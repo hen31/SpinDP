@@ -1,10 +1,10 @@
 import threading
+from SPINOS.Command import COMMAND
 
 __author__ = 'Hendrik'
 
 
 class ServerClient:
-
     def __init__(self, client_socket, adress):
         self.client_socket = client_socket
         self.adress = adress
@@ -17,9 +17,8 @@ class ServerClient:
         while True:
             for l in self.client_socket.makefile('r'):
                 self.mutex.acquire()
-                self.messages.append(l)
+                self.messages.append(COMMAND.decode_message(l))
                 self.mutex.release()
-
 
     def send_message(self, message):
         self.client_socket.send(message)
