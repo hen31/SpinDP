@@ -1,0 +1,63 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.spiderdp.spidercontroller.MainActivity"
+    tools:ignore="MergeRootFrame" >
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+                    >
+
+        <RelativeLayout
+            android:id="@+id/leftJoystick"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+        android:background="@drawable/image_button_bg" >
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/relativeLayout1"
+            android:layout_width="75dp"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/leftJoystick" >
+
+            <Button
+                android:id="@+id/button1"
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                   android:layout_centerHorizontal="true"
+                android:text="@string/ManMode" />
+
+                      <Button
+                          android:id="@+id/button2"
+                          style="?android:attr/buttonStyleSmall"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_below="@+id/button1"
+                          android:layout_centerHorizontal="true"
+                          android:text="@string/AutoMode" />
+
+        </RelativeLayout>
+        
+                <RelativeLayout
+            android:id="@+id/rightJoystick"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_toRightOf="@+id/relativeLayout1"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/image_button_bg" >
+        </RelativeLayout>
+        
+    </RelativeLayout>
+    
+    
+</FrameLayout>
+
