@@ -1,5 +1,7 @@
 package com.spiderdp.spidercontroller;
 
+import java.util.ArrayList;
+
 import android.app.Activity;
 import android.app.ActionBar;
 import android.app.Fragment;
@@ -8,16 +10,20 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.os.Build;
 
 public class MainActivity extends Activity {
 	RelativeLayout layout_joystick_left;
 	RelativeLayout layout_joystick_right;
+	Button exitBtn;
 	JoyStickClass js;
 	JoyStickClass js_right;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -27,6 +33,20 @@ public class MainActivity extends Activity {
 			getFragmentManager().beginTransaction()
 					.add(R.id.container, new PlaceholderFragment()).commit();
 		}
+	
+		exitBtn = (Button)findViewById(R.id.button3);
+		exitBtn.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				ServerClient.getInstance().sendMessage(ServerClient.KILL, null);
+				
+			}
+		
+		});
+
+		
+		
 		layout_joystick_left = (RelativeLayout)findViewById(R.id.leftJoystick);
 		layout_joystick_right = (RelativeLayout)findViewById(R.id.rightJoystick);
 		
@@ -47,7 +67,7 @@ public class MainActivity extends Activity {
 	    
 	    
 	    
-	    
+	   
 	    js_right = new JoyStickClass(getApplicationContext()
         		, layout_joystick_right, R.drawable.image_button);
 	    js_right.setStickSize(150, 150);
@@ -79,7 +99,7 @@ public class MainActivity extends Activity {
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
 		if (id == R.id.action_settings) {
-			return true;
+			ServerClient.getInstance(this);
 		}
 		return super.onOptionsItemSelected(item);
 	}

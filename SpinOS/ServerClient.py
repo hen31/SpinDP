@@ -18,9 +18,11 @@ class ServerClient:
         while self.alive:
             for l in self.client_socket.makefile('r'):
                 l = l.replace("\n", "")
+                command_recieved = COMMAND.decode_message(l)
                 self.mutex.acquire()
-                self.messages.append(COMMAND.decode_message(l))
+                self.messages.append(command_recieved)
                 self.mutex.release()
+                self.send_message(COMMAND.encode_message(COMMAND.RECIEVED, [command_recieved[0]]))
 
     def send_message(self, message):
         self.client_socket.send(message)

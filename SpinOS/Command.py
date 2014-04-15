@@ -2,6 +2,7 @@ __author__ = 'Hendrik'
 
 
 class COMMAND:
+    IDENTIFY = -2
     RECIEVED = -1
     TO_MANUAL = 0
     TO_AUTO_1 = 1
@@ -15,6 +16,7 @@ class COMMAND:
         pass
     @staticmethod
     def decode_message(recieved_string):
+        recieved_string.replace("\n", "")
         splitter = '<;>'
         result = recieved_string.split(splitter)
         result[0] = int(result[0])
@@ -22,13 +24,13 @@ class COMMAND:
     @staticmethod
     def encode_message(command, parameters):
         if len(parameters) > 0:
-            encoded_string = str(command) + "<,>"
+            encoded_string = str(command) + "<;>"
             for x in xrange(0, len(parameters)):
                 if x > len(parameters)-1:
-                    encoded_string = str(parameters[x]) + "<,>"
+                    encoded_string += str(parameters[x]) + "<;>"
                 else:
-                    encoded_string = str(parameters[x])
+                    encoded_string += str(parameters[x])
         else:
-               encoded_string = str(command)
+            encoded_string = str(command)
 
         return encoded_string
