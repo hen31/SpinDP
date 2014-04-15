@@ -1,4 +1,4 @@
-from SPINOS.SpinOS import SpinOS
+from SpinOS import SpinOS
 
 __author__ = 'Hendrik'
 

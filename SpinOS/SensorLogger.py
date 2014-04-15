@@ -1,6 +1,8 @@
 import threading
 from time import strftime
-from Logger import Logger
+
+import Logger
+
 
 __author__ = 'Hendrik'
 

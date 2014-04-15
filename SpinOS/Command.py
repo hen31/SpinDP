@@ -9,6 +9,7 @@ class COMMAND:
     TO_AUTO_3 = 3
     SEND_SENSOR_DATA = 4
     SEND_START_TIME = 5
+    KILL = 6
 
     def __init__(self):
         pass
