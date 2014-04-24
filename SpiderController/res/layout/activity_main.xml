@@ -26,7 +26,12 @@
             android:layout_width="75dp"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/leftJoystick" >
-
+<android.widget.VerticalSeekBar
+  android:id="@+id/seekBar1"
+  android:layout_width="75dp"
+  android:layout_height="fill_parent"
+  android:layout_marginBottom="10dp"
+  />
         
 
         </RelativeLayout>

@@ -17,6 +17,9 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.VerticalSeekBar;
 import android.os.Build;
 
 public class MainActivity extends Activity {
@@ -25,6 +28,7 @@ public class MainActivity extends Activity {
 	Button exitBtn;
 	JoyStickClass js;
 	JoyStickClass js_right;
+	VerticalSeekBar elvation_bar;
 	Boolean connected = false;
 	
 	@Override
@@ -39,7 +43,7 @@ public class MainActivity extends Activity {
 	
 
 		
-		
+		elvation_bar = (VerticalSeekBar)findViewById(R.id.seekBar1);
 		layout_joystick_left = (RelativeLayout)findViewById(R.id.leftJoystick);
 		layout_joystick_right = (RelativeLayout)findViewById(R.id.rightJoystick);
 		
@@ -89,6 +93,29 @@ public class MainActivity extends Activity {
 	 				return true;
 	 			}
 	    });
+	    elvation_bar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+			
+			@Override
+			public void onStopTrackingTouch(SeekBar seekBar) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onStartTrackingTouch(SeekBar seekBar) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onProgressChanged(SeekBar seekBar, int progress,
+					boolean fromUser) {
+				List<Object> _temp = new ArrayList<Object>();
+ 				_temp.add(progress);
+ 				ServerClient.getInstance().sendMessage(ServerClient.MOVE_HEIGHT, _temp);
+				
+			}
+		});
 	}
 
 	@Override
@@ -111,6 +138,13 @@ public class MainActivity extends Activity {
 			ServerClient.getInstance().sendMessage(ServerClient.KILL, null);
 		}else if(id == R.id.autoBtm){
 			ServerClient.getInstance().sendMessage(ServerClient.TO_AUTO1, null);
+		}else if(id == R.id.auto2Btm){
+			ServerClient.getInstance().sendMessage(ServerClient.TO_AUTO2, null);
+		}else if(id == R.id.auto3Btm){
+			ServerClient.getInstance().sendMessage(ServerClient.TO_AUTO3, null);
+		}
+		else if(id == R.id.auto4Btm){
+			ServerClient.getInstance().sendMessage(ServerClient.TO_AUTO4, null);
 		}else if(id == R.id.manModeBtm){
 			ServerClient.getInstance().sendMessage(ServerClient.TO_MANUAL, null);
 		}
