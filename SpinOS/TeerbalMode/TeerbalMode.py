@@ -1,10 +1,15 @@
-
+from TeerbalMode import SearchState
 
 __author__ = 'Jeroen'
 
-"""class TeerbalMode:
-    def __init__(self):
-        self.var = "hoi"
-        return
+class TeerbalMode:
 
-    def process_command(self, command, parameters):"""""
+    alive = False;
+
+    def __init__(self):
+        self.currentState = SearchState;
+
+
+    def process_command(self, command, parameters):
+        print "teerbal process_command"
+
