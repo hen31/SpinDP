@@ -1,11 +1,13 @@
 package com.spiderdp.spidercontroller;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.app.Activity;
 import android.app.ActionBar;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,6 +25,7 @@ public class MainActivity extends Activity {
 	Button exitBtn;
 	JoyStickClass js;
 	JoyStickClass js_right;
+	Boolean connected = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -34,16 +37,6 @@ public class MainActivity extends Activity {
 					.add(R.id.container, new PlaceholderFragment()).commit();
 		}
 	
-		exitBtn = (Button)findViewById(R.id.button3);
-		exitBtn.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				ServerClient.getInstance().sendMessage(ServerClient.KILL, null);
-				
-			}
-		
-		});
 
 		
 		
@@ -61,6 +54,10 @@ public class MainActivity extends Activity {
 	    layout_joystick_left.setOnTouchListener(new OnTouchListener() {
 	 			public boolean onTouch(View arg0, 	android.view.MotionEvent arg1) {
 	 				js.drawStick(arg1);
+	 				List<Object> _temp = new ArrayList<Object>();
+	 				_temp.add(js.getAngle());
+	 				_temp.add(js.getDistance());
+	 				ServerClient.getInstance().sendMessage(ServerClient.MOVE, _temp);
 	 				return true;
 	 			}
 	    });
@@ -79,6 +76,16 @@ public class MainActivity extends Activity {
 	    layout_joystick_right.setOnTouchListener(new OnTouchListener() {
 	 			public boolean onTouch(View arg0, 	android.view.MotionEvent arg1) {
 	 				js_right.drawStick(arg1);
+	 				Log.d("SpiderController","X : " + String.valueOf(js_right.getX()));
+	 				Log.d("SpiderController","Y : " + String.valueOf(js_right.getY()));
+	 				Log.d("SpiderController","Angle : " 
+                           + String.valueOf(js_right.getAngle()));
+	 				Log.d("SpiderController","Distance : " 
+                           + String.valueOf(js_right.getDistance()));
+	 				List<Object> _temp = new ArrayList<Object>();
+	 				_temp.add(js_right.getAngle());
+	 				_temp.add(js_right.getDistance());
+	 				ServerClient.getInstance().sendMessage(ServerClient.MOVE_INTERNAL, _temp);
 	 				return true;
 	 			}
 	    });
@@ -100,6 +107,12 @@ public class MainActivity extends Activity {
 		int id = item.getItemId();
 		if (id == R.id.action_settings) {
 			ServerClient.getInstance(this);
+		}else if(id == R.id.exitBtm){
+			ServerClient.getInstance().sendMessage(ServerClient.KILL, null);
+		}else if(id == R.id.autoBtm){
+			ServerClient.getInstance().sendMessage(ServerClient.TO_AUTO1, null);
+		}else if(id == R.id.manModeBtm){
+			ServerClient.getInstance().sendMessage(ServerClient.TO_MANUAL, null);
 		}
 		return super.onOptionsItemSelected(item);
 	}

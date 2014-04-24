@@ -2,6 +2,7 @@
 import platform
 import socket
 import threading
+import time
 
 from ServerClient import ServerClient
 from Logger import Logger
@@ -34,6 +35,7 @@ class Server:
 
     def run(self):
         while self.alive:
+            time.sleep(0.2)
             c, addr = self.s.accept()  # Establish connection with client.
             self.log.logevent("Server", "Got connection from: " + str(addr), Logger.MESSAGE)
             clientobj = ServerClient(c, str(addr))#create client object

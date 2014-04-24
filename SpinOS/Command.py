@@ -11,6 +11,8 @@ class COMMAND:
     SEND_SENSOR_DATA = 4
     SEND_START_TIME = 5
     KILL = 6
+    MOVE = 7
+    MOVE_INTERNAL = 8
 
     def __init__(self):
         pass

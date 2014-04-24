@@ -1,4 +1,5 @@
 import threading
+import time
 from Command import COMMAND
 
 __author__ = 'Hendrik'
@@ -16,6 +17,7 @@ class ServerClient:
 
     def run(self):
         while self.alive:
+            time.sleep(0.2)
             for l in self.client_socket.makefile('r'):
                 l = l.replace("\n", "")
                 command_recieved = COMMAND.decode_message(l)

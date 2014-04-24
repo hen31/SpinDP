@@ -27,31 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/leftJoystick" >
 
-            <Button
-                android:id="@+id/button1"
-                style="?android:attr/buttonStyleSmall"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                   android:layout_centerHorizontal="true"
-                android:text="@string/ManMode" />
-
-                      <Button
-                          android:id="@+id/button2"
-                          style="?android:attr/buttonStyleSmall"
-                          android:layout_width="wrap_content"
-                          android:layout_height="wrap_content"
-                          android:layout_below="@+id/button1"
-                          android:layout_centerHorizontal="true"
-                          android:text="@string/AutoMode" />
-
-                         <Button
-                             android:id="@+id/button3"
-                             style="?android:attr/buttonStyleSmall"
-                             android:layout_width="wrap_content"
-                             android:layout_height="wrap_content"
-                             android:layout_below="@+id/button2"
-                             android:layout_centerHorizontal="true"
-                             android:text="@string/exit" />
+        
 
         </RelativeLayout>
         

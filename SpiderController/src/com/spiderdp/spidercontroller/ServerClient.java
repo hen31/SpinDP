@@ -17,8 +17,12 @@ import android.widget.Toast;
 
 public class ServerClient {
 
-	static public int KILL = 6;
-	static public int IDENTYFY = -2;
+	public static final int TO_AUTO1 = 1;
+	public static  final int MOVE_INTERNAL = 8;
+	public static  final  int KILL = 6;
+	public static  final int IDENTYFY = -2;
+	public static  final int MOVE = 7;
+	public static final int TO_MANUAL = 0;
 	static private ServerClient instance = null;
 	public static ServerClient getInstance()
 	{

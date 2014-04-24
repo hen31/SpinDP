@@ -7,5 +7,6 @@
     <string name="ManMode">Manual</string>
     <string name="AutoMode">Auto</string>
     <string name="exit">Exit</string>
+    <string name="AutoString">Auto modes</string>
 
 </resources>
