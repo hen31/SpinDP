@@ -19,7 +19,7 @@ class MPU6050(Sensor):
     K = 0.98
     K1 = 1 - K
 
-    interval = 5 #interval in seconds
+    interval = 1 #interval in seconds
 
     def __init__(self):
         self.thread = threading.Thread(target=self.run)
@@ -39,7 +39,7 @@ class MPU6050(Sensor):
             gyro_total_x = last_x - gyro_offset_x
             gyro_total_y = last_y - gyro_offset_y
             
-            print "{0:.2f} {1:.2f} {2:.2f} {3:.2f} {4:.2f} {5:.2f}".format(last_x, gyro_total_x, last_x, last_y, gyro_total_y, last_y)
+            print "{0:.2f} {1:.2f} {2:.2f} {3:.2f}".format(gyro_total_x, last_x, gyro_total_y, last_y)
 
             time.sleep(self.interval)
 
