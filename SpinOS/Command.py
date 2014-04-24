@@ -14,6 +14,8 @@ class COMMAND:
     MOVE = 7
     MOVE_INTERNAL = 8
     MOVE_HEIGHT = 9
+    TO_AUTO_4 = 10
+
 
     def __init__(self):
         pass
