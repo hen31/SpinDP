@@ -50,7 +50,7 @@ class SpinOS:
                     self.shutdown()
                 else:
                     command = message[0]
-                    message.remove(0)
+                    message.remove(command)
                     self.current_mode.process_command(command, message)
 
                 #TODO act on message
