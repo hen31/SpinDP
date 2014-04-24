@@ -2,11 +2,13 @@ import os
 import threading
 import sys
 import time
+from BalloonMode.BalloonMode import BalloonMode
 from Command import COMMAND
 from ManualMode import ManualMode
 from Server import Server
 from Logger import Logger
 from SensorLogger import SensorLogger
+from TeerbalMode.TeerbalMode import TeerbalMode
 
 __author__ = 'Hendrik'
 
@@ -48,6 +50,24 @@ class SpinOS:
                 if message[0] == COMMAND.KILL:
                     self.running = False
                     self.shutdown()
+                elif message[0] == COMMAND.TO_MANUAL:
+                    self.current_mode.alive = False
+                    self.mode = "manual"
+                    SpinOS.logger.logevent("SPINOS", "Mode set to " + self.mode, Logger.MESSAGE)
+                    self.current_mode = ManualMode()
+                    self.current_mode.alive = True
+                elif message[0] == COMMAND.TO_BALLOON_MODE:
+                    self.current_mode.alive = False
+                    self.mode = "balloon mode"
+                    SpinOS.logger.logevent("SPINOS", "Mode set to " + self.mode, Logger.MESSAGE)
+                    self.current_mode = BalloonMode()
+                    self.current_mode.alive = True
+                elif message[0] == COMMAND.TO_TEERBAL_MODE:
+                    self.current_mode.alive = False
+                    self.mode = "teerbal mode"
+                    SpinOS.logger.logevent("SPINOS", "Mode set to " + self.mode, Logger.MESSAGE)
+                    self.current_mode = TeerbalMode()
+                    self.current_mode.alive = True
                 else:
                     command = message[0]
                     message.remove(command)

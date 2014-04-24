@@ -1,4 +1,4 @@
-from TeerbalMode import SearchState
+from SearchState import SearchState
 
 __author__ = 'Jeroen'
 

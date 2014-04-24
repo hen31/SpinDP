@@ -2,6 +2,7 @@ __author__ = 'Hendrik'
 
 
 class ManualMode:
+    alive = False
     def __init__(self):
         pass
 

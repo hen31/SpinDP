@@ -137,14 +137,14 @@ public class MainActivity extends Activity {
 		}else if(id == R.id.exitBtm){
 			ServerClient.getInstance().sendMessage(ServerClient.KILL, null);
 		}else if(id == R.id.autoBtm){
-			ServerClient.getInstance().sendMessage(ServerClient.TO_AUTO1, null);
+			ServerClient.getInstance().sendMessage(ServerClient.TO_BALLOON_MODE, null);
 		}else if(id == R.id.auto2Btm){
-			ServerClient.getInstance().sendMessage(ServerClient.TO_AUTO2, null);
+			ServerClient.getInstance().sendMessage(ServerClient.TO_TEERBAL_MODE, null);
 		}else if(id == R.id.auto3Btm){
-			ServerClient.getInstance().sendMessage(ServerClient.TO_AUTO3, null);
+			ServerClient.getInstance().sendMessage(ServerClient.TO_DANCE_MODE, null);
 		}
 		else if(id == R.id.auto4Btm){
-			ServerClient.getInstance().sendMessage(ServerClient.TO_AUTO4, null);
+			ServerClient.getInstance().sendMessage(ServerClient.TO_DERBY_MODE, null);
 		}else if(id == R.id.manModeBtm){
 			ServerClient.getInstance().sendMessage(ServerClient.TO_MANUAL, null);
 		}

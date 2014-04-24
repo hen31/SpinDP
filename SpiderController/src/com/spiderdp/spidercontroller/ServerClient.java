@@ -17,10 +17,10 @@ import android.widget.Toast;
 
 public class ServerClient {
 
-	public static final int TO_AUTO1 = 1;
-	public static final int TO_AUTO2 = 2;
-	public static final int TO_AUTO3 = 3;
-	public static final int TO_AUTO4 = 10;
+	public static final int TO_BALLOON_MODE = 1;
+	public static final int TO_TEERBAL_MODE = 2;
+	public static final int TO_DANCE_MODE = 3;
+	public static final int TO_DERBY_MODE = 10;
 	public static  final int MOVE_INTERNAL = 8;
 	public static  final  int KILL = 6;
 	public static  final int IDENTYFY = -2;

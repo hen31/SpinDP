@@ -5,17 +5,16 @@ class COMMAND:
     IDENTIFY = -2
     RECIEVED = -1
     TO_MANUAL = 0
-    TO_AUTO_1 = 1
-    TO_AUTO_2 = 2
-    TO_AUTO_3 = 3
+    TO_BALLOON_MODE = 1
+    TO_TEERBAL_MODE = 2
+    TO_DANCE_MODE = 3
     SEND_SENSOR_DATA = 4
     SEND_START_TIME = 5
     KILL = 6
     MOVE = 7
     MOVE_INTERNAL = 8
     MOVE_HEIGHT = 9
-    TO_AUTO_4 = 10
-
+    TO_DERBY_MODE = 10
 
     def __init__(self):
         pass
