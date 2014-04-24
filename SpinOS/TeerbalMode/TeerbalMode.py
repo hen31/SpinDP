@@ -4,10 +4,11 @@ __author__ = 'Jeroen'
 
 class TeerbalMode:
 
-    alive = False;
+    alive = False
 
     def __init__(self):
-        self.currentState = SearchState;
+        print "hoi"
+
 
 
     def process_command(self, command, parameters):
