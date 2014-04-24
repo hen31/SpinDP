@@ -62,27 +62,24 @@ class MPU6050(Sensor):
         return (gyro_scaled_x, gyro_scaled_y, gyro_scaled_z, acceleration_scaled_x, acceleration_scaled_y, acceleration_scaled_z)
 
     @staticmethod
-    def twos_compliment(self, val):
+    def twos_compliment(val):
         if (val >= 0x8000):
             return -((65535 - val) + 1)
         else:
             return val
 
     @staticmethod
-    def dist(self, a, b):
+    def dist(a, b):
         return math.sqrt((a * a) + (b * b))
 
-    @staticmethod
-    def get_y_rotation(self, x,y,z):
+    def get_y_rotation(self,x,y,z):
         radians = math.atan2(x, self.dist(y,z))
         return -math.degrees(radians)
 
-    @staticmethod
-    def get_x_rotation(self, x,y,z):
+    def get_x_rotation(self,x,y,z):
         radians = math.atan2(y, self.dist(x,z))
         return math.degrees(radians)
 
 
 MPU = MPU6050()
 MPU.thread.start()
-MPU.stop()
