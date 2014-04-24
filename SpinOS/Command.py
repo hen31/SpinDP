@@ -13,6 +13,7 @@ class COMMAND:
     KILL = 6
     MOVE = 7
     MOVE_INTERNAL = 8
+    MOVE_HEIGHT = 9
 
     def __init__(self):
         pass
