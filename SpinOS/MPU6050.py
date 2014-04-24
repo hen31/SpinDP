@@ -28,7 +28,7 @@ class MPU6050(Sensor):
     current_value = [0, 0, 0]
 
     def __init__(self, logger):
-        super(MPU6050, self, logger).__init__()
+        super(MPU6050, self).__init__(logger)
         self.thread = threading.Thread(target=self.run)
         self.bus = smbus.SMBus(1)  # or bus = smbus.SMBus(0) for Revision 1 boards
         self.bus.write_byte_data(self.address, self.power_mgmt_1, 0) # Wake up
@@ -46,8 +46,8 @@ class MPU6050(Sensor):
             gyro_total_x = last_x - gyro_offset_x
             gyro_total_y = last_y - gyro_offset_y
 
-            self.laatste_waarde = self.huidige_waarde
-            self.huidige_waarde = [gyro_scaled_x, gyro_scaled_y, gyro_scaled_z]
+            self.last_value = self.current_value
+            self.current_value = [gyro_scaled_x, gyro_scaled_y, gyro_scaled_z]
             
             #print "{0:.2f} {1:.2f} {2:.2f} {3:.2f}".format(gyro_total_x, last_x, gyro_total_y, last_y)
             self.sensorlogger.log_waarde("x:{0:.2f} y:{1:.2f} z:{2:.2f}".format(gyro_scaled_x,gyro_scaled_y,gyro_scaled_z))
