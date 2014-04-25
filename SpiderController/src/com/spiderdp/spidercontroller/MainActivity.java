@@ -29,8 +29,8 @@ public class MainActivity extends Activity {
 	JoyStickClass js;
 	JoyStickClass js_right;
 	VerticalSeekBar elvation_bar;
-	Boolean connected = false;
-	
+	static public Boolean connected = false;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -40,80 +40,86 @@ public class MainActivity extends Activity {
 			getFragmentManager().beginTransaction()
 					.add(R.id.container, new PlaceholderFragment()).commit();
 		}
-	
 
-		
-		elvation_bar = (VerticalSeekBar)findViewById(R.id.seekBar1);
-		layout_joystick_left = (RelativeLayout)findViewById(R.id.leftJoystick);
-		layout_joystick_right = (RelativeLayout)findViewById(R.id.rightJoystick);
-		
-        js = new JoyStickClass(getApplicationContext()
-        		, layout_joystick_left, R.drawable.image_button);
-	    js.setStickSize(150, 150);
-	    js.setLayoutSize(500, 500);
-	    js.setLayoutAlpha(150);
-	    js.setStickAlpha(100);
-	    js.setOffset(90);
-	    js.setMinimumDistance(50);	
-	    layout_joystick_left.setOnTouchListener(new OnTouchListener() {
-	 			public boolean onTouch(View arg0, 	android.view.MotionEvent arg1) {
-	 				js.drawStick(arg1);
-	 				List<Object> _temp = new ArrayList<Object>();
-	 				_temp.add(js.getAngle());
-	 				_temp.add(js.getDistance());
-	 				ServerClient.getInstance().sendMessage(ServerClient.MOVE, _temp);
-	 				return true;
-	 			}
-	    });
-	    
-	    
-	    
-	   
-	    js_right = new JoyStickClass(getApplicationContext()
-        		, layout_joystick_right, R.drawable.image_button);
-	    js_right.setStickSize(150, 150);
-	    js_right.setLayoutSize(500, 500);
-	    js_right.setLayoutAlpha(150);
-	    js_right.setStickAlpha(100);
-	    js_right.setOffset(90);
-	    js_right.setMinimumDistance(50);	
-	    layout_joystick_right.setOnTouchListener(new OnTouchListener() {
-	 			public boolean onTouch(View arg0, 	android.view.MotionEvent arg1) {
-	 				js_right.drawStick(arg1);
-	 				Log.d("SpiderController","X : " + String.valueOf(js_right.getX()));
-	 				Log.d("SpiderController","Y : " + String.valueOf(js_right.getY()));
-	 				Log.d("SpiderController","Angle : " 
-                           + String.valueOf(js_right.getAngle()));
-	 				Log.d("SpiderController","Distance : " 
-                           + String.valueOf(js_right.getDistance()));
-	 				List<Object> _temp = new ArrayList<Object>();
-	 				_temp.add(js_right.getAngle());
-	 				_temp.add(js_right.getDistance());
-	 				ServerClient.getInstance().sendMessage(ServerClient.MOVE_INTERNAL, _temp);
-	 				return true;
-	 			}
-	    });
-	    elvation_bar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
-			
+		elvation_bar = (VerticalSeekBar) findViewById(R.id.seekBar1);
+		layout_joystick_left = (RelativeLayout) findViewById(R.id.leftJoystick);
+		layout_joystick_right = (RelativeLayout) findViewById(R.id.rightJoystick);
+
+		js = new JoyStickClass(getApplicationContext(), layout_joystick_left,
+				R.drawable.image_button);
+		js.setStickSize(150, 150);
+		js.setLayoutSize(500, 500);
+		js.setLayoutAlpha(150);
+		js.setStickAlpha(100);
+		js.setOffset(90);
+		js.setMinimumDistance(50);
+		layout_joystick_left.setOnTouchListener(new OnTouchListener() {
+			public boolean onTouch(View arg0, android.view.MotionEvent arg1) {
+				js.drawStick(arg1);
+				if (MainActivity.connected) {
+					List<Object> _temp = new ArrayList<Object>();
+					_temp.add(js.getAngle());
+					_temp.add(js.getDistance());
+					ServerClient.getInstance().sendMessage(ServerClient.MOVE,
+							_temp);
+				}
+
+				return true;
+			}
+		});
+
+		js_right = new JoyStickClass(getApplicationContext(),
+				layout_joystick_right, R.drawable.image_button);
+		js_right.setStickSize(150, 150);
+		js_right.setLayoutSize(500, 500);
+		js_right.setLayoutAlpha(150);
+		js_right.setStickAlpha(100);
+		js_right.setOffset(90);
+		js_right.setMinimumDistance(50);
+		layout_joystick_right.setOnTouchListener(new OnTouchListener() {
+			public boolean onTouch(View arg0, android.view.MotionEvent arg1) {
+				js_right.drawStick(arg1);
+				Log.d("SpiderController",
+						"X : " + String.valueOf(js_right.getX()));
+				Log.d("SpiderController",
+						"Y : " + String.valueOf(js_right.getY()));
+				Log.d("SpiderController",
+						"Angle : " + String.valueOf(js_right.getAngle()));
+				Log.d("SpiderController",
+						"Distance : " + String.valueOf(js_right.getDistance()));
+				if (MainActivity.connected) {
+					List<Object> _temp = new ArrayList<Object>();
+					_temp.add(js_right.getAngle());
+					_temp.add(js_right.getDistance());
+					ServerClient.getInstance().sendMessage(
+							ServerClient.MOVE_INTERNAL, _temp);
+				}
+				return true;
+			}
+		});
+		elvation_bar.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+
 			@Override
 			public void onStopTrackingTouch(SeekBar seekBar) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void onStartTrackingTouch(SeekBar seekBar) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void onProgressChanged(SeekBar seekBar, int progress,
 					boolean fromUser) {
-				List<Object> _temp = new ArrayList<Object>();
- 				_temp.add(progress);
- 				ServerClient.getInstance().sendMessage(ServerClient.MOVE_HEIGHT, _temp);
-				
+				if (MainActivity.connected) {
+					List<Object> _temp = new ArrayList<Object>();
+					_temp.add(progress);
+					ServerClient.getInstance().sendMessage(
+							ServerClient.MOVE_HEIGHT, _temp);
+				}
 			}
 		});
 	}
@@ -134,19 +140,29 @@ public class MainActivity extends Activity {
 		int id = item.getItemId();
 		if (id == R.id.action_settings) {
 			ServerClient.getInstance(this);
-		}else if(id == R.id.exitBtm){
-			ServerClient.getInstance().sendMessage(ServerClient.KILL, null);
-		}else if(id == R.id.autoBtm){
-			ServerClient.getInstance().sendMessage(ServerClient.TO_BALLOON_MODE, null);
-		}else if(id == R.id.auto2Btm){
-			ServerClient.getInstance().sendMessage(ServerClient.TO_TEERBAL_MODE, null);
-		}else if(id == R.id.auto3Btm){
-			ServerClient.getInstance().sendMessage(ServerClient.TO_DANCE_MODE, null);
-		}
-		else if(id == R.id.auto4Btm){
-			ServerClient.getInstance().sendMessage(ServerClient.TO_DERBY_MODE, null);
-		}else if(id == R.id.manModeBtm){
-			ServerClient.getInstance().sendMessage(ServerClient.TO_MANUAL, null);
+		} else if (id == R.id.exitBtm) {
+			if (MainActivity.connected)
+				ServerClient.getInstance().sendMessage(ServerClient.KILL, null);
+		} else if (id == R.id.autoBtm) {
+			if (MainActivity.connected)
+				ServerClient.getInstance().sendMessage(
+						ServerClient.TO_BALLOON_MODE, null);
+		} else if (id == R.id.auto2Btm) {
+			if (MainActivity.connected)
+				ServerClient.getInstance().sendMessage(
+						ServerClient.TO_TEERBAL_MODE, null);
+		} else if (id == R.id.auto3Btm) {
+			if (MainActivity.connected)
+				ServerClient.getInstance().sendMessage(
+						ServerClient.TO_DANCE_MODE, null);
+		} else if (id == R.id.auto4Btm) {
+			if (MainActivity.connected)
+				ServerClient.getInstance().sendMessage(
+						ServerClient.TO_DERBY_MODE, null);
+		} else if (id == R.id.manModeBtm) {
+			if (MainActivity.connected)
+				ServerClient.getInstance().sendMessage(ServerClient.TO_MANUAL,
+						null);
 		}
 		return super.onOptionsItemSelected(item);
 	}

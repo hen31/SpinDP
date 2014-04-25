@@ -64,7 +64,7 @@ public class ServerClient {
             }
         });
         listenerThread.start();
-        
+        MainActivity.connected =true;
 	}
 
 	/**
@@ -85,6 +85,7 @@ public class ServerClient {
             paramList.clear();
             paramList.add("controller");
             sendMessage(ServerClient.IDENTYFY, paramList);
+			sendMessage(ServerClient.TO_MANUAL,null);
         } catch (UnknownHostException ex) {
             Logger.getLogger(ServerClient.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {

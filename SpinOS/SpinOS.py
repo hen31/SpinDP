@@ -46,8 +46,8 @@ class SpinOS:
             time.sleep(0.2)
             message_list = self.server.get_messages()
             for message in message_list:
-                self.logger.logevent("SPINOS", "Reading message - " + str(message))
                 if message[0] == COMMAND.KILL:
+                    self.logger.logevent("SPINOS", "KILLING SPIDER, OH NO!!!!!")
                     self.running = False
                     self.shutdown()
                 elif message[0] == COMMAND.TO_MANUAL:
