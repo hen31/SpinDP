@@ -3,6 +3,8 @@ import time
 import smbus
 import math
 from Sensor import Sensor
+from SensorLogger import SensorLogger
+from Logger import Logger
 
 __author__ = 'Ruben'
 
@@ -21,10 +23,12 @@ class MPU6050(Sensor):
 
     interval = 1 #interval in seconds
 
-    def __init__(self):
+    def __init__(self, logger):
         self.thread = threading.Thread(target=self.run)
         self.bus = smbus.SMBus(1)  # or bus = smbus.SMBus(0) for Revision 2 boards
         self.bus.write_byte_data(self.address, self.power_mgmt_1, 0)
+        self.logger = logger
+        self.sensorLogger = SensorLogger('MPU6050',logger)
 
     def run(self):
         while self.alive:
@@ -39,13 +43,18 @@ class MPU6050(Sensor):
             gyro_total_x = last_x - gyro_offset_x
             gyro_total_y = last_y - gyro_offset_y
             
-            print "{0:.2f} {1:.2f} {2:.2f} {3:.2f}".format(gyro_total_x, last_x, gyro_total_y, last_y)
+            #print "{0:.2f} {1:.2f} {2:.2f} {3:.2f}".format(gyro_total_x, last_x, gyro_total_y, last_y)
+            self.sensorLogger.log_waarde("x:{0:.2f} y:{1:.2f} z:{2:.2f}".format(gyro_scaled_x,gyro_scaled_y,gyro_scaled_z))
 
             time.sleep(self.interval)
 
     def stop(self):
         self.alive = False
-        print "stopped"
+        self.sensorLogger.log_waarde('Sensor MPU6050 stopped')
+
+    def start(self):
+        self.thread.start()
+        self.sensorLogger.log_waarde('Sensor MPU6050 started')
 
     def read_all(self):
         raw_gyro_data = self.bus.read_i2c_block_data(self.address, 0x43, 6)
@@ -79,7 +88,3 @@ class MPU6050(Sensor):
     def get_x_rotation(self,x,y,z):
         radians = math.atan2(y, self.dist(x,z))
         return math.degrees(radians)
-
-
-MPU = MPU6050()
-MPU.thread.start()
