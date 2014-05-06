@@ -13,22 +13,26 @@ class MPU6050(Sensor):
     power_mgmt_1 = 0x6b
     power_mgmt_2 = 0x6c
 
+    # MPU6050 scales
     gyro_scale = 131.0
     acceleration_scale = 16384.0
 
-    address = 0x68  # This is the address value read via the i2cdetect command
+    # This is the address value read via the i2cdetect command
+    address = 0x68
 
-    K = 0.98
-    K1 = 1 - K
+    # Interval in seconds
+    interval = 1
 
-    interval = 1 #interval in seconds
+    # Values
+    last_value = [0, 0, 0]
+    current_value = [0, 0, 0]
 
     def __init__(self, logger):
         self.thread = threading.Thread(target=self.run)
-        self.bus = smbus.SMBus(1)  # or bus = smbus.SMBus(0) for Revision 2 boards
+        self.bus = smbus.SMBus(1)  # or bus = smbus.SMBus(0) for Revision 1 boards
         self.bus.write_byte_data(self.address, self.power_mgmt_1, 0)
         self.logger = logger
-        self.sensorLogger = SensorLogger('MPU6050',logger)
+        self.sensorlogger = SensorLogger('MPU6050',logger)
 
     def run(self):
         while self.alive:
@@ -42,19 +46,22 @@ class MPU6050(Sensor):
 
             gyro_total_x = last_x - gyro_offset_x
             gyro_total_y = last_y - gyro_offset_y
+
+            self.laatste_waarde = self.huidige_waarde
+            self.huidige_waarde = [gyro_scaled_x, gyro_scaled_y, gyro_scaled_z]
             
             #print "{0:.2f} {1:.2f} {2:.2f} {3:.2f}".format(gyro_total_x, last_x, gyro_total_y, last_y)
-            self.sensorLogger.log_waarde("x:{0:.2f} y:{1:.2f} z:{2:.2f}".format(gyro_scaled_x,gyro_scaled_y,gyro_scaled_z))
+            self.sensorlogger.log_waarde("x:{0:.2f} y:{1:.2f} z:{2:.2f}".format(gyro_scaled_x,gyro_scaled_y,gyro_scaled_z))
 
             time.sleep(self.interval)
 
     def stop(self):
         self.alive = False
-        self.sensorLogger.log_waarde('Sensor MPU6050 stopped')
+        self.sensorlogger.log_waarde('Sensor MPU6050 stopped')
 
     def start(self):
         self.thread.start()
-        self.sensorLogger.log_waarde('Sensor MPU6050 started')
+        self.sensorlogger.log_waarde('Sensor MPU6050 started')
 
     def read_all(self):
         raw_gyro_data = self.bus.read_i2c_block_data(self.address, 0x43, 6)
@@ -70,9 +77,12 @@ class MPU6050(Sensor):
 
         return (gyro_scaled_x, gyro_scaled_y, gyro_scaled_z, acceleration_scaled_x, acceleration_scaled_y, acceleration_scaled_z)
 
+    def getWaarde(self):
+        return self.current_value
+
     @staticmethod
     def twos_compliment(val):
-        if (val >= 0x8000):
+        if val >= 0x8000:
             return -((65535 - val) + 1)
         else:
             return val
