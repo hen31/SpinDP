@@ -85,4 +85,5 @@ class SpinOS:
 
     def shutdown(self):
         self.server.stop()
+                self.movementHandler.die()
         os._exit(0)

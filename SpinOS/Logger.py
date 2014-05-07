@@ -13,7 +13,7 @@ class Logger:
 
     def logevent(self, module, message, priority=0):
         if priority >= self.min_log_priority:
-            print(str(module) + str(" - ") + str(message))
+            print(str(module).upper() + str(" - ") + str(message))
 
     def get_loglevel_string(self):
         if self.min_log_priority == Logger.SENSOR_VALUES:

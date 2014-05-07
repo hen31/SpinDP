@@ -18,12 +18,12 @@ class ManualMode:
             forceMove  = parameters[1]
             angleTurn  = parameters[2]
             forceTurn  = parameters[3]
-            self.handler.move()
+            self.handler.move(forceMove, angleMove, forceTurn, angleTurn)
         elif command == Command.MOVE_INTERNAL:
             angle  = parameters[0]
             force  = parameters[1]
-            pass
+            self.handler.internal_move(angle, force)
         elif command == Command.MOVE_HEIGHT:
             height = parameters[0]
-            pass
+            self.handler.height_move(height)
         self.mutex.release()
