@@ -11,7 +11,6 @@ from Server import Server
 from Logger import Logger
 from SensorLogger import SensorLogger
 from TeerbalMode.TeerbalMode import TeerbalMode
-from MPU6050 import MPU6050
 
 __author__ = 'Hendrik'
 
@@ -46,9 +45,9 @@ class SpinOS:
         self.main_thread.start()
 
         if platform.system() != "Windows":
+            from MPU6050 import MPU6050
             self.MPU = MPU6050(SpinOS.logger)
             self.MPU.start()
-
 
     def run(self):
         while self.running:
