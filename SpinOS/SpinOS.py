@@ -9,6 +9,7 @@ from Server import Server
 from Logger import Logger
 from SensorLogger import SensorLogger
 from TeerbalMode.TeerbalMode import TeerbalMode
+from MPU6050 import MPU6050
 
 __author__ = 'Hendrik'
 
@@ -27,7 +28,7 @@ class SpinOS:
         print("Group 5 IDP 2014 NHL")
         print("Default string encoding : " + str(sys.getdefaultencoding()).upper())
         #logger aanmaken
-        SpinOS.logger = Logger(Logger.MESSAGE)
+        SpinOS.logger = Logger(Logger.SENSOR_VALUES)
         print("Logger level : " + SpinOS.logger.get_loglevel_string())
         #running op true zetten
         self.running = True
@@ -40,6 +41,9 @@ class SpinOS:
         #main loop opstarten
         self.main_thread = threading.Thread(target=self.run)
         self.main_thread.start()
+
+        self.MPU = MPU6050(SpinOS.logger)
+        self.MPU.start()
 
     def run(self):
         while self.running:
