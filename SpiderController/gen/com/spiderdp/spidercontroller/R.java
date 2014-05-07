@@ -30,7 +30,6 @@ public final class R {
         public static final int action_settings=0x7f080005;
         public static final int auto2Btm=0x7f08000a;
         public static final int auto3Btm=0x7f08000b;
-        public static final int auto4Btm=0x7f08000c;
         public static final int autoBtm=0x7f080009;
         public static final int autoSubMenu=0x7f080007;
         public static final int container=0x7f080000;

@@ -14,7 +14,7 @@ class COMMAND:
     MOVE = 7
     MOVE_INTERNAL = 8
     MOVE_HEIGHT = 9
-    TO_DERBY_MODE = 10
+
 
     def __init__(self):
         pass

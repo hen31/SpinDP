@@ -16,7 +16,7 @@
           <item android:id="@+id/autoBtm" android:title="Balloon mode"></item>
           <item android:id="@+id/auto2Btm" android:title="Teerbal mode"></item>
           <item android:id="@+id/auto3Btm" android:title="Dance mode"></item>
-             <item android:id="@+id/auto4Btm" android:title="Derby mode"></item>
+
          </menu>
 	</item>
 </menu>
