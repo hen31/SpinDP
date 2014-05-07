@@ -7,14 +7,18 @@ __author__ = 'Hendrik'
 class ManualMode:
     alive = False
 
-    def __init__(self):
+    def __init__(self, movementHandler):
         self.mutex = threading.Semaphore(1)
+        self.handler = movementHandler
 
     def process_command(self, command, parameters):
         self.mutex.acquire()
         if command == Command.MOVE:
-            angle  = parameters[0]
-            force  = parameters[1]
+            angleMove  = parameters[0]
+            forceMove  = parameters[1]
+            angleTurn  = parameters[2]
+            forceTurn  = parameters[3]
+            self.handler.move()
         elif command == Command.MOVE_INTERNAL:
             angle  = parameters[0]
             force  = parameters[1]
