@@ -5,13 +5,13 @@ class MovementHandler:
         #TODO: create connection
         pass
 
-    def move(self, xSpeed, ySpeed, degrees):
+    def move(self, powerMove, degreesMove, powerTurn, degreesTurn):
         pass
 
     def height_move(self, i):
         pass
 
-    def internal_move(self, speed, degrees):
+    def internal_move(self, power, degrees):
         pass
 
     def die(self):
