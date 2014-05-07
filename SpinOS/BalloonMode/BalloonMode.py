@@ -13,4 +13,4 @@ class BalloonMode:
     def run(self):
         from CardState import CardState
         state = CardState()
-        state.doe_stap()
+        state.doe_stap([])
