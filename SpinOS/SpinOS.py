@@ -6,6 +6,7 @@ import time
 from BalloonMode.BalloonMode import BalloonMode
 from Command import COMMAND
 from ManualMode import ManualMode
+from MovementHandler import MovementHandler
 from Server import Server
 from Logger import Logger
 from SensorLogger import SensorLogger
@@ -30,6 +31,7 @@ class SpinOS:
         print("Default string encoding : " + str(sys.getdefaultencoding()).upper())
         #logger aanmaken
         SpinOS.logger = Logger(Logger.SENSOR_VALUES)
+        self.movementHandler = MovementHandler()
         print("Logger level : " + SpinOS.logger.get_loglevel_string())
         #running op true zetten
         self.running = True
@@ -38,7 +40,7 @@ class SpinOS:
         #server aanmaken en starten
         self.server = Server(15, SpinOS.logger)
         self.server.startServer()
-        self.current_mode = ManualMode()
+        self.current_mode = ManualMode(self.movementHandler )
         #main loop opstarten
         self.main_thread = threading.Thread(target=self.run)
         self.main_thread.start()
@@ -61,13 +63,13 @@ class SpinOS:
                     self.current_mode.alive = False
                     self.mode = "manual"
                     SpinOS.logger.logevent("SPINOS", "Mode set to " + self.mode, Logger.MESSAGE)
-                    self.current_mode = ManualMode()
+                    self.current_mode = ManualMode(self.movementHandler)
                     self.current_mode.alive = True
                 elif message[0] == COMMAND.TO_BALLOON_MODE:
                     self.current_mode.alive = False
                     self.mode = "balloon mode"
                     SpinOS.logger.logevent("SPINOS", "Mode set to " + self.mode, Logger.MESSAGE)
-                    self.current_mode = BalloonMode()
+                    self.current_mode = BalloonMode(self.logger)
                     self.current_mode.alive = True
                 elif message[0] == COMMAND.TO_TEERBAL_MODE:
                     self.current_mode.alive = False
