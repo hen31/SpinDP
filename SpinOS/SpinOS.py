@@ -1,4 +1,5 @@
 import os
+import platform
 import threading
 import sys
 import time
@@ -42,8 +43,10 @@ class SpinOS:
         self.main_thread = threading.Thread(target=self.run)
         self.main_thread.start()
 
-        self.MPU = MPU6050(SpinOS.logger)
-        self.MPU.start()
+        if platform.system() != "Windows":
+            self.MPU = MPU6050(SpinOS.logger)
+            self.MPU.start()
+
 
     def run(self):
         while self.running:
