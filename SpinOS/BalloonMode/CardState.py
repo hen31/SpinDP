@@ -1,8 +1,8 @@
-__author__ = 'Robert'
-
 from BalloonMode import BalloonMode
 from SearchState import SearchState
 from SimpleCV import *
+
+__author__ = 'Robert'
 
 class CardState:
 
@@ -23,27 +23,25 @@ class CardState:
         blueBlob = None
         blobs = None
 
-        #img = Image("http://localhost:8080/?action=snapshot")
-        cam = Camera(0, {"width": 1920, "height": 1080})
-        img = cam.getImage()
+        img = Image("http://localhost:8080/?action=snapshot")
 
+        #img = Image("C:\\realCard6.jpg")
         blobs = self.getBlobs(img)
-        redBlob, greenBlob, blueBlob = blobs
 
-        while redBlob.area() < 30000 or greenBlob.area() < 30000 or blueBlob.area() < 30000 and BalloonMode.alive:
+        while blobs == False:
             print "Nog niets gevonden"
 
-            #img = Image("http://localhost:8080/?action=snapshot")
+            img = Image("http://localhost:8080/?action=snapshot")
+            #img = Image("C:\\realCard6.jpg")
 
-            cam = Camera(0, {"width": 1920, "height": 1080})
-            img = cam.getImage()
             blobs = self.getBlobs(img)
             print blobs
-            redBlob, greenBlob, blueBlob = blobs
 
         #Voorbij de while, kaart wordt voorgehouden. Of niet meer alive
         if not BalloonMode.alive:
             return False
+
+        redBlob, greenBlob, blueBlob = blobs
 
         print "Gevonden."
         print redBlob.y
@@ -58,23 +56,65 @@ class CardState:
         return [blobs[0].Name, blobs[1].Name, blobs[2].Name]
 
     def getBlobs(self, img):
-        r = img.hueDistance(Color.RED).binarize(10)
+        r = img.hueDistance(Color.RED).binarize(18)
         redBlobs = r.findBlobs()
 
-        g = img.hueDistance(Color.GREEN)
-        g = g.binarize(90)
+        if redBlobs == None:
+            return False
 
+        goodRedBlobs = []
+        for i in xrange(0, len(redBlobs)):
+            ratio = (float(float(redBlobs[i].height())/float(redBlobs[i].width())))
+            if(ratio > 0.6 and ratio < 1.2 and redBlobs[i].area() > 2000):
+                goodRedBlobs.append(redBlobs[i])
+
+        if len(goodRedBlobs) == 0:
+            return False
+
+        goodRedBlobs.sort(key=lambda x: x.area(), reverse = True)
+        redBlob = goodRedBlobs[0]
+        redBlob.Name = "red"
+
+        g = img.colorDistance((51,194,32)).binarize(95)
         greenBlobs = g.findBlobs()
 
-        b = img.hueDistance(Color.BLUE)
-        b = b.binarize()
+        if greenBlobs == None:
+            return False
+
+        goodGreenBlobs = []
+        for i in xrange(0, len(greenBlobs)):
+            ratio = (float(float(greenBlobs[i].height())/float(greenBlobs[i].width())))
+            if(ratio > 0.6 and ratio < 1.2 and greenBlobs[i].area() > 2000):
+                goodGreenBlobs.append(greenBlobs[i])
+
+        if len(goodGreenBlobs) == 0:
+            return False
+
+        goodGreenBlobs.sort(key=lambda x: x.area(), reverse = True)
+        greenBlob = greenBlobs[0]
+        greenBlob.Name = "green"
+
+        b = img.hueDistance(Color.BLUE).binarize(60)
         blueBlobs = b.findBlobs()
 
-        redBlob = redBlobs[len(redBlobs) -1]
-        redBlob.Name = "red"
-        greenBlob = greenBlobs[len(greenBlobs) -1]
-        greenBlob.Name = "green"
-        blueBlob = blueBlobs[len(blueBlobs) -1]
+        if blueBlobs == None:
+            return False
+
+        goodBlueBlobs = []
+
+        for i in xrange(0, len(blueBlobs)):
+            ratio = (float(float(blueBlobs[i].height())/float(blueBlobs[i].width())))
+            print ratio
+            print blueBlobs[i].area()
+            print "\n"
+            if(ratio > 0.6 and ratio < 1.2 and blueBlobs[i].area() > 2000):
+                goodBlueBlobs.append(blueBlobs[i])
+
+        if len(goodBlueBlobs) == 0:
+            return False
+
+        goodBlueBlobs.sort(key=lambda x: x.area(), reverse = True)
+        blueBlob = goodBlueBlobs[0]
         blueBlob.Name = "blue"
 
         return [redBlob, greenBlob, blueBlob]
