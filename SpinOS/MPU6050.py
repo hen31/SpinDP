@@ -31,7 +31,10 @@ class MPU6050(Sensor):
         super(MPU6050, self).__init__(logger)
         self.thread = threading.Thread(target=self.run)
         self.bus = smbus.SMBus(1)  # or bus = smbus.SMBus(0) for Revision 1 boards
-        self.bus.write_byte_data(self.address, self.power_mgmt_1, 0) # Wake up
+        try:
+            self.bus.write_byte_data(self.address, self.power_mgmt_1, 0) # Wake up
+        except IOError:
+            self.sensorlogger("Unable to access parallel port on bus %d, addresss 0x%02x" % (self.bus, self.address))
 
     def run(self):
         while self.alive:
@@ -63,8 +66,12 @@ class MPU6050(Sensor):
         self.sensorlogger.log_waarde('Sensor MPU6050 started')
 
     def read_all(self):
-        raw_gyro_data = self.bus.read_i2c_block_data(self.address, 0x43, 6)
-        raw_acceleration_data = self.bus.read_i2c_block_data(self.address, 0x3b, 6)
+        try:
+            raw_gyro_data = self.bus.read_i2c_block_data(self.address, 0x43, 6)
+            raw_acceleration_data = self.bus.read_i2c_block_data(self.address, 0x3b, 6)
+        except IOError:
+            self.sensorlogger("Unable to access parallel port on bus %d, addresss 0x%02x" % (self.bus, self.address))
+            return (0, 0, 0, 0, 0, 0)
 
         gyro_scaled_x = self.twos_compliment((raw_gyro_data[0] << 8) + raw_gyro_data[1]) / self.gyro_scale
         gyro_scaled_y = self.twos_compliment((raw_gyro_data[2] << 8) + raw_gyro_data[3]) / self.gyro_scale
