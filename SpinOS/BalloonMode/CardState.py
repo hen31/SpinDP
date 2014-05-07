@@ -1,4 +1,5 @@
 from BalloonMode import BalloonMode
+from Logger import Logger
 from SearchState import SearchState
 from SimpleCV import *
 
@@ -17,7 +18,6 @@ class CardState:
                 nextState.doe_stap([colorOrder])
 
     def recognize_card(self):
-
         redBlob = None
         greenBlob = None
         blueBlob = None
@@ -29,13 +29,10 @@ class CardState:
         blobs = self.getBlobs(img)
 
         while blobs == False:
-            print "Nog niets gevonden"
+            BalloonMode.logger.logevent("BalloonMode CardState", "Nog niets gevonden", Logger.MESSAGE)
 
             img = Image("http://localhost:8080/?action=snapshot")
             #img = Image("C:\\realCard6.jpg")
-
-            blobs = self.getBlobs(img)
-            print blobs
 
         #Voorbij de while, kaart wordt voorgehouden. Of niet meer alive
         if not BalloonMode.alive:
@@ -43,14 +40,7 @@ class CardState:
 
         redBlob, greenBlob, blueBlob = blobs
 
-        print "Gevonden."
-        print redBlob.y
-        print greenBlob.y
-        print blueBlob.y
-        print "\n"
-        print redBlob.area()
-        print greenBlob.area()
-        print blueBlob.area()
+        BalloonMode.logger.logevent("BalloonMode CardSate", "Gevonden.", Logger.MESSAGE)
         blobs.sort(key=lambda x: x.y)
 
         return [blobs[0].Name, blobs[1].Name, blobs[2].Name]
@@ -104,9 +94,6 @@ class CardState:
 
         for i in xrange(0, len(blueBlobs)):
             ratio = (float(float(blueBlobs[i].height())/float(blueBlobs[i].width())))
-            print ratio
-            print blueBlobs[i].area()
-            print "\n"
             if(ratio > 0.6 and ratio < 1.2 and blueBlobs[i].area() > 2000):
                 goodBlueBlobs.append(blueBlobs[i])
 
