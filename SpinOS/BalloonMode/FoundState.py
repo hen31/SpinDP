@@ -1,5 +1,7 @@
 __author__ = 'Robert'
 
+from BalloonMode import BalloonMode
+
 class FoundState:
 
     def __init__(self):
