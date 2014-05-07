@@ -51,3 +51,4 @@ class Server:
         self.alive = False
         for c in self.clients:
             c.stop()
+        self.s.close()

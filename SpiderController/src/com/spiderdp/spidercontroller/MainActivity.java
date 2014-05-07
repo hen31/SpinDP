@@ -57,9 +57,20 @@ public class MainActivity extends Activity {
 			public boolean onTouch(View arg0, android.view.MotionEvent arg1) {
 				js.drawStick(arg1);
 				if (MainActivity.connected) {
+					int distance = (int) ((js.getDistance() / 210) * 100);
+					if (distance > 100) {
+						distance = 100;
+					}
 					List<Object> _temp = new ArrayList<Object>();
-					_temp.add(js.getAngle());
-					_temp.add(js.getDistance());
+					int angle = (int) js.getAngle();
+					if (angle != 0) {
+						angle = angle - 270;
+						if (angle < 0) {
+							angle += 360;
+						}
+					}
+					_temp.add(angle);
+					_temp.add(distance);
 					ServerClient.getInstance().sendMessage(ServerClient.MOVE,
 							_temp);
 				}
@@ -88,9 +99,20 @@ public class MainActivity extends Activity {
 				Log.d("SpiderController",
 						"Distance : " + String.valueOf(js_right.getDistance()));
 				if (MainActivity.connected) {
+					int distance = (int) ((js_right.getDistance() / 210) * 100);
+					if (distance > 100) {
+						distance = 100;
+					}
 					List<Object> _temp = new ArrayList<Object>();
-					_temp.add(js_right.getAngle());
-					_temp.add(js_right.getDistance());
+					int angle = (int) js_right.getAngle();
+					if (angle != 0) {
+						angle = angle - 270;
+						if (angle < 0) {
+							angle += 360;
+						}
+					}
+					_temp.add(angle);
+					_temp.add(distance);
 					ServerClient.getInstance().sendMessage(
 							ServerClient.MOVE_INTERNAL, _temp);
 				}
@@ -155,10 +177,6 @@ public class MainActivity extends Activity {
 			if (MainActivity.connected)
 				ServerClient.getInstance().sendMessage(
 						ServerClient.TO_DANCE_MODE, null);
-		} else if (id == R.id.auto4Btm) {
-			if (MainActivity.connected)
-				ServerClient.getInstance().sendMessage(
-						ServerClient.TO_DERBY_MODE, null);
 		} else if (id == R.id.manModeBtm) {
 			if (MainActivity.connected)
 				ServerClient.getInstance().sendMessage(ServerClient.TO_MANUAL,

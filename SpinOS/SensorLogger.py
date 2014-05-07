@@ -1,7 +1,7 @@
 import threading
 from time import strftime
 
-import Logger
+from Logger import Logger
 
 
 __author__ = 'Hendrik'
@@ -18,7 +18,7 @@ class SensorLogger:
         self.mutex.acquire()
         self.log_file.write(strftime("%H:%M:%S") + " - " + str(waarde) + "<;>")
         self.mutex.release()
-        self.logger.logevent(self.sensor_name,   "waarde : " + str(waarde), Logger.SENSOR_VALUES)
+        self.logger.logevent(self.sensor_name,   "waarde : " + str(waarde), self.logger.SENSOR_VALUES)
 
     def get_log(self):
         self.mutex.acquire()

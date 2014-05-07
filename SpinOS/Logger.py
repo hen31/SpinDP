@@ -24,5 +24,7 @@ class Logger:
             return "WARNING"
         elif self.min_log_priority == Logger.ERROR:
             return "ERROR"
+        elif self.min_log_priority == Logger.INPUT_VALUES:
+            return "INPUT_VALUES"
         else:
             return "UNDEFINED"

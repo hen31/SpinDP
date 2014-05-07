@@ -5,13 +5,10 @@ class MovementHandler:
         #TODO: create connection
         pass
 
-    def move(self, x, y, z):
+    def move(self, xSpeed, ySpeed, rSpeed):
         pass
 
-    def internal_move(self, x, y, z):
-        pass
-
-    def height_move(self, x, y, z):
+    def height_move(self, i):
         pass
 
     def die(self):
