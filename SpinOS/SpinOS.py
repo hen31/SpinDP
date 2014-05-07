@@ -39,7 +39,7 @@ class SpinOS:
         #server aanmaken en starten
         self.server = Server(15, SpinOS.logger)
         self.server.startServer()
-        self.current_mode = ManualMode(self.movementHandler )
+        self.current_mode = ManualMode(self.movementHandler, self.logger)
         #main loop opstarten
         self.main_thread = threading.Thread(target=self.run)
         self.main_thread.start()
@@ -62,7 +62,7 @@ class SpinOS:
                     self.current_mode.alive = False
                     self.mode = "manual"
                     SpinOS.logger.logevent("SPINOS", "Mode set to " + self.mode, Logger.MESSAGE)
-                    self.current_mode = ManualMode(self.movementHandler)
+                    self.current_mode = ManualMode(self.movementHandler, self.logger)
                     self.current_mode.alive = True
                 elif message[0] == COMMAND.TO_BALLOON_MODE:
                     self.current_mode.alive = False

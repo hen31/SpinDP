@@ -30,6 +30,12 @@ public class MainActivity extends Activity {
 	JoyStickClass js_right;
 	VerticalSeekBar elvation_bar;
 	static public Boolean connected = false;
+	static public Boolean internalMode = false;
+
+	int latestAngleLeft = 0;
+	int latestAngleRight = 0;
+	int latestPowerLeft = 0;
+	int latestPowerRight = 0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -69,10 +75,26 @@ public class MainActivity extends Activity {
 							angle += 360;
 						}
 					}
-					_temp.add(angle);
-					_temp.add(distance);
-					ServerClient.getInstance().sendMessage(ServerClient.MOVE,
-							_temp);
+					latestAngleLeft = angle;
+
+					latestPowerLeft = distance;
+
+					if (internalMode == true) {
+						_temp.add(angle);
+						_temp.add(distance);
+						_temp.add(0);
+						_temp.add(0);
+						ServerClient.getInstance().sendMessage(
+								ServerClient.MOVE, _temp);
+					} else {
+						_temp.add(latestAngleLeft);
+						_temp.add(latestPowerLeft);
+						_temp.add(latestAngleRight);
+						_temp.add(latestPowerRight);
+						ServerClient.getInstance().sendMessage(
+								ServerClient.MOVE, _temp);
+					}
+
 				}
 
 				return true;
@@ -111,10 +133,24 @@ public class MainActivity extends Activity {
 							angle += 360;
 						}
 					}
-					_temp.add(angle);
-					_temp.add(distance);
-					ServerClient.getInstance().sendMessage(
-							ServerClient.MOVE_INTERNAL, _temp);
+					latestAngleRight = angle;
+
+					latestPowerRight = distance;
+
+					if (internalMode == true) {
+						_temp.add(angle);
+						_temp.add(distance);
+						ServerClient.getInstance().sendMessage(
+								ServerClient.MOVE_INTERNAL, _temp);
+					} else {
+
+						_temp.add(latestAngleLeft);
+						_temp.add(latestPowerLeft);
+						_temp.add(latestAngleRight);
+						_temp.add(latestPowerRight);
+						ServerClient.getInstance().sendMessage(
+								ServerClient.MOVE, _temp);
+					}
 				}
 				return true;
 			}
@@ -181,6 +217,9 @@ public class MainActivity extends Activity {
 			if (MainActivity.connected)
 				ServerClient.getInstance().sendMessage(ServerClient.TO_MANUAL,
 						null);
+		}else if(id == R.id.switch_internal)
+		{
+			MainActivity.internalMode = !MainActivity.internalMode;
 		}
 		return super.onOptionsItemSelected(item);
 	}
