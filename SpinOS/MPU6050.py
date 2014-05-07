@@ -59,11 +59,9 @@ class MPU6050(Sensor):
 
     def stop(self):
         self.alive = False
-        self.sensorlogger.log_waarde('Sensor MPU6050 stopped')
 
     def start(self):
         self.thread.start()
-        self.sensorlogger.log_waarde('Sensor MPU6050 started')
 
     def read_all(self):
         try:
