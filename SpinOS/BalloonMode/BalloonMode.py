@@ -5,10 +5,12 @@ import threading
 class BalloonMode:
 
     alive = True
+    logger = None
 
-    def __init__(self):
+    def __init__(self, logger):
         self.thread = threading.Thread(target=self.run)
         self.thread.start()
+        self.logger = logger
 
     def run(self):
         from CardState import CardState

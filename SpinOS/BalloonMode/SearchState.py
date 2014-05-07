@@ -2,6 +2,7 @@ __author__ = 'Robert'
 
 from BalloonMode import BalloonMode
 import SimpleCV
+from Logger import Logger
 
 class SearchState:
 
@@ -12,8 +13,8 @@ class SearchState:
     def doe_stap(self, parameters):
         if BalloonMode.alive:
             self.colors = parameters[0]
-            print "Ik ga een ballon zoeken. Dit is de volgorde van kleuren:"
-            print self.colors;
+            BalloonMode.logger.logevent("BalloonMode SearchState", "Ballonnen zoeken met de volgende volgorde", Logger.MESSAGE)
+            BalloonMode.logger.logevent("BalloonMode SearchState", self.colors, Logger.MESSAGE)
 
     def find_balloon(self):
         cam = SimpleCV.Camera()
