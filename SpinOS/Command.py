@@ -37,4 +37,4 @@ class COMMAND:
         else:
             encoded_string = str(command)
 
-        return encoded_string
+        return encoded_string + "\n"
