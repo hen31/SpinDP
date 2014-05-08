@@ -1,31 +1,26 @@
 from SimpleCV import *
 import FoundState
 import MoveState
+import os, sys
 __author__ = 'Jeroen'
 
 class SearchState:
 
-    def __init__(self):
-        pass
+    def __init__(self, image_path):
+        self.image_path = image_path
 
     def search_teerbal(self):
-        image_path = ["C:\\Users\\Jeroen\\Documents\\GitHub\\SpinDP\\SpinOS\\TeerbalMode\\TestImages\\teerbal.jpg", "C:\\Users\\Jeroen\\Documents\\GitHub\\SpinDP\\SpinOS\\TeerbalMode\\TestImages\\vooruit.png"]
+
+        image_paths = [self.image_path + "\\TeerbalMode\\TestImages\\teerbal.png", self.image_path + "\\TeerbalMode\\TestImages\\vooruit.png"]
         rand = random.randrange(0,2)
-        self.image = Image("C:\\Users\\Jeroen\\Documents\\GitHub\\SpinDP\\SpinOS\\TeerbalMode\\TestImages\\teerbal.jpg")
+        self.image = Image(image_paths[rand])
 
         if rand == 0:
             print "FOTO: TEERBAL"
         else:
             print "FOTO: GEEN TEERBAL"
 
-        (r,g,b) = self.image.splitChannels()
-        r.show()
-        time.sleep(5)
-        g.show()
-        time.sleep(5)
-        b.show()
-        time.sleep(5)
-        bin_image = self.image.hueDistance(color=Color.BLACK)#binarize(20)
+        bin_image = self.image.colorDistance(color=Color.BLACK).binarize(20)
         bin_image.erode(2)
 
 
@@ -42,8 +37,8 @@ class SearchState:
         #    index+=1
         #print blobs
         if blobs:
-            blobs[-1].draw()
-            bin_image.show()
+            #blobs[-1].draw()
+            #bin_image.show()
 
             if len(blobs) >= 1:
                 return True
