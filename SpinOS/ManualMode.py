@@ -26,9 +26,9 @@ class ManualMode:
             angle = parameters[0]
             force = parameters[1]
             self.logger.logevent("MANUAL MODE", "Move Internal [" + str(angle)+"," + str(force) + "]", Logger.INPUT_VALUES)
-            self.handler.internal_move(angle, force)
+            self.handler.move_internal(angle, force)
         elif command == COMMAND.MOVE_HEIGHT:
             height = parameters[0]
             self.logger.logevent("MANUAL MODE", "Move height [" + str(height) + "]", Logger.INPUT_VALUES)
-            self.handler.height_move(height)
+            self.handler.move_height(height)
         self.mutex.release()
