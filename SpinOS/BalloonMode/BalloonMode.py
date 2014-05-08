@@ -16,3 +16,6 @@ class BalloonMode:
         from CardState import CardState
         state = CardState()
         state.doe_stap([])
+
+    def set_alive(self, value):
+        BalloonMode.alive = value
