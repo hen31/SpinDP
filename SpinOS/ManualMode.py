@@ -15,7 +15,7 @@ class ManualMode:
 
     def set_alive(self, bool):
         pass
-    
+
     def process_command(self, command, parameters):
         self.mutex.acquire()
         if command == COMMAND.MOVE:
