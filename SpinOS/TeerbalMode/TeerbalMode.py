@@ -2,7 +2,7 @@ from os import getcwd
 import SearchState
 import MoveState
 import FoundState
-import os, sys
+
 __author__ = 'Jeroen'
 
 class TeerbalMode:
@@ -30,3 +30,5 @@ class TeerbalMode:
                 MoveState.MoveState(self.image_path).check_for_obstacle()
 
 
+    def set_alive(self, bool):
+        pass
