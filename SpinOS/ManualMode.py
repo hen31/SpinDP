@@ -21,7 +21,7 @@ class ManualMode:
             angleTurn  = parameters[2]
             forceTurn  = parameters[3]
             self.logger.logevent("MANUAL MODE", "Move [" + str(angleMove)+"," + str(forceMove)+"," + str(angleTurn) + "," + str(forceTurn) + "]", Logger.INPUT_VALUES)
-            self.handler.move(forceMove, angleMove, forceTurn, angleTurn)
+            self.handler.move(angleMove, forceMove, angleTurn, forceTurn)
         elif command == COMMAND.MOVE_INTERNAL:
             angle = parameters[0]
             force = parameters[1]
