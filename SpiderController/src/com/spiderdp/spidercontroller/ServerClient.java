@@ -102,8 +102,8 @@ public class ServerClient {
 						@Override
 						public void run() {
 						    System.out.println("message from ip:" + client.getRemoteSocketAddress());
-	                        Toast.makeText(ServerClient.this.activity.getApplicationContext(), s, 
-	                        		   Toast.LENGTH_LONG).show();
+	                    /*    Toast.makeText(ServerClient.this.activity.getApplicationContext(), s, 
+	                        		   Toast.LENGTH_LONG).show();*/
 							
 						}});
                 }
