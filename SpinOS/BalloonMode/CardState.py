@@ -25,14 +25,14 @@ class CardState:
 
         img = Image("http://localhost:8080/?action=snapshot")
 
-        #img = Image("C:\\realCard6.jpg")
+        #img = Image("C:\\realCard1.jpg")
         blobs = self.getBlobs(img)
 
-        while blobs == False:
+        while blobs == False and BalloonMode.alive:
             BalloonMode.logger.logevent("BalloonMode CardState", "Nog niets gevonden", Logger.MESSAGE)
 
             img = Image("http://localhost:8080/?action=snapshot")
-            #img = Image("C:\\realCard6.jpg")
+            #img = Image("C:\\realCard1.jpg")
 
         #Voorbij de while, kaart wordt voorgehouden. Of niet meer alive
         if not BalloonMode.alive:

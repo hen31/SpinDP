@@ -8,9 +8,9 @@ class BalloonMode:
     logger = None
 
     def __init__(self, logger):
+        BalloonMode.logger = logger
         self.thread = threading.Thread(target=self.run)
         self.thread.start()
-        self.logger = logger
 
     def run(self):
         from CardState import CardState
