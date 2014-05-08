@@ -28,8 +28,9 @@ class CardState:
         #img = Image("C:\\realCard1.jpg")
         blobs = self.getBlobs(img)
 
+        BalloonMode.logger.logevent("BalloonMode CardState", "Bezig met zoeken", Logger.MESSAGE)
+
         while blobs == False and BalloonMode.alive:
-            BalloonMode.logger.logevent("BalloonMode CardState", "Nog niets gevonden", Logger.MESSAGE)
 
             img = Image("http://localhost:8080/?action=snapshot")
             #img = Image("C:\\realCard1.jpg")
