@@ -61,19 +61,19 @@ class SpinOS:
                     self.running = False
                     self.shutdown()
                 elif message[0] == COMMAND.TO_MANUAL:
-                    self.current_mode.alive = False
+                    self.current_mode.set_alive(False)
                     self.mode = "manual"
                     SpinOS.logger.logevent("SPINOS", "Mode set to " + self.mode, Logger.MESSAGE)
                     self.current_mode = ManualMode(self.movementHandler, self.logger)
                     self.current_mode.alive = True
                 elif message[0] == COMMAND.TO_BALLOON_MODE:
-                    self.current_mode.alive = False
+                    self.current_mode.set_alive(False)
                     self.mode = "balloon mode"
                     SpinOS.logger.logevent("SPINOS", "Mode set to " + self.mode, Logger.MESSAGE)
                     self.current_mode = BalloonMode(self.logger)
                     self.current_mode.alive = True
                 elif message[0] == COMMAND.TO_TEERBAL_MODE:
-                    self.current_mode.alive = False
+                    self.current_mode.set_alive(False)
                     self.mode = "teerbal mode"
                     SpinOS.logger.logevent("SPINOS", "Mode set to " + self.mode, Logger.MESSAGE)
                     self.current_mode = TeerbalMode()
