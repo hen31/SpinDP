@@ -44,16 +44,18 @@ class SpinOS:
         self.main_thread = threading.Thread(target=self.run)
         self.main_thread.start()
 
-        if platform.system() != "Windows":
-            from MPU6050 import MPU6050
-            self.MPU = MPU6050(SpinOS.logger)
-            self.MPU.start()
+        #if platform.system() != "Windows":
+        #    from MPU6050 import MPU6050
+        #    self.MPU = MPU6050(SpinOS.logger)
+        #    self.MPU.start()
 
     def run(self):
         while self.running:
             time.sleep(0.2)
             message_list = self.server.get_messages()
             for message in message_list:
+                client = message[0]
+                message.remove(client)
                 if message[0] == COMMAND.KILL:
                     self.logger.logevent("SPINOS", "KILLING SPIDER, OH NO!!!!!")
                     self.running = False
@@ -76,6 +78,12 @@ class SpinOS:
                     SpinOS.logger.logevent("SPINOS", "Mode set to " + self.mode, Logger.MESSAGE)
                     self.current_mode = TeerbalMode()
                     self.current_mode.alive = True
+
+                elif message[0] == COMMAND.SEND_SENSOR_DATA:
+                    data = SensorLogger.get_log()
+                    encoded = COMMAND.encode_message(COMMAND.SEND_SENSOR_DATA, data)
+                    client.send_message(encoded)
+
                 else:
                     command = message[0]
                     message.remove(command)

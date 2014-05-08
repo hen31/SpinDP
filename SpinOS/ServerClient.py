@@ -22,7 +22,7 @@ class ServerClient:
                 l = l.replace("\n", "")
                 command_recieved = COMMAND.decode_message(l)
                 self.mutex.acquire()
-                self.messages.append(command_recieved)
+                self.messages.append([self] + command_recieved)
                 self.mutex.release()
                 self.send_message(COMMAND.encode_message(COMMAND.RECIEVED, [command_recieved[0]]))
 
