@@ -6,6 +6,7 @@ import FoundState
 
 __author__ = 'Jeroen'
 
+
 class TeerbalMode:
 
     alive = False

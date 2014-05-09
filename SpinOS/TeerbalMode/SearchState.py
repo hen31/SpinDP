@@ -4,25 +4,6 @@ import MoveState
 import os, sys
 __author__ = 'Jeroen'
 
-
-image = Image(os.path.join(os.path.dirname(__file__) + "/TestImages",'4cm.jpg'))
-image.show()
-time.sleep(1)
-(h,s,v) = image.splitChannels()
-h.show()
-time.sleep(2)
-s.show()
-time.sleep(2)
-h = h.binarize(95)
-h.show()
-time.sleep(2)
-blobs = h.findBlobs(1,2000)
-blobs[-1].show()
-print blobs
-time.sleep(2)
-
-
-
 class SearchState:
 
     def __init__(self):
