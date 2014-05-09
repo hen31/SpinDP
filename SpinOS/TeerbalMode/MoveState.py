@@ -2,18 +2,30 @@ from SimpleCV import *
 import random
 import SearchState
 
+
 __author__ = 'Jeroen'
 
 class MoveState:
 
-    def __init__(self, image_path):
-        self.image_path = image_path
-
-    def spin_lopen(self):
+    def __init__(self):
+        #self.image_path = image_path
         pass
 
+    def spin_walk_up(self):
+        print "WALK UP"
+
+    def spin_walk_down(self):
+        print "WALK DOWN"
+
+    def spin_walk_right(self):
+        print "WALK RIGHT"
+
+    def spin_walk_left(self):
+        print "WALK LEFT"
+
     def check_for_obstacle(self):
-        image_path = [self.image_path + "\\TeerbalMode\\TestImages\\red bucket.png", self.image_path + "\\TeerbalMode\\TestImages\\vooruit.png"]
+
+        image_path = [os.path.join(os.path.dirname(__file__) + "/TestImages",'red bucket.png'), os.path.join(os.path.dirname(__file__) + "/TestImages",'vooruit.png')]
         rand = random.randrange(0,2)
         if rand == 0:
             print "FOTO: EMMER"

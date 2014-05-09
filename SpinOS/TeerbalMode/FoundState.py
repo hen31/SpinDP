@@ -1,14 +1,16 @@
 import pygame
+import os, sys
 __author__ = 'Jeroen'
 
 class FoundState:
 
-    def __init__(self, image_path):
-        self.image_path = image_path
+    def __init__(self):
+        #self.image_path = image_path
+        pass
 
     def play_sound(self):
         pygame.mixer.init()
-        pygame.mixer.music.load(self.image_path + "\\TeerbalMode\\Beep sounds\\beep.wav")
+        pygame.mixer.music.load(os.path.join(os.path.dirname(__file__) + "\Beep sounds",'beep.wav'))
         pygame.mixer.music.play()
         while pygame.mixer.music.get_busy() == True:
             continue

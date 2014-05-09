@@ -8,7 +8,7 @@ class MovementHandler:
     def move(self, degreesMove, powerMove, degreesTurn, powerTurn):
         pass
 
-    def moveheight(self, i):
+    def move_height(self, i):
         pass
 
     def move_internal(self, degrees, power):
