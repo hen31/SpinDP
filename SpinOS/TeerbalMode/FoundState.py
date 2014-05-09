@@ -10,7 +10,7 @@ class FoundState:
 
     def play_sound(self):
         pygame.mixer.init()
-        pygame.mixer.music.load(os.path.join(os.path.dirname(__file__) + "\Beep sounds",'beep.wav'))
+        pygame.mixer.music.load(os.path.join(os.path.dirname(__file__) + "/Beep sounds",'beep.wav'))
         pygame.mixer.music.play()
         while pygame.mixer.music.get_busy() == True:
             continue

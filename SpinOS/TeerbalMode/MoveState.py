@@ -7,21 +7,29 @@ __author__ = 'Jeroen'
 
 class MoveState:
 
+    MOVE_UP = 0
+    MOVE_DOWN = 1
+    MOVE_LEFT = 2
+    MOVE_RIGHT = 3
+
     def __init__(self):
-        #self.image_path = image_path
         pass
 
     def spin_walk_up(self):
         print "WALK UP"
+        return MoveState.MOVE_UP
 
     def spin_walk_down(self):
         print "WALK DOWN"
+        return MoveState.MOVE_DOWN
 
     def spin_walk_right(self):
         print "WALK RIGHT"
+        return MoveState.MOVE_RIGHT
 
     def spin_walk_left(self):
         print "WALK LEFT"
+        return MoveState.MOVE_LEFT
 
     def check_for_obstacle(self):
 
@@ -42,6 +50,7 @@ class MoveState:
             bucket_blob = blobs.filter(blobs.area() > 1000)
             #hsv_image.show()
             if len(bucket_blob) >=1:
+
                 print "DRAAI"
                 self.check_for_obstacle()
             else:
@@ -49,6 +58,9 @@ class MoveState:
         else:
             #TODO: MoveState vooruit want er is geen emmer gevonden.
             print "VOORUIT"
+
+    def move(self, route):
+        pass
 
 
 
