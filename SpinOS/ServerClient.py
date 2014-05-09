@@ -6,12 +6,18 @@ __author__ = 'Hendrik'
 
 
 class ServerClient:
+    UNKNOWN = 0
+    ANDROID_DASHBOARD = 1
+    ANDROID_CONTROLLER = 2
+    GAMEPAD_CONTROLLER = 3
+
     def __init__(self, client_socket, adress):
         self.client_socket = client_socket
         self.adress = adress
         self.messages = list()
         self.mutex = threading.Semaphore(1)
         self.alive = True
+        self.type = ServerClient.UNKNOWN
         self.listen_thread = threading.Thread(target=self.run)
         self.listen_thread.start()
 

@@ -1,3 +1,5 @@
+from ServerClient import ServerClient
+from Command import  COMMAND
 __author__ = 'Hendrik'
 
 
@@ -10,10 +12,18 @@ class Logger:
 
     def __init__(self, min_priority):
         self.min_log_priority = min_priority
+        self.server = None
+
+    def set_server(self, ser):
+        self.server = ser
 
     def logevent(self, module, message, priority=0):
         if priority >= self.min_log_priority:
             print(str(module).upper() + str(" - ") + str(message))
+            if self.server is not None:
+                for c in self.server.clients:
+                    if c.type == ServerClient.ANDROID_DASHBOARD:
+                        c.send_message(COMMAND.encode_message(COMMAND.LOG_ENTRY, [str(module).upper() + str(" - ") + str(message)]))
 
     def get_loglevel_string(self):
         if self.min_log_priority == Logger.SENSOR_VALUES:
