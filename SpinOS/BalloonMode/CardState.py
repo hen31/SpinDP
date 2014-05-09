@@ -13,7 +13,7 @@ class CardState:
     def doe_stap(self, parameters):
         if BalloonMode.alive:
             colorOrder = self.recognize_card()
-            if colorOrder:
+            if colorOrder is not False:
                 nextState = SearchState()
                 nextState.doe_stap([colorOrder])
 
@@ -30,7 +30,7 @@ class CardState:
 
         BalloonMode.logger.logevent("BalloonMode CardState", "Bezig met zoeken", Logger.MESSAGE)
 
-        while blobs == False and BalloonMode.alive:
+        while blobs is False and BalloonMode.alive:
 
             img = Image("http://localhost:8080/?action=snapshot")
             #img = Image("C:\\realCard1.jpg")
