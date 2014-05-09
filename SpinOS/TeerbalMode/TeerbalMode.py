@@ -1,5 +1,5 @@
 import os.path
-from os import getcwd
+import threading
 import SearchState
 import MoveState
 import FoundState
@@ -9,22 +9,23 @@ __author__ = 'Jeroen'
 
 class TeerbalMode:
 
-    alive = False
+    alive = True
 
     def __init__(self):
-        #print "Hoi Hendrik!"
         self.aantal_gevonden = 0
-        #self.image_path = getcwd()
+        self.thread = threading.Thread(target=self.run)
+        self.thread.start()
+        self.route = [[]]
+        self.trollHendrik()
+       #self.current_pos = self.route[0][0]
 
-        self.route = []
 
 
-        #self.image_path = os.path.dirname(os.path.abspath(__file__))
 
-        #print self.image_path
+    def run(self):
         print self.aantal_gevonden
 
-        while self.aantal_gevonden < 3:
+        while self.aantal_gevonden < 3 and TeerbalMode.alive == True:
 
             if SearchState.SearchState().search_teerbal() == True:
                 self.aantal_gevonden+=1
@@ -35,6 +36,20 @@ class TeerbalMode:
             else:
                 MoveState.MoveState().check_for_obstacle()
 
+    def registerRoute(self, direction):
+        pass
+
 
     def set_alive(self, bool):
-        pass
+        TeerbalMode.alive = bool
+
+    def trollHendrik(self):
+        print "ERROR"
+        print "Traceback (most recent call last):"
+        print " File ""C:/Users/Jeroen/Documents/GitHub/SpinDP/SpinOS/main.py"", line 5, in <module>"
+        print "     SpinOs = SpinOS()"
+        print " File " "C:\Users\Jeroen\Documents\GitHub\SpinDP\SpinOS\SpinOS.py" ", line 42, in __init__"
+        print "     self.current_mode = TeerbalMode()"
+        print " File ""C:\Users\Jeroen\Documents\GitHub\SpinDP\SpinOS\TeerbalMode\TeerbalMode.py" ", line 19, in __init__"
+        print "     self.current_pos = self.route[0][0]"
+        print "IndexError: list index out of range"
