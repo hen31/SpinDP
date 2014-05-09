@@ -4,44 +4,50 @@ import MoveState
 import os, sys
 __author__ = 'Jeroen'
 
+
+image = Image(os.path.join(os.path.dirname(__file__) + "/TestImages",'4cm.jpg'))
+image.show()
+time.sleep(1)
+(h,s,v) = image.splitChannels()
+h.show()
+time.sleep(2)
+s.show()
+time.sleep(2)
+h = h.binarize(95)
+h.show()
+time.sleep(2)
+blobs = h.findBlobs(1,2000)
+blobs[-1].show()
+print blobs
+time.sleep(2)
+
+
+
 class SearchState:
 
-    def __init__(self, image_path):
-        self.image_path = image_path
+    def __init__(self):
+        #self.image_path = image_path
+        pass
 
     def search_teerbal(self):
 
-        image_paths = [self.image_path + "\\TeerbalMode\\TestImages\\teerbal.png", self.image_path + "\\TeerbalMode\\TestImages\\vooruit.png"]
+        image_paths = [os.path.join(os.path.dirname(__file__) + "/TestImages",'teerbal.png'), os.path.join(os.path.dirname(__file__) + "/TestImages",'vooruit.png')]
         rand = random.randrange(0,2)
+
         self.image = Image(image_paths[rand])
+
+
 
         if rand == 0:
             print "FOTO: TEERBAL"
         else:
             print "FOTO: GEEN TEERBAL"
 
-        bin_image = self.image.colorDistance(color=Color.BLACK).binarize(20)
-        bin_image.erode(2)
-
-
-        blobs = bin_image.findBlobs()
+        (h,s,v)= self.image.splitChannels()
+        bin_image = h.binarize(30)
+        blobs = bin_image.findBlobs(1,2000)
 
         if blobs:
-            blobs = blobs.filter(blobs.area() > 1000)
-
-        #voor debugging
-        #print blobs
-        #index = 0
-        #for b in blobs:
-        #    blobs[index].show()
-        #    index+=1
-        #print blobs
-        if blobs:
-            #blobs[-1].draw()
-            #bin_image.show()
-
-            if len(blobs) >= 1:
-                return True
-            else:
-                return False
-        return False
+            return True
+        else:
+            return False
