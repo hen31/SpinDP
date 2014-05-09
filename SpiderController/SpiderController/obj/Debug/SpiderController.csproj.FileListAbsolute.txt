@@ -1,0 +1,11 @@
+c:\users\hendrik\documents\visual studio 2012\Projects\SpiderController\SpiderController\bin\Debug\SpiderController.exe.config
+c:\users\hendrik\documents\visual studio 2012\Projects\SpiderController\SpiderController\obj\Debug\SpiderController.csprojResolveAssemblyReference.cache
+c:\users\hendrik\documents\visual studio 2012\Projects\SpiderController\SpiderController\bin\Debug\SDL.dll
+c:\users\hendrik\documents\visual studio 2012\Projects\SpiderController\SpiderController\bin\Debug\SpiderController.exe
+c:\users\hendrik\documents\visual studio 2012\Projects\SpiderController\SpiderController\bin\Debug\SpiderController.pdb
+c:\users\hendrik\documents\visual studio 2012\Projects\SpiderController\SpiderController\bin\Debug\Lidgren.Network.dll
+c:\users\hendrik\documents\visual studio 2012\Projects\SpiderController\SpiderController\bin\Debug\MonoGame.Framework.dll
+c:\users\hendrik\documents\visual studio 2012\Projects\SpiderController\SpiderController\bin\Debug\OpenTK.dll
+c:\users\hendrik\documents\visual studio 2012\Projects\SpiderController\SpiderController\bin\Debug\Tao.Sdl.dll
+c:\users\hendrik\documents\visual studio 2012\Projects\SpiderController\SpiderController\obj\Debug\SpiderController.exe
+c:\users\hendrik\documents\visual studio 2012\Projects\SpiderController\SpiderController\obj\Debug\SpiderController.pdb

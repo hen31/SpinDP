@@ -1,0 +1,19 @@
+﻿<Window x:Class="SpiderDashboard.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="MainWindow" Height="350" Width="525">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="35"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <ToolBar>
+            <Button Content="Start spider" Click="Button_Click_3"/>
+            <Button Content="Connect to spider" Click="Button_Click"/>
+            <Button Content="Let spider die" Click="Button_Click_1" />
+            <Button Content="Clear log" Click="Button_Click_2" />
+            <Button Content="Change IP" Click="Button_Click_4"/>
+        </ToolBar>
+        <TextBox IsReadOnly="True" x:Name="log_textBox" Grid.Row="1" Margin="5" ScrollViewer.VerticalScrollBarVisibility="Visible"/>
+    </Grid>
+</Window>
