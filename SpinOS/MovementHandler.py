@@ -1,18 +1,31 @@
+import threading
+
 __author__ = 'Ruben'
 
 class MovementHandler:
+
     def __init__(self):
-        #TODO: create connection
-        pass
+        self.mutexMove = threading.Semaphore(1)
+        self.mutexHeight = threading.Semaphore(1)
+        self.mutexIntenal = threading.Semaphore(1)
 
     def move(self, degreesMove, powerMove, degreesTurn, powerTurn):
-        pass
+        self.mutexMove.acquire()
 
-    def move_height(self, i):
-        pass
+        self.mutexMove.release()
+
+    def move_height(self, height):
+        self.mutexHeight.acquire()
+
+        self.mutexHeight.release()
 
     def move_internal(self, degrees, power):
-        pass
+        self.mutexIntenal.acquire()
+
+        self.mutexIntenal.release()
 
     def die(self):
+        self.mutexIntenal.acquire()
+        self.mutexHeight.acquire()
+        self.mutexIntenal.acquire()
         pass
