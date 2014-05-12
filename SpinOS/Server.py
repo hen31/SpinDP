@@ -36,10 +36,15 @@ class Server:
     def run(self):
         while self.alive:
             time.sleep(0.2)
-            c, addr = self.s.accept()  # Establish connection with client.
-            self.log.logevent("Server", "Got connection from: " + str(addr), Logger.MESSAGE)
-            clientobj = ServerClient(c, str(addr))#create client object
-            self.clients.append(clientobj)
+            try:
+                c, addr = self.s.accept()  # Establish connection with client.
+                self.log.logevent("Server", "Got connection from: " + str(addr), Logger.MESSAGE)
+                clientobj = ServerClient(c, str(addr))#create client object
+                self.clients.append(clientobj)
+            except:
+                b=1
+
+
 
     def get_messages(self):
         messages = list()

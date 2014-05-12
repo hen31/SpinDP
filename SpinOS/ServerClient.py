@@ -33,7 +33,10 @@ class ServerClient:
                 self.send_message(COMMAND.encode_message(COMMAND.RECIEVED, [command_recieved[0]]))
 
     def send_message(self, message):
-        self.client_socket.send(message)
+        try:
+            self.client_socket.send(message)
+        except:
+            a=0
 
     def recieve_messages(self):
         self.mutex.acquire()
