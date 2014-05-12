@@ -100,7 +100,7 @@ class SpinOS:
                         self.current_mode.alive = True
 
                     elif message[0] == COMMAND.SEND_SENSOR_DATA:
-                        data = SensorLogger.get_log()
+                        data = "h1:10, h2:5<;>h1:9, h2:5<;>h1:8, h2:9"
                         encoded = COMMAND.encode_message(COMMAND.SEND_SENSOR_DATA, data)
                         client.send_message(encoded)
 
