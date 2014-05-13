@@ -7,9 +7,13 @@ class Leg:
     def __init__(self, leg_number, pwm):
         self.pwm = pwm
         self.leg_number = leg_number
-        self.hip = Servo(leg_number*3, pwm)
-        self.height = Servo(leg_number*3+1, pwm)
-        self.knee = Servo(leg_number*3+2, pwm)
+        if leg_number > 3:
+            leg_number -= 3
+        leg_number -= 1
+
+        self.hip = Servo((leg_number) *3, pwm)
+        self.height = Servo((leg_number)*3+1, pwm)
+        self.knee = Servo((leg_number)*3+2, pwm)
 
     #def walk(self):
     #    while (True):
