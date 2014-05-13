@@ -8,6 +8,7 @@ class BalloonMode:
     logger = None
 
     def __init__(self, logger):
+        self.set_alive(True)
         BalloonMode.logger = logger
         self.thread = threading.Thread(target=self.run)
         self.thread.start()
