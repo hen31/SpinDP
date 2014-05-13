@@ -19,3 +19,6 @@ class BalloonMode:
 
     def set_alive(self, value):
         BalloonMode.alive = value
+
+    def process_command(self, command, message):
+        pass

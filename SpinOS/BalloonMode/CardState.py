@@ -23,17 +23,18 @@ class CardState:
         blueBlob = None
         blobs = None
 
-        img = Image("http://localhost:8080/?action=snapshot")
-
-        #img = Image("C:\\realCard1.jpg")
+        img = Image("C:\\20cm.jpg")
+        #img = Image("http://192.168.10.1:8080/?action=snapshot")
         blobs = self.getBlobs(img)
 
         BalloonMode.logger.logevent("BalloonMode CardState", "Bezig met zoeken", Logger.MESSAGE)
 
         while blobs is False and BalloonMode.alive:
 
-            img = Image("http://localhost:8080/?action=snapshot")
-            #img = Image("C:\\realCard1.jpg")
+            img = Image("http://192.168.10.1:8080/?action=snapshot")
+            #img = Image("C:\\20cm.jpg")
+            blobs = self.getBlobs(img)
+
 
         #Voorbij de while, kaart wordt voorgehouden. Of niet meer alive
         if not BalloonMode.alive:
@@ -53,20 +54,22 @@ class CardState:
         if redBlobs == None:
             return False
 
+
         goodRedBlobs = []
         for i in xrange(0, len(redBlobs)):
+
             ratio = (float(float(redBlobs[i].height())/float(redBlobs[i].width())))
-            if(ratio > 0.6 and ratio < 1.2 and redBlobs[i].area() > 2000):
+            if(ratio > 0.6 and ratio < 1.2 and redBlobs[i].area() > 5000):
                 goodRedBlobs.append(redBlobs[i])
 
         if len(goodRedBlobs) == 0:
             return False
 
-        goodRedBlobs.sort(key=lambda x: x.area(), reverse = True)
+        goodRedBlobs.sort(key=lambda x: x.area(), reverse=True)
         redBlob = goodRedBlobs[0]
         redBlob.Name = "red"
 
-        g = img.colorDistance((51,194,32)).binarize(95)
+        g = img.colorDistance((51, 194, 32)).binarize(95)
         greenBlobs = g.findBlobs()
 
         if greenBlobs == None:
@@ -75,13 +78,14 @@ class CardState:
         goodGreenBlobs = []
         for i in xrange(0, len(greenBlobs)):
             ratio = (float(float(greenBlobs[i].height())/float(greenBlobs[i].width())))
-            if(ratio > 0.6 and ratio < 1.2 and greenBlobs[i].area() > 2000):
+            if(ratio > 0.6 and ratio < 1.2 and greenBlobs[i].area() > 5000):
                 goodGreenBlobs.append(greenBlobs[i])
+
 
         if len(goodGreenBlobs) == 0:
             return False
 
-        goodGreenBlobs.sort(key=lambda x: x.area(), reverse = True)
+        goodGreenBlobs.sort(key=lambda x: x.area(), reverse=True)
         greenBlob = greenBlobs[0]
         greenBlob.Name = "green"
 
@@ -95,7 +99,7 @@ class CardState:
 
         for i in xrange(0, len(blueBlobs)):
             ratio = (float(float(blueBlobs[i].height())/float(blueBlobs[i].width())))
-            if(ratio > 0.6 and ratio < 1.2 and blueBlobs[i].area() > 2000):
+            if(ratio > 0.6 and ratio < 1.2 and blueBlobs[i].area() > 5000):
                 goodBlueBlobs.append(blueBlobs[i])
 
         if len(goodBlueBlobs) == 0:
@@ -104,5 +108,9 @@ class CardState:
         goodBlueBlobs.sort(key=lambda x: x.area(), reverse = True)
         blueBlob = goodBlueBlobs[0]
         blueBlob.Name = "blue"
+
+        print redBlob.area()
+        print greenBlob.area()
+        print blueBlob.area()
 
         return [redBlob, greenBlob, blueBlob]

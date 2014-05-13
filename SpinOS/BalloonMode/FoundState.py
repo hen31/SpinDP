@@ -9,5 +9,5 @@ class FoundState:
 
     def doe_stap(self, parameters):
         if BalloonMode.alive == True:
-            SearchState.getinstance().doestap()
+            pass
         return
