@@ -4,6 +4,10 @@ from Servo import Servo
 import time
 
 class Leg:
+    COXA = 46.13
+    FEMUR = 70.61
+    TIBIA = 146.0
+
     def __init__(self, leg_number, pwm):
         self.pwm = pwm
         self.leg_number = leg_number

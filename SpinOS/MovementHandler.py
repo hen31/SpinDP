@@ -31,12 +31,16 @@ __author__ = 'Ruben en Hendrik'
 
 class MovementHandler:
 
-    min_height_degrees = 35
-    max_height_degrees = 110
+
+
+    min_height_mm = 50
+    max_height_mm = 100
 
     min_knee_degrees = 50
 
     max_internal_degrees = 60
+
+
 
     PWM_FREQ = 50
     def __init__(self):
@@ -79,6 +83,31 @@ class MovementHandler:
     def die(self):
         pass
 
+    def degrees_to_radians(self, degrees):
+        return degrees *( math.pi/180)
+
+
+    def get_gammma_angle(self, x, y):
+        return math.degrees(math.atan(float(x) / float(y)))
+
+    def get_angles(self, x, y, z):
+
+        gamma = self.get_gammma_angle(x, y)
+
+        L = math.sqrt((float(z) * float(z)) + math.exp((y - Leg.COXA), 2))
+
+        a1 = math.acos(float(z) / float(L))
+
+        tibia2 = Leg.TIBIA * Leg.TIBIA
+        a2 = math.acos((tibia2 - (Leg.FEMUR * Leg.FEMUR) - (L * L)) / (-2 * Leg.FEMUR * L))
+        a = a1 + a2
+
+        beta = math.acos(((L * L) - (Leg.TIBIA * Leg.TIBIA) - (Leg.FEMUR * Leg.FEMUR)) / (-2 * Leg.TIBIA * Leg.FEMUR))
+
+        return (math.degrees(a) , math.degrees(beta), math.degrees(gamma))
+
+
+
     def movement(self):
         while True:
             self.variable_mutex.acquire()
@@ -91,42 +120,28 @@ class MovementHandler:
             height = self.height_setting
             self.variable_mutex.release()
             if power_move != 0 and power_turn != 0:
-                y = ((power_internal * math.cos(degrees_internal)) + 100) / 2
-                #uitrekenen waardes
-                servo_height = (float(MovementHandler.max_height_degrees - MovementHandler.min_height_degrees) / float(100)) * height
-                servo_angle_calc = ((float(MovementHandler.max_internal_degrees) / float(100)) * y) - (MovementHandler.max_internal_degrees / 2)
+                y = (((power_internal * math.cos(self.degrees_to_radians(degrees_internal))) + 100) / 2) - 50 #-50  - 50
+                mm_height = MovementHandler.min_height_mm + (float(MovementHandler.max_height_mm - MovementHandler.min_height_mm) / float(100)) * height
 
-                #voorste servo 1 en 4
-                servo_front_height = servo_height
-                servo_front_height = servo_front_height + servo_angle_calc
+                z_mm_front = mm_height
+                z_mm_front += (float(MovementHandler.max_height_mm - mm_height) / float(100)) * y
 
-                #midelste servo 2 en 5
-                servo_middle_height = servo_height
+                z_mm_middle = mm_height
 
-                #achterste servo 3 en 6
-                servo_back_height = servo_height
-                servo_back_height = servo_back_height - servo_angle_calc
+                z_mm_back = mm_height
+                z_mm_back -= (float(MovementHandler.max_height_mm - mm_height) / float(100)) * y
 
+                alpha, beta, gamma = self.get_angles(0, 0, z_mm_front)
 
-
+                self.legs[0].set_hip(gamma)
+                self.legs[0].set_height(alpha)
+                self.legs[0].set_knee(beta)
 
 
 
 
 
 
-
-
-
-
-                #servo voor knee 1 en 4
-                servo_front_knee = MovementHandler.min_knee_degrees + (servo_front_height - MovementHandler.min_height_degrees)
-
-                #servo midelste knee 2 en 5
-                servo_middle_knee = MovementHandler.min_knee_degrees + (servo_middle_height - MovementHandler.min_height_degrees)
-
-                #achterste servo 3 en 6
-                servo_back_knee = MovementHandler.min_knee_degrees + (servo_back_height - MovementHandler.min_height_degrees)
 
 
 
