@@ -147,7 +147,7 @@ class MovementHandler:
 
 
             else:
-
+                '''
                 y = ((power_internal * math.cos(degrees_internal)) + 100) / 2
                 x = ((power_internal * math.sin(degrees_internal)) + 100) / 2
                 #uitrekenen waardes
@@ -184,4 +184,5 @@ class MovementHandler:
                 servo_4 -= servo_bank_calc #front
                 servo_5 -= servo_bank_calc #middle
                 servo_6 -= servo_bank_calc #back
+                '''
 
