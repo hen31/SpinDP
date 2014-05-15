@@ -5,6 +5,7 @@ from SimpleCV import *
 
 __author__ = 'Robert'
 
+
 class CardState:
 
     def __init__(self):
@@ -23,16 +24,16 @@ class CardState:
         blueBlob = None
         blobs = None
 
-        img = Image("C:\\20cm.jpg")
-        #img = Image("http://192.168.10.1:8080/?action=snapshot")
+        #img = Image("C:\\cards\\realCard1.jpg")
+        img = Image("http://localhost:8080/?action=snapshot")
         blobs = self.getBlobs(img)
 
         BalloonMode.logger.logevent("BalloonMode CardState", "Bezig met zoeken", Logger.MESSAGE)
 
         while blobs is False and BalloonMode.alive:
 
-            img = Image("http://192.168.10.1:8080/?action=snapshot")
-            #img = Image("C:\\20cm.jpg")
+            #img = Image("http://localhost:8080/?action=snapshot")
+            img = Image("C:\\muur\\card.jpg")
             blobs = self.getBlobs(img)
 
 
@@ -51,7 +52,7 @@ class CardState:
         r = img.hueDistance(Color.RED).binarize(18)
         redBlobs = r.findBlobs()
 
-        if redBlobs == None:
+        if redBlobs is None:
             return False
 
 
@@ -59,7 +60,7 @@ class CardState:
         for i in xrange(0, len(redBlobs)):
 
             ratio = (float(float(redBlobs[i].height())/float(redBlobs[i].width())))
-            if(ratio > 0.6 and ratio < 1.2 and redBlobs[i].area() > 5000):
+            if ratio > 0.6 and ratio < 1.2 and redBlobs[i].area() > 5000 :
                 goodRedBlobs.append(redBlobs[i])
 
         if len(goodRedBlobs) == 0:
@@ -69,11 +70,12 @@ class CardState:
         redBlob = goodRedBlobs[0]
         redBlob.Name = "red"
 
-        g = img.colorDistance((51, 194, 32)).binarize(95)
+        g = img.colorDistance((51, 194, 32)).binarize(105)
         greenBlobs = g.findBlobs()
 
-        if greenBlobs == None:
-            return False
+        if greenBlobs is None:
+            g = img.colorDistance(Color.GREEN).binarize(60)
+            greenBlobs = g.findBlobs()
 
         goodGreenBlobs = []
         for i in xrange(0, len(greenBlobs)):
@@ -83,23 +85,35 @@ class CardState:
 
 
         if len(goodGreenBlobs) == 0:
+            g = img.colorDistance(Color.GREEN).binarize(65)
+            greenBlobs = g.findBlobs()
+
+            if greenBlobs is None:
+                return False
+
+            for i in xrange(0, len(greenBlobs)):
+                ratio = (float(float(greenBlobs[i].height())/float(greenBlobs[i].width())))
+                if ratio > 0.6 and ratio < 1.2 and greenBlobs[i].area() > 5000:
+                    goodGreenBlobs.append(greenBlobs[i])
+
+        if len(goodGreenBlobs) == 0:
             return False
 
         goodGreenBlobs.sort(key=lambda x: x.area(), reverse=True)
-        greenBlob = greenBlobs[0]
+        greenBlob = goodGreenBlobs[0]
         greenBlob.Name = "green"
 
-        b = img.hueDistance(Color.BLUE).binarize(60)
+        b = img.hueDistance(Color.BLUE).binarize(70)
         blueBlobs = b.findBlobs()
 
-        if blueBlobs == None:
+        if blueBlobs is None:
             return False
 
         goodBlueBlobs = []
 
         for i in xrange(0, len(blueBlobs)):
             ratio = (float(float(blueBlobs[i].height())/float(blueBlobs[i].width())))
-            if(ratio > 0.6 and ratio < 1.2 and blueBlobs[i].area() > 5000):
+            if ratio > 0.6 and ratio < 1.2 and blueBlobs[i].area() > 5000:
                 goodBlueBlobs.append(blueBlobs[i])
 
         if len(goodBlueBlobs) == 0:
@@ -108,9 +122,5 @@ class CardState:
         goodBlueBlobs.sort(key=lambda x: x.area(), reverse = True)
         blueBlob = goodBlueBlobs[0]
         blueBlob.Name = "blue"
-
-        print redBlob.area()
-        print greenBlob.area()
-        print blueBlob.area()
 
         return [redBlob, greenBlob, blueBlob]
