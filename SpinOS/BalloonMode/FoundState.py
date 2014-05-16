@@ -29,12 +29,6 @@ class FoundState:
         return
 
     def find_balloon(self, color):
-        from SearchState import SearchState
-        img = Image("http://raspberrypi:8080/?action=snapshot")
+        img = BalloonVision.get_image()
 
-        if color == "red":
-            return BalloonVision.find_red_balloon(img)[0]
-        elif color == "green":
-            return BalloonVision.find_green_balloon(img)[0]
-        elif color == "blue":
-            return BalloonVision.find_blue_balloon(img)[0]
+        return BalloonVision.find_balloon(color, img, True)
