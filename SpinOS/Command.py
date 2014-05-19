@@ -15,6 +15,7 @@ class COMMAND:
     MOVE_INTERNAL = 8
     MOVE_HEIGHT = 9
     LOG_ENTRY = 10
+    SEND_ACCU_DATA = 11
 
     def __init__(self):
         pass

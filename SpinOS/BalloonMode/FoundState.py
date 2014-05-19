@@ -5,36 +5,36 @@ from BalloonMode import BalloonMode
 from Logger import Logger
 from SimpleCV import *
 
+
 class FoundState:
+
+    LOGGER_NAME = "BalloonMode FoundState"
 
     def __init__(self):
         pass
 
     def doe_stap(self, parameters):
+        #param 0 = color
         if BalloonMode.alive:
-            BalloonMode.logger.logevent("BalloonMode FoundState", "Kijken wanneer de ballon dood gaat " +parameters[0], Logger.MESSAGE)
+            BalloonMode.logger.logevent(FoundState.LOGGER_NAME, "Vlak voor de ballon, kijken wanneer hij knapt " +parameters[0], Logger.MESSAGE)
 
             found = self.find_balloon(parameters[0])
 
-            while found is True and BalloonMode.alive:
+            while found and not_found_count >= 5 and BalloonMode.alive:
                 found = self.find_balloon(parameters[0])
+                if not found:
+                    not_found_count += 1
+                else:
+                    not_found_count = 0
 
             if not BalloonMode.alive:
                 return
 
-            BalloonMode.logger.logevent("BalloonMode FoundState", "Balloon weg (geknapt)!", Logger.MESSAGE)
+            BalloonMode.logger.logevent(FoundState.LOGGER_NAME, "Balloon weg (geknapt)!", Logger.MESSAGE)
 
-
-
-        return
+        return True
 
     def find_balloon(self, color):
-        from SearchState import SearchState
-        img = Image("http://raspberrypi:8080/?action=snapshot")
+        img = BalloonVision.get_image()
 
-        if color == "red":
-            return BalloonVision.find_red_balloon(img)[0]
-        elif color == "green":
-            return BalloonVision.find_green_balloon(img)[0]
-        elif color == "blue":
-            return BalloonVision.find_blue_balloon(img)[0]
+        return BalloonVision.find_balloon(color, img, True)

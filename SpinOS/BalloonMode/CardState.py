@@ -1,20 +1,35 @@
+import pygame
+import os
+import time
 from BalloonMode import BalloonMode
+from BalloonVision import BalloonVision
 from Logger import Logger
 from SearchState import SearchState
-from SimpleCV import *
+from SimpleCV import Image, Color
 
 __author__ = 'Robert'
 
 
 class CardState:
 
+    LOGGER_NAME = "BalloonMode CardState"
+
     def __init__(self):
+        #img = Image("C:\Users\Robert\Desktop\\raspberrypi.jpg")
+        #while True:
+        #    img = Image("http://raspberrypi:8080/?action=snapshot")
+        #    search = BalloonVision.find_blue_balloon(img)
+        #    if search[0]:
+        #        search[1].show()
         pass
 
     def doe_stap(self, parameters):
         if BalloonMode.alive:
             colorOrder = self.recognize_card()
             if colorOrder is not False:
+                self.play_sound()
+                time.sleep(2)
+
                 nextState = SearchState()
                 nextState.doe_stap([colorOrder])
 
@@ -24,15 +39,16 @@ class CardState:
         blueBlob = None
         blobs = None
 
+        #img = BalloonVision.get_image()
         #img = Image("C:\\cards\\realCard1.jpg")
-        img = Image("http://localhost:8080/?action=snapshot")
+        img = Image("C:\\muur\\card.jpg")
         blobs = self.getBlobs(img)
 
-        BalloonMode.logger.logevent("BalloonMode CardState", "Bezig met zoeken", Logger.MESSAGE)
+        BalloonMode.logger.logevent(CardState.LOGGER_NAME, "Bezig met zoeken", Logger.MESSAGE)
 
         while blobs is False and BalloonMode.alive:
 
-            #img = Image("http://localhost:8080/?action=snapshot")
+            #img = BalloonVision.get_image()
             img = Image("C:\\muur\\card.jpg")
             blobs = self.getBlobs(img)
 
@@ -43,7 +59,7 @@ class CardState:
 
         redBlob, greenBlob, blueBlob = blobs
 
-        BalloonMode.logger.logevent("BalloonMode CardSate", "Gevonden.", Logger.MESSAGE)
+        BalloonMode.logger.logevent(CardState.LOGGER_NAME, "Gevonden.", Logger.MESSAGE)
         blobs.sort(key=lambda x: x.y)
 
         return [blobs[0].Name, blobs[1].Name, blobs[2].Name]
@@ -76,6 +92,9 @@ class CardState:
         if greenBlobs is None:
             g = img.colorDistance(Color.GREEN).binarize(60)
             greenBlobs = g.findBlobs()
+
+        if greenBlobs is None:
+            return False
 
         goodGreenBlobs = []
         for i in xrange(0, len(greenBlobs)):
@@ -124,3 +143,10 @@ class CardState:
         blueBlob.Name = "blue"
 
         return [redBlob, greenBlob, blueBlob]
+
+    def play_sound(self):
+        pygame.mixer.init()
+        pygame.mixer.music.load(os.path.join(os.path.dirname(__file__) + "/Sound",'herkend.wav'))
+        pygame.mixer.music.play()
+        while pygame.mixer.music.get_busy():
+            continue

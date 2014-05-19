@@ -100,8 +100,13 @@ class SpinOS:
                         self.current_mode.alive = True
 
                     elif message[0] == COMMAND.SEND_SENSOR_DATA:
-                        data = "h1:10, h2:5<;>h1:9, h2:5<;>h1:8, h2:9"
+                        data = "h1:10, h2:5<;>h1:9, h2:5<;>h1:8, h2:9<;>h1:3,h2:10"
                         encoded = COMMAND.encode_message(COMMAND.SEND_SENSOR_DATA, data)
+                        client.send_message(encoded)
+
+                    elif message[0] == COMMAND.SEND_ACCU_DATA:
+                        data = "100<;>100<;>100<;>100<;>100<;>100<;>100<;>100<;>100<;>99<;>99<;>99<;>70<;>60<;>50"
+                        encoded = COMMAND.encode_message(COMMAND.SEND_ACCU_DATA, data)
                         client.send_message(encoded)
 
                     else:
