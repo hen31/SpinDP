@@ -4,7 +4,6 @@ from BalloonMode import BalloonMode
 from BalloonVision import BalloonVision
 from FoundState import FoundState
 from Logger import Logger
-from SimpleCV import *
 
 class MoveState:
 

@@ -1,6 +1,6 @@
 __author__ = 'Robert'
 
-from SimpleCV import *
+from SimpleCV import Image
 
 
 class BalloonVision:
@@ -31,8 +31,6 @@ class BalloonVision:
 
         for i in xrange(0, len(binValues)):
             bin = r.binarize(binValues[i])
-
-            bin.show()
 
             redBlobs = bin.findBlobs()
 
@@ -106,7 +104,6 @@ class BalloonVision:
 
         for i in xrange(0, len(binValues)):
             bin = b.binarize(binValues[i])
-            bin.show()
 
             blueBlobs = bin.findBlobs()
 

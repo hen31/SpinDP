@@ -1,9 +1,11 @@
 import pygame
+import os
+import time
 from BalloonMode import BalloonMode
 from BalloonVision import BalloonVision
 from Logger import Logger
 from SearchState import SearchState
-from SimpleCV import *
+from SimpleCV import Image, Color
 
 __author__ = 'Robert'
 
@@ -37,6 +39,7 @@ class CardState:
         blueBlob = None
         blobs = None
 
+        #img = BalloonVision.get_image()
         #img = Image("C:\\cards\\realCard1.jpg")
         img = Image("C:\\muur\\card.jpg")
         blobs = self.getBlobs(img)
@@ -45,7 +48,7 @@ class CardState:
 
         while blobs is False and BalloonMode.alive:
 
-            #img = Image("http://raspberrypi:8080/?action=snapshot")
+            #img = BalloonVision.get_image()
             img = Image("C:\\muur\\card.jpg")
             blobs = self.getBlobs(img)
 

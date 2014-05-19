@@ -3,9 +3,7 @@ __author__ = 'Robert'
 from BalloonMode import BalloonMode
 from MoveState import MoveState
 from Logger import Logger
-from SimpleCV import *
 from BalloonVision import BalloonVision
-
 
 class SearchState:
 
