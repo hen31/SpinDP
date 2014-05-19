@@ -10,6 +10,9 @@ class Leg:
 
     def __init__(self, leg_number, pwm):
         self.pwm = pwm
+        self.last_x = 0
+        self.last_y = 0
+        self.last_z = 0
         self.leg_number = leg_number
         if leg_number > 3:
             leg_number -= 3
@@ -34,16 +37,16 @@ class Leg:
         self.hip.set_servo(degree)
 
     def get_hip(self):
-        self.hip.get_servo()
+        return self.hip.get_servo()
 
     def set_height(self, degree):
         self.height.set_servo(degree)
 
     def get_height(self):
-        self.height.get_servo()
+        return self.height.get_servo()
 
     def set_knee(self, degree):
         self.knee.set_servo(degree)
 
     def get_knee(self):
-        self.knee.get_servo()
+        return self.knee.get_servo()

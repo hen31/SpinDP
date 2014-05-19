@@ -1,5 +1,6 @@
 import threading
 import math
+import time
 from Adafruit_PWM_Servo_Driver import PWM
 from Leg import Leg
 
@@ -33,25 +34,35 @@ class MovementHandler:
 
 
 
-    min_height_mm = 50
-    max_height_mm = 100
+    min_height_mm = 25
+    max_height_mm = 200
 
     min_knee_degrees = 50
 
     max_internal_degrees = 60
+    time_per_degrees = 0.004
+    min_exec_time = 0.03
+    stap_uitslag = 75
 
 
+    max_uitslag_x_voor = 10
+    max_uitslag_x_midden = 10
+    max_uitslag_x_achter = 10
+
+    max_uitslag_y_voor = 10
+    max_uitslag_y_midden = 10
+    max_uitslag_y_achter = 10
+
+    TIME_TURN_PER_DEGREE = 2
+    TIME_MOVE_ONE_CM =2
 
     PWM_FREQ = 50
     def __init__(self):
-
         self.pwm = PWM(0x40)                # PWM for the first servo controller
         self.pwm.setPWMFreq(MovementHandler.PWM_FREQ)    # Set frequency to 50 Hz
-        self.pwm2 = PWM(0x41)               # PWM for the first servo controller
-        self.pwm2.setPWMFreq(MovementHandler.PWM_FREQ)   # Set frequency to 50 Hz
-        self.leg = Leg(0, self.pwm)
-        self.leg.set_height(180)
-        self.legs = [Leg(1, self.pwm), Leg(2, self.pwm), Leg(3, self.pwm), Leg(4, self.pwm2), Leg(5, self.pwm2), Leg(6, self.pwm2)]
+        #self.pwm2 = PWM(0x41)               # PWM for the first servo controller
+        #self.pwm2.setPWMFreq(MovementHandler.PWM_FREQ)   # Set frequency to 50 Hz
+        self.legs = [Leg(1, self.pwm), Leg(2, self.pwm), Leg(3, self.pwm)]#, Leg(4, self.pwm2), Leg(5, self.pwm2), Leg(6, self.pwm2)]
         self.move_degrees = 0
         self.move_power = 0
         self.turn_degrees = 0
@@ -59,7 +70,10 @@ class MovementHandler:
         self.height_setting = 50
         self.internal_degrees = 0
         self.internal_power = 0
+        self.last_x =150
         self.variable_mutex = threading.Semaphore(1)
+        thread_main = threading.Thread(target=self.movement)
+        thread_main.start()
 
     def move(self, degreesMove, powerMove, degreesTurn, powerTurn):
         self.variable_mutex.acquire()
@@ -84,31 +98,114 @@ class MovementHandler:
         pass
 
     def degrees_to_radians(self, degrees):
-        return degrees *( math.pi/180)
+        return math.degrees(float(degrees))
 
 
     def get_gammma_angle(self, x, y):
-        return math.degrees(math.atan(float(x) / float(y)))
+        if y == 0:
+            return math.pi/2.0
+        return math.atan((float(x) / float(y)))
 
-    def get_angles(self, x, y, z):
+    def get_angles(self, y, x, z):
 
         gamma = self.get_gammma_angle(x, y)
+        L1 = math.sqrt((x*x)+(y*y))
+        L = math.sqrt((float(z) * float(z)) + math.pow((L1 - Leg.COXA), 2))
 
-        L = math.sqrt((float(z) * float(z)) + math.exp((y - Leg.COXA), 2))
-
-        a1 = math.acos(float(z) / float(L))
+        z_div_L =float(z) / float(L)
+        if z_div_L < -1.0:
+            z_div_L = -1
+        elif z_div_L > 1.0:
+            z_div_L = 1.0
+        a1 = math.acos(z_div_L)
 
         tibia2 = Leg.TIBIA * Leg.TIBIA
-        a2 = math.acos((tibia2 - (Leg.FEMUR * Leg.FEMUR) - (L * L)) / (-2 * Leg.FEMUR * L))
+        #print((tibia2 - (Leg.FEMUR * Leg.FEMUR) - (L * L)) / (-2 * Leg.FEMUR * L))
+        sum = (tibia2 - (Leg.FEMUR * Leg.FEMUR) - (L * L)) / (-2 * Leg.FEMUR * L)
+        if sum < -1.0:
+            sum = -1
+        elif sum > 1.0:
+            sum = 1.0
+        a2 = math.acos(sum)
         a = a1 + a2
+        sum = ((L * L) - (Leg.TIBIA * Leg.TIBIA) - (Leg.FEMUR * Leg.FEMUR)) / (-2 * Leg.TIBIA * Leg.FEMUR)
+        if sum < -1.0:
+            sum = -1
+        elif sum > 1.0:
+            sum = 1.0
+        beta = math.acos(sum)
+        gamma =math.degrees(gamma)
+        if gamma <0:
+            gamma += 180
+        return (math.degrees(a) , math.degrees(beta), gamma)
 
-        beta = math.acos(((L * L) - (Leg.TIBIA * Leg.TIBIA) - (Leg.FEMUR * Leg.FEMUR)) / (-2 * Leg.TIBIA * Leg.FEMUR))
 
-        return (math.degrees(a) , math.degrees(beta), math.degrees(gamma))
+    def kalibreren(self):
+        for i in [1]: #,4, 2, 5, 3, 6]:
+            leg = self.legs[i-1]
+            leg.last_x = 0
+            leg.last_y = 150
+            leg.last_z = MovementHandler.min_height_mm
+            alpha, beta, gamma = self.get_angles(200, 150, MovementHandler.min_height_mm)
+            leg.set_height(alpha+30)
+            time.sleep(0.5)
+            leg.set_hip(gamma)
+            leg.set_knee(beta)
+            time.sleep(0.5)
 
+        time.sleep(0.5)
+        for i in [1]:# , 4, 2, 5, 3, 6]:
+            leg = self.legs[i-1]
+            alpha, beta, gamma = self.get_angles(0, 150, MovementHandler.min_height_mm)
+            leg.set_height(alpha+30)
+            time.sleep(0.5)
+            leg.set_hip(gamma)
+            leg.set_knee(beta)
+            time.sleep(0.5)
+            leg.set_height(alpha)
+            time.sleep(2)
+
+    def move_leg_stilstaand(self, leg, x , y, z):
+        x_dif = x  - leg.last_x
+        aantal_stappen = math.fabs(x_dif/2)
+        if aantal_stappen >15:
+            aantal_stappen = 15
+        print(aantal_stappen)
+        #x = 125
+        #y = 150
+
+        #print(x_dif)#-150
+        x_stap = x_dif / aantal_stappen
+        y_dif = y - leg.last_y
+        #print(y_dif)
+        y_stap =  y_dif /aantal_stappen
+        #print((leg.last_x +x_dif))
+        for i in range(1, aantal_stappen+1):
+            alpha, beta, gamma = self.get_angles((x_stap  * i)+ leg.last_x, (y_stap * i)+leg.last_y, z)
+            #print(alpha)
+            #print(beta)
+            #print(gamma)
+            leg.set_height(alpha)
+            leg.set_hip(gamma)
+            leg.set_knee(beta)
+            dif_alpha = (leg.get_height() - alpha)
+            dif_gamma = (leg.get_hip() - gamma)
+            dif_beta = (leg.get_knee() - beta)
+            max_dif = max([dif_alpha,dif_gamma,dif_beta])
+
+            excution_time=max_dif * MovementHandler.time_per_degrees
+            excution_time = math.fabs(excution_time)
+            if excution_time < MovementHandler.min_exec_time:
+                excution_time = MovementHandler.min_exec_time
+
+            time.sleep(excution_time)
+        #time.sleep(MovementHandler.min_exec_time)
+        leg.last_y += y_dif
+        leg.last_x += x_dif
 
 
     def movement(self):
+        self.kalibreren()
         while True:
             self.variable_mutex.acquire()
             power_internal = self.internal_power
@@ -119,9 +216,9 @@ class MovementHandler:
             degrees_move = self.move_degrees
             height = self.height_setting
             self.variable_mutex.release()
-            if power_move != 0 and power_turn != 0:
-                y = (((power_internal * math.cos(self.degrees_to_radians(degrees_internal))) + 100) / 2) - 50 #-50  - 50
-                mm_height = MovementHandler.min_height_mm + (float(MovementHandler.max_height_mm - MovementHandler.min_height_mm) / float(100)) * height
+            if power_move != 0 and power_turn != 0 or True:
+                y = int((((float(power_internal) * math.cos(self.degrees_to_radians(degrees_internal))) + 100) / 2)) - 50 #-50  - 50
+                mm_height = MovementHandler.min_height_mm + (float(MovementHandler.max_height_mm - MovementHandler.min_height_mm) / float(100)) * float(height)
 
                 z_mm_front = mm_height
                 z_mm_front += (float(MovementHandler.max_height_mm - mm_height) / float(100)) * y
@@ -131,58 +228,48 @@ class MovementHandler:
                 z_mm_back = mm_height
                 z_mm_back -= (float(MovementHandler.max_height_mm - mm_height) / float(100)) * y
 
-                alpha, beta, gamma = self.get_angles(0, 0, z_mm_front)
+                rad = math.radians(degrees_move)
 
-                self.legs[0].set_hip(gamma)
-                self.legs[0].set_height(alpha)
-                self.legs[0].set_knee(beta)
+                y_stap = math.sin(rad) * MovementHandler.stap_uitslag
+                x_stap = math.cos(rad) * MovementHandler.stap_uitslag
+                rechtsom = False
+                if degrees_turn <= 180:
+                    power_turn = degrees_turn
+                else:
+                    power_turn = 360 - degrees_turn
+                    rechtsom = True
 
+                leg_front_x_turn = (float(power_turn)/ float(100) ) * MovementHandler.max_uitslag_x_voor
+                leg_front_y_turn = (float(power_turn)/ float(100) ) * MovementHandler.max_uitslag_y_voor
+                leg_middle_x_turn = (float(power_turn)/ float(100) ) * MovementHandler.max_uitslag_x_midden
+                leg_middle_y_turn = (float(power_turn)/ float(100) ) * MovementHandler.max_uitslag_y_midden
+                leg_back_x_turn = (float(power_turn)/ float(100) ) * MovementHandler.max_uitslag_x_back
+                leg_back_y_turn = (float(power_turn)/ float(100) ) * MovementHandler.max_uitslag_y_back
 
-
-
-
-
-
-
-
-
-            else:
-                '''
-                y = ((power_internal * math.cos(degrees_internal)) + 100) / 2
-                x = ((power_internal * math.sin(degrees_internal)) + 100) / 2
-                #uitrekenen waardes
-                servo_height = (float(MovementHandler.max_height_degrees - MovementHandler.min_height_degrees) / float(100)) * height
-                servo_angle_calc = ((float(MovementHandler.max_internal_degrees) / float(100)) * y) - (MovementHandler.max_internal_degrees / 2)
-                servo_bank_calc = ((float(MovementHandler.max_internal_degrees) / float(100)) * x) - (MovementHandler.max_internal_degrees / 2)
+                if rechtsom:
+                    pass
 
 
-                #voorste servo
-                servo_1 = servo_height
-                servo_1 = servo_front_height + servo_angle_calc
 
-                servo_4 = servo_height
-                servo_4 = servo_front_height + servo_angle_calc
+                else:
+                    pass
+                    #linksom draaien
 
-                #midelste servo
-                servo_2 = servo_height
-                servo_5 = servo_height
+                threads = []
+                if self.last_x == -150:
+                    self.last_x =150
+                elif self.last_x == 150:
+                    self.last_x=-150
+                #print(self.last_x)
+                poot1_thread = threading.Thread(target=self.move_leg_stilstaand, args=(self.legs[0], self.last_x, 200, z_mm_front))
+                #threads.append(poot1_thread)
 
-                #achterste servo
-                servo_3 = servo_height
-                servo_3 = servo_back_height - servo_angle_calc
+                for t in threads:
+                    t.start()
 
-                servo_6 = servo_height
-                servo_6 = servo_back_height - servo_angle_calc
+                for t in threads:
+                    t.join()
+                time.sleep(4)
 
 
-                #left
-                servo_1 += servo_bank_calc #front
-                servo_2 += servo_bank_calc #middle
-                servo_3 += servo_bank_calc #back
-
-                #right
-                servo_4 -= servo_bank_calc #front
-                servo_5 -= servo_bank_calc #middle
-                servo_6 -= servo_bank_calc #back
-                '''
 
