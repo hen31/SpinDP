@@ -3,9 +3,12 @@ __author__ = 'Robert'
 from BalloonMode import BalloonMode
 from BalloonVision import BalloonVision
 from FoundState import FoundState
+from Logger import Logger
 from SimpleCV import *
 
 class MoveState:
+
+    LOGGER_NAME = "BalloonMode MoveState"
 
     def __init__(self):
         pass
@@ -21,11 +24,46 @@ class MoveState:
         return
 
     def move_to_balloon(self, color, blob):
+        BalloonMode.logger.logevent(MoveState.LOGGER_NAME, "Naar ballon " + color + " lopen", Logger.MESSAGE)
         #Draaien zodat de ballon in het midden van de camera staat
         #Midden van het beeld
         center = 640 / 2
 
-        verschil = center - blob.x
+        move = self.move_balloon_to_center(blob, center, color)
+
+        if not move:
+            return False
+
+        #loop naar de ballon
+        #lopen moet nog worden gemaakt
+        BalloonMode.logger.logevent(MoveState.LOGGER_NAME, "Vooruit lopen", Logger.MESSAGE)
+
+        #Max area = 640*480 = 307200
+        area = 0
+        not_found_count = 0
+
+        #TODO: vooruit lopen
+        while area < 20000 and BalloonMode.alive: #2000???
+            if not_found_count >= 5:
+                BalloonMode.logger.logevent(MoveState.LOGGER_NAME, color + " ballon kwijt, wat nu?!", Logger.MESSAGE)
+                return False
+
+            img = BalloonVision.get_image()
+            search = BalloonVision.find_balloon(color, img, True)
+            if search[0]:
+                area = search[1].area()
+                #TODO: vooruit lopen
+            else:
+                not_found_count += 1
+
+        if not BalloonMode.alive:
+            return False
+
+        return True
+
+    def move_balloon_to_center(self, blob, center, color):
+        BalloonMode.logger.logevent(MoveState.LOGGER_NAME, "Ballon " + color + " naar het midden bewegen", Logger.MESSAGE)
+        verschil = self.diff_to_center(blob, center)
         while abs(verschil) > 20 and BalloonMode.alive: #20 px marge voor het midden
             print "Blob nog niet in het midden"
             if verschil > 0:
@@ -41,24 +79,15 @@ class MoveState:
             blob = search[1]
 
             if search[0]:
-                verschil = center - blob.x
+                verschil = self.diff_to_center(blob, center)
 
-        if not BalloonMode.alive:
-            return False
-
-        #loop naar de ballon
-        #lopen moet nog worden gemaakt
-        print "Ik ga nu lopen. Maar dat kan ik nog niet :-("
-
-        area = 0
-        while area < 2000 and BalloonMode.alive: #2000???
-            last_area = area
-            #TODO: vooruit lopen
-            img = BalloonVision.get_image()
-            search = BalloonVision.find_balloon(color, img)
-            if search[0]:
-                area = search[1].area()
         if not BalloonMode.alive:
             return False
 
         return True
+
+    def balloon_in_center(self, blob, center, marge):
+        return abs(center - blob.x) > marge
+
+    def diff_to_center(self, blob, center):
+        return center - blob.x

@@ -10,25 +10,22 @@ __author__ = 'Robert'
 
 class CardState:
 
+    LOGGER_NAME = "BalloonMode CardState"
+
     def __init__(self):
-        img = Image("C:\Users\Robert\Desktop\\raspberrypi.jpg")
-        while True:
-            img = Image("http://raspberrypi:8080/?action=snapshot")
-            search = BalloonVision.find_green_balloon(img)
-            if search[0]:
-                search[1].show()
+        #img = Image("C:\Users\Robert\Desktop\\raspberrypi.jpg")
+        #while True:
+        #    img = Image("http://raspberrypi:8080/?action=snapshot")
+        #    search = BalloonVision.find_blue_balloon(img)
+        #    if search[0]:
+        #        search[1].show()
         pass
 
     def doe_stap(self, parameters):
         if BalloonMode.alive:
             colorOrder = self.recognize_card()
             if colorOrder is not False:
-                pygame.mixer.init()
-                pygame.mixer.music.load(os.path.join(os.path.dirname(__file__) + "/Sound",'herkend.wav'))
-                pygame.mixer.music.play()
-                while pygame.mixer.music.get_busy():
-                    continue
-
+                self.play_sound()
                 time.sleep(2)
 
                 nextState = SearchState()
@@ -44,7 +41,7 @@ class CardState:
         img = Image("C:\\muur\\card.jpg")
         blobs = self.getBlobs(img)
 
-        BalloonMode.logger.logevent("BalloonMode CardState", "Bezig met zoeken", Logger.MESSAGE)
+        BalloonMode.logger.logevent(CardState.LOGGER_NAME, "Bezig met zoeken", Logger.MESSAGE)
 
         while blobs is False and BalloonMode.alive:
 
@@ -59,7 +56,7 @@ class CardState:
 
         redBlob, greenBlob, blueBlob = blobs
 
-        BalloonMode.logger.logevent("BalloonMode CardSate", "Gevonden.", Logger.MESSAGE)
+        BalloonMode.logger.logevent(CardState.LOGGER_NAME, "Gevonden.", Logger.MESSAGE)
         blobs.sort(key=lambda x: x.y)
 
         return [blobs[0].Name, blobs[1].Name, blobs[2].Name]
@@ -143,3 +140,10 @@ class CardState:
         blueBlob.Name = "blue"
 
         return [redBlob, greenBlob, blueBlob]
+
+    def play_sound(self):
+        pygame.mixer.init()
+        pygame.mixer.music.load(os.path.join(os.path.dirname(__file__) + "/Sound",'herkend.wav'))
+        pygame.mixer.music.play()
+        while pygame.mixer.music.get_busy():
+            continue

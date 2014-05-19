@@ -9,6 +9,8 @@ from BalloonVision import BalloonVision
 
 class SearchState:
 
+    LOGGER_NAME = "BalloonMode SearchState"
+
     def __init__(self):
         self.colors = []
         self.balloonOrder = []
@@ -17,18 +19,18 @@ class SearchState:
     def doe_stap(self, parameters):
         if BalloonMode.alive:
             self.colors = parameters[0]
-            BalloonMode.logger.logevent("BalloonMode SearchState", "Ballonnen zoeken met de volgende volgorde",
+            BalloonMode.logger.logevent(SearchState.LOGGER_NAME, "Ballonnen zoeken met de volgende volgorde",
                                         Logger.MESSAGE)
-            BalloonMode.logger.logevent("BalloonMode SearchState", self.colors, Logger.MESSAGE)
+            BalloonMode.logger.logevent(SearchState.LOGGER_NAME, self.colors, Logger.MESSAGE)
 
-            BalloonMode.logger.logevent("BalloonMode SearchState", "Volgorde ballonnen uit omgegving herkennen")
+            BalloonMode.logger.logevent(SearchState.LOGGER_NAME, "Volgorde ballonnen uit omgegving herkennen")
 
             self.balloonOrder = self.get_balloon_order()
 
             if not self.balloonOrder:
                 return
 
-            BalloonMode.logger.logevent("BalloonMode SearchState", "Volgorde van ballonnen uit de omgeving: " + self.balloonOrder[0] +" " + self.balloonOrder[1] +" " +self.balloonOrder[2])
+            BalloonMode.logger.logevent(SearchState.LOGGER_NAME, "Volgorde van ballonnen uit de omgeving: " + self.balloonOrder[0] +" " + self.balloonOrder[1] +" " +self.balloonOrder[2])
 
 
             for i in xrange(0, 3):
@@ -36,23 +38,20 @@ class SearchState:
                     if self.balloonOrder.index(self.colors[i-1]) > self.balloonOrder.index(self.colors[i]):
                         #Naar links draaien
                         self.moveTo = True
-                        print "Naar links draaien"
                     else:
                         #Naar rechts draaien
                         self.moveTo = False
-                        print "Naar rechts draaien"
 
                 blob = self.find_balloon(self.colors[i])
                 if blob is not False:
-                    print self.colors[i] + " gevonden!"
+                    BalloonMode.logger.logevent(SearchState.LOGGER_NAME, self.colors[i] + " gevonden!", Logger.MESSAGE)
                     moveState = MoveState()
                     moveState.doe_stap([self.colors[i], blob])
 
     def find_balloon(self, color):
-        BalloonMode.logger.logevent("BalloonMode SearchState", "Zoeken naar ballon " + color, Logger.MESSAGE)
+        BalloonMode.logger.logevent(SearchState.LOGGER_NAME, "Zoeken naar ballon " + color, Logger.MESSAGE)
 
         img = BalloonVision.get_image()
-        #img = Image("C:\\muur\\red.jpg")
 
         search = BalloonVision.find_balloon(color, img)
 

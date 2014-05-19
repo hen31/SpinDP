@@ -48,7 +48,7 @@ class BalloonVision:
                 #filter goede blob
                 for redBlob in redBlobs:
 
-                    if (redBlob.area() > 800 and not redBlob.isSquare(0.10) and redBlob.isCircle(0.40)):
+                    if (redBlob.area() > 800 and not redBlob.isSquare(0.10) and redBlob.isCircle(0.40)) or (color_only and redBlob.area() > 800):
                         goodRedBlobs.append(redBlob)
 
 
@@ -84,7 +84,7 @@ class BalloonVision:
                     break
 
                 for greenBlob in greenBlobs:
-                    if greenBlob.isCircle(0.40) and greenBlob.area() > 800 and not greenBlob.isSquare(0.10):
+                    if (greenBlob.isCircle(0.40) and greenBlob.area() > 800 and not greenBlob.isSquare(0.10)) or (color_only and greenBlob.area()):
                         goodGreenBlobs.append(greenBlob)
 
                 if len(goodGreenBlobs) == 0:
@@ -100,9 +100,9 @@ class BalloonVision:
 
     @staticmethod
     def find_blue_balloon(img, color_only=False):
-        binValues = [135, 140, 145, 150]
+        binValues = [115, 120, 125, 130, 135, 140, 145, 150]
 
-        b = img.colorDistance(Color.BLUE)
+        b = img.colorDistance((0,0,255))
 
         for i in xrange(0, len(binValues)):
             bin = b.binarize(binValues[i])
@@ -119,7 +119,7 @@ class BalloonVision:
                     break
 
                 for blueBlob in blueBlobs:
-                    if blueBlob.isCircle(0.40) and blueBlob.area() > 800 and not blueBlob.isSquare(0.10):
+                    if (blueBlob.isCircle(0.40) and blueBlob.area() > 800 and not blueBlob.isSquare(0.10)) or (color_only and blueBlob.area() > 800):
                         goodBlueBlobs.append(blueBlob)
 
                 if len(goodBlueBlobs) == 0:
