@@ -4,6 +4,7 @@ from BalloonMode import BalloonMode
 from MoveState import MoveState
 from Logger import Logger
 from BalloonVision import BalloonVision
+import time
 
 class SearchState:
 
@@ -56,9 +57,11 @@ class SearchState:
         while not search[0] and BalloonMode.alive:
             if self.moveTo:
                 #TODO: beweeg 5 graden naar links
+                time.sleep(BalloonMode.movementHandler.TIME_TURN_PER_DEGREE * 5)
                 pass
             elif not self.moveTo:
                 #TODO: beweeg 5 graden naar rechts
+                time.sleep(BalloonMode.movementHandler.TIME_TURN_PER_DEGREE * 5)
                 pass
 
             img = BalloonVision.get_image()

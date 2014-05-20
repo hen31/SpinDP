@@ -4,6 +4,7 @@ from BalloonMode import BalloonMode
 from BalloonVision import BalloonVision
 from FoundState import FoundState
 from Logger import Logger
+import time
 
 class MoveState:
 
@@ -42,6 +43,8 @@ class MoveState:
         not_found_count = 0
 
         #TODO: vooruit lopen
+        time.sleep(BalloonMode.movementHandler.TIME_MOVE_ONE_CM)
+
         while area < 20000 and BalloonMode.alive: #2000???
             if not_found_count >= 5:
                 BalloonMode.logger.logevent(MoveState.LOGGER_NAME, color + " ballon kwijt, wat nu?!", Logger.MESSAGE)
@@ -49,9 +52,12 @@ class MoveState:
 
             img = BalloonVision.get_image()
             search = BalloonVision.find_balloon(color, img, True)
+
             if search[0]:
                 area = search[1].area()
                 #TODO: vooruit lopen
+                time.sleep(BalloonMode.movementHandler.TIME_MOVE_ONE_CM)
+
             else:
                 not_found_count += 1
 
@@ -67,9 +73,11 @@ class MoveState:
             print "Blob nog niet in het midden"
             if verschil > 0:
                 #TODO: 5 graden naar links draaien
+                time.sleep(BalloonMode.movementHandler.TIME_TURN_PER_DEGREE * 5)
                 pass
             else:
                 #TODO: 5 graden naar rechts draaien
+                time.sleep(BalloonMode.movementHandler.TIME_TURN_PER_DEGREE * 5)
                 pass
 
             img = BalloonVision.get_image()
