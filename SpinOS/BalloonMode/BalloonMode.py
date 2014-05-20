@@ -6,10 +6,12 @@ class BalloonMode:
 
     alive = True
     logger = None
+    movementHandler = None
 
-    def __init__(self, logger):
+    def __init__(self, movementHandler, logger):
         self.set_alive(True)
         BalloonMode.logger = logger
+        BalloonMode.movementHandler = movementHandler
         self.thread = threading.Thread(target=self.run)
         self.thread.start()
 
