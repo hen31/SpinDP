@@ -43,6 +43,7 @@ class MoveState:
         not_found_count = 0
 
         #TODO: vooruit lopen
+        #BalloonMode.movementHandler.move
         time.sleep(BalloonMode.movementHandler.TIME_MOVE_ONE_CM)
 
         while area < 20000 and BalloonMode.alive: #2000???
@@ -56,6 +57,7 @@ class MoveState:
             if search[0]:
                 area = search[1].area()
                 #TODO: vooruit lopen
+                #BalloonMode.movementHandler.move
                 time.sleep(BalloonMode.movementHandler.TIME_MOVE_ONE_CM)
 
             else:

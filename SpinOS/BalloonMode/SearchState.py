@@ -57,10 +57,12 @@ class SearchState:
         while not search[0] and BalloonMode.alive:
             if self.moveTo:
                 #TODO: beweeg 5 graden naar links
+                BalloonMode.movementHandler.move(0, 0, 5, 0)
                 time.sleep(BalloonMode.movementHandler.TIME_TURN_PER_DEGREE * 5)
                 pass
             elif not self.moveTo:
                 #TODO: beweeg 5 graden naar rechts
+                BalloonMode.movementHandler.move(0, 0, 5, 0)
                 time.sleep(BalloonMode.movementHandler.TIME_TURN_PER_DEGREE * 5)
                 pass
 
