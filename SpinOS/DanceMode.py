@@ -5,8 +5,13 @@ __author__ = 'levi'
 
 class DanceMode:
     alive = True
+    movementHandler = None
+    logger = None
 
-    def __init__(self):
+    def __init__(self, movementHandler, logger):
+        DanceMode.movementHandler = movementHandler
+        DanceMode.logger = logger
+
         self.thread = threading.Thread(target=self.run)
         self.thread.start()
 

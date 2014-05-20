@@ -12,6 +12,7 @@ from Logger import Logger
 from SensorLogger import SensorLogger
 from ServerClient import ServerClient
 from TeerbalMode.TeerbalMode import TeerbalMode
+from DanceMode import DanceMode
 
 __author__ = 'Hendrik'
 
@@ -98,6 +99,12 @@ class SpinOS:
                         SpinOS.logger.logevent("SPINOS", "Mode set to " + self.mode, Logger.MESSAGE)
                         self.current_mode = TeerbalMode()
                         self.current_mode.alive = True
+                    elif message[0] == COMMAND.TO_DANCE_MODE:
+                        self.current_mode.set_alive(False)
+                        self.mode = "dance mode"
+                        SpinOS.logger.logevent("SPINOS", "Mode set to " + self.mode, Logger.MESSAGE)
+                        self.current_mode = DanceMode(self.movementHandler, self.logger)
+                        self.current_mode.set_alive(True)
 
                     elif message[0] == COMMAND.SEND_SENSOR_DATA:
                         data = "h1:10, h2:5<;>h1:9, h2:5<;>h1:8, h2:9<;>h1:3,h2:10"
