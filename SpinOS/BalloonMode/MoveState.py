@@ -4,6 +4,8 @@ from BalloonMode import BalloonMode
 from BalloonVision import BalloonVision
 from FoundState import FoundState
 from Logger import Logger
+import time
+
 
 class MoveState:
 
@@ -34,7 +36,6 @@ class MoveState:
             return False
 
         #loop naar de ballon
-        #lopen moet nog worden gemaakt
         BalloonMode.logger.logevent(MoveState.LOGGER_NAME, "Vooruit lopen", Logger.MESSAGE)
 
         #Max area = 640*480 = 307200
@@ -42,16 +43,24 @@ class MoveState:
         not_found_count = 0
 
         #TODO: vooruit lopen
-        while area < 20000 and BalloonMode.alive: #2000???
+        BalloonMode.movementHandler.move(0, 100, 0, 0)
+        time.sleep(BalloonMode.movementHandler.TIME_MOVE_ONE_CM * 10)
+        BalloonMode.movementHandler.move(0, 0, 0, 0)
+
+        while area < 20000 and BalloonMode.alive:
             if not_found_count >= 5:
                 BalloonMode.logger.logevent(MoveState.LOGGER_NAME, color + " ballon kwijt, wat nu?!", Logger.MESSAGE)
                 return False
 
             img = BalloonVision.get_image()
             search = BalloonVision.find_balloon(color, img, True)
+
             if search[0]:
                 area = search[1].area()
-                #TODO: vooruit lopen
+                BalloonMode.movementHandler.move(0, 100, 0, 0)
+                time.sleep(BalloonMode.movementHandler.TIME_MOVE_ONE_CM * 10)
+                BalloonMode.movementHandler.move(0, 100, 0, 0)
+
             else:
                 not_found_count += 1
 
@@ -66,11 +75,15 @@ class MoveState:
         while abs(verschil) > 20 and BalloonMode.alive: #20 px marge voor het midden
             print "Blob nog niet in het midden"
             if verschil > 0:
-                #TODO: 5 graden naar links draaien
-                pass
+                #5 graden naar links draaien
+                BalloonMode.movementHandler(0, 0, 181, 100)
+                time.sleep(BalloonMode.movementHandler.TIME_TURN_PER_DEGREE * 5)
+                BalloonMode.movementHandler(0, 0, 0, 0)
             else:
-                #TODO: 5 graden naar rechts draaien
-                pass
+                #5 graden naar rechts draaien
+                BalloonMode.movementHandler(0, 0, 180, 100)
+                time.sleep(BalloonMode.movementHandler.TIME_TURN_PER_DEGREE * 5)
+                BalloonMode.movementHandler(0, 0, 0, 0)
 
             img = BalloonVision.get_image()
             search = BalloonVision.find_balloon(color, img)

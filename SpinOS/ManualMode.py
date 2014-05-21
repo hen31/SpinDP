@@ -24,14 +24,14 @@ class ManualMode:
             angleTurn  = parameters[2]
             forceTurn  = parameters[3]
             self.logger.logevent("MANUAL MODE", "Move [" + str(angleMove)+"," + str(forceMove)+"," + str(angleTurn) + "," + str(forceTurn) + "]", Logger.INPUT_VALUES)
-            self.handler.move(angleMove, forceMove, angleTurn, forceTurn)
+            self.handler.move(int(angleMove), int(forceMove), int(angleTurn), int(forceTurn))
         elif command == COMMAND.MOVE_INTERNAL:
             angle = parameters[0]
             force = parameters[1]
             self.logger.logevent("MANUAL MODE", "Move Internal [" + str(angle)+"," + str(force) + "]", Logger.INPUT_VALUES)
-            self.handler.move_internal(angle, force)
+            self.handler.move_internal(int(angle), int(force))
         elif command == COMMAND.MOVE_HEIGHT:
             height = parameters[0]
             self.logger.logevent("MANUAL MODE", "Move height [" + str(height) + "]", Logger.INPUT_VALUES)
-            self.handler.move_height(height)
+            self.handler.move_height(int(height))
         self.mutex.release()

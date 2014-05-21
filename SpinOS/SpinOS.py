@@ -12,6 +12,7 @@ from Logger import Logger
 from SensorLogger import SensorLogger
 from ServerClient import ServerClient
 from TeerbalMode.TeerbalMode import TeerbalMode
+from DanceMode import DanceMode
 
 __author__ = 'Hendrik'
 
@@ -90,7 +91,7 @@ class SpinOS:
                         self.current_mode.set_alive(False)
                         self.mode = "balloon mode"
                         SpinOS.logger.logevent("SPINOS", "Mode set to " + self.mode, Logger.MESSAGE)
-                        self.current_mode = BalloonMode(self.logger)
+                        self.current_mode = BalloonMode(self.movementHandler, self.logger)
                         self.current_mode.alive = True
                     elif message[0] == COMMAND.TO_TEERBAL_MODE:
                         self.current_mode.set_alive(False)
@@ -98,6 +99,12 @@ class SpinOS:
                         SpinOS.logger.logevent("SPINOS", "Mode set to " + self.mode, Logger.MESSAGE)
                         self.current_mode = TeerbalMode()
                         self.current_mode.alive = True
+                    elif message[0] == COMMAND.TO_DANCE_MODE:
+                        self.current_mode.set_alive(False)
+                        self.mode = "dance mode"
+                        SpinOS.logger.logevent("SPINOS", "Mode set to " + self.mode, Logger.MESSAGE)
+                        self.current_mode = DanceMode(self.movementHandler, self.logger)
+                        self.current_mode.set_alive(True)
 
                     elif message[0] == COMMAND.SEND_SENSOR_DATA:
                         data = "h1:10, h2:5<;>h1:9, h2:5<;>h1:8, h2:9<;>h1:3,h2:10"
@@ -105,7 +112,12 @@ class SpinOS:
                         client.send_message(encoded)
 
                     elif message[0] == COMMAND.SEND_ACCU_DATA:
-                        data = "100<;>100<;>100<;>100<;>100<;>100<;>100<;>100<;>100<;>99<;>99<;>99<;>70<;>60<;>50"
+                        data = ""
+                        from random import randint
+                        for i in xrange(0, 500):
+                            rand = randint(0, 100)
+                            data += `rand` + "<;>"
+                        data += "10"
                         encoded = COMMAND.encode_message(COMMAND.SEND_ACCU_DATA, data)
                         client.send_message(encoded)
 
