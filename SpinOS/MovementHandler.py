@@ -42,16 +42,16 @@ class MovementHandler:
     max_internal_degrees = 60
     time_per_degrees = 0.004
     min_exec_time = 0.03
-    stap_uitslag = 75
+    stap_uitslag = 100
+    stap_uitslag_y = 50
 
+    max_uitslag_x_voor = 50
+    max_uitslag_x_midden = 50
+    max_uitslag_x_achter = 50
 
-    max_uitslag_x_voor = 10
-    max_uitslag_x_midden = 10
-    max_uitslag_x_achter = 10
-
-    max_uitslag_y_voor = 10
-    max_uitslag_y_midden = 10
-    max_uitslag_y_achter = 10
+    max_uitslag_y_voor = 50
+    max_uitslag_y_midden = 50
+    max_uitslag_y_achter = 50
 
     TIME_TURN_PER_DEGREE = 2
     TIME_MOVE_ONE_CM =2
@@ -70,7 +70,6 @@ class MovementHandler:
         self.height_setting = 50
         self.internal_degrees = 0
         self.internal_power = 0
-        self.last_x =150
         self.variable_mutex = threading.Semaphore(1)
         thread_main = threading.Thread(target=self.movement)
         thread_main.start()
@@ -167,21 +166,21 @@ class MovementHandler:
 
     def move_leg_stilstaand(self, leg, x , y, z):
         x_dif = x  - leg.last_x
-        aantal_stappen = math.fabs(x_dif/2)
+        aantal_stappen = int(math.fabs(x_dif / 20)) + 1
         if aantal_stappen >15:
             aantal_stappen = 15
         print(aantal_stappen)
         #x = 125
         #y = 150
 
-        #print(x_dif)#-150
+        print(x_dif)#-150
         x_stap = x_dif / aantal_stappen
         y_dif = y - leg.last_y
         #print(y_dif)
         y_stap =  y_dif /aantal_stappen
         #print((leg.last_x +x_dif))
-        for i in range(1, aantal_stappen+1):
-            alpha, beta, gamma = self.get_angles((x_stap  * i)+ leg.last_x, (y_stap * i)+leg.last_y, z)
+        for i in range(1, aantal_stappen + 1):
+            alpha, beta, gamma = self.get_angles((x_stap * i)+ leg.last_x, (y_stap * i)+leg.last_y, z)
             #print(alpha)
             #print(beta)
             #print(gamma)
@@ -191,7 +190,7 @@ class MovementHandler:
             dif_alpha = (leg.get_height() - alpha)
             dif_gamma = (leg.get_hip() - gamma)
             dif_beta = (leg.get_knee() - beta)
-            max_dif = max([dif_alpha,dif_gamma,dif_beta])
+            max_dif = max([dif_alpha, dif_gamma, dif_beta])
 
             excution_time=max_dif * MovementHandler.time_per_degrees
             excution_time = math.fabs(excution_time)
@@ -202,6 +201,7 @@ class MovementHandler:
         #time.sleep(MovementHandler.min_exec_time)
         leg.last_y += y_dif
         leg.last_x += x_dif
+        print("end")
 
 
     def movement(self):
@@ -219,7 +219,6 @@ class MovementHandler:
             if power_move != 0 and power_turn != 0 or True:
                 y = int((((float(power_internal) * math.cos(self.degrees_to_radians(degrees_internal))) + 100) / 2)) - 50 #-50  - 50
                 mm_height = MovementHandler.min_height_mm + (float(MovementHandler.max_height_mm - MovementHandler.min_height_mm) / float(100)) * float(height)
-
                 z_mm_front = mm_height
                 z_mm_front += (float(MovementHandler.max_height_mm - mm_height) / float(100)) * y
 
@@ -228,10 +227,17 @@ class MovementHandler:
                 z_mm_back = mm_height
                 z_mm_back -= (float(MovementHandler.max_height_mm - mm_height) / float(100)) * y
 
-                rad = math.radians(degrees_move)
-
-                y_stap = math.sin(rad) * MovementHandler.stap_uitslag
+                rad = math.radians(float(degrees_move))
+                #print("rad")
+                #print(rad)
+                #print("degree")
+                #print(degrees_move)
+                y_stap = math.sin(rad) * MovementHandler.stap_uitslag_y
                 x_stap = math.cos(rad) * MovementHandler.stap_uitslag
+                if power_move == 0:
+                    x_stap = 0
+                    y_stap = 0
+                print(x_stap)
                 rechtsom = False
                 if degrees_turn <= 180:
                     power_turn = degrees_turn
@@ -239,37 +245,63 @@ class MovementHandler:
                     power_turn = 360 - degrees_turn
                     rechtsom = True
 
-                leg_front_x_turn = (float(power_turn)/ float(100) ) * MovementHandler.max_uitslag_x_voor
-                leg_front_y_turn = (float(power_turn)/ float(100) ) * MovementHandler.max_uitslag_y_voor
-                leg_middle_x_turn = (float(power_turn)/ float(100) ) * MovementHandler.max_uitslag_x_midden
-                leg_middle_y_turn = (float(power_turn)/ float(100) ) * MovementHandler.max_uitslag_y_midden
-                leg_back_x_turn = (float(power_turn)/ float(100) ) * MovementHandler.max_uitslag_x_back
-                leg_back_y_turn = (float(power_turn)/ float(100) ) * MovementHandler.max_uitslag_y_back
+                leg_front_x_turn = (float(power_turn) / float(100)) * MovementHandler.max_uitslag_x_voor
+                leg_front_y_turn = (float(power_turn) / float(100)) * MovementHandler.max_uitslag_y_voor
+                leg_middle_x_turn = (float(power_turn) / float(100)) * MovementHandler.max_uitslag_x_midden
+                leg_middle_y_turn = (float(power_turn) / float(100)) * MovementHandler.max_uitslag_y_midden
+                leg_back_x_turn = (float(power_turn) / float(100)) * MovementHandler.max_uitslag_x_achter
+                leg_back_y_turn = (float(power_turn) / float(100)) * MovementHandler.max_uitslag_y_achter
 
                 if rechtsom:
-                    pass
+                    left_front_x = x_stap + leg_front_x_turn
+                    left_front_y = y_stap + leg_front_y_turn
+                    right_front_x = x_stap - leg_front_x_turn
+                    right_front_y = y_stap - leg_front_y_turn
 
+                    left_middle_x = x_stap - leg_middle_x_turn
+                    left_middle_y = y_stap - leg_middle_y_turn
+                    right_middle_x = x_stap + leg_middle_x_turn
+                    right_middle_y = y_stap + leg_middle_y_turn
 
-
+                    left_back_x = x_stap - leg_back_x_turn
+                    left_back_y = y_stap - leg_back_y_turn
+                    right_back_x = x_stap + leg_back_x_turn
+                    right_back_y = y_stap + leg_back_y_turn
                 else:
-                    pass
-                    #linksom draaien
+                    left_front_x = x_stap - leg_front_x_turn
+                    left_front_y = y_stap - leg_front_y_turn
+                    right_front_x = x_stap + leg_front_x_turn
+                    right_front_y = y_stap + leg_front_y_turn
 
+                    left_middle_x = x_stap + leg_middle_x_turn
+                    left_middle_y = y_stap + leg_middle_y_turn
+                    right_middle_x = x_stap - leg_middle_x_turn
+                    right_middle_y = y_stap - leg_middle_y_turn
+
+                    left_back_x = x_stap + leg_back_x_turn
+                    left_back_y = y_stap + leg_back_y_turn
+                    right_back_x = x_stap - leg_back_x_turn
+                    right_back_y = y_stap - leg_back_y_turn
+
+
+                print(left_front_x)
                 threads = []
-                if self.last_x == -150:
-                    self.last_x =150
-                elif self.last_x == 150:
-                    self.last_x=-150
                 #print(self.last_x)
-                poot1_thread = threading.Thread(target=self.move_leg_stilstaand, args=(self.legs[0], self.last_x, 200, z_mm_front))
-                #threads.append(poot1_thread)
+
+                new_x = self.legs[0].normal_x + left_front_x
+
+                new_y = self.legs[0].normal_y + left_front_y
+
+
+                poot1_thread = threading.Thread(target=self.move_leg_stilstaand, args=(self.legs[0], new_x,new_y, z_mm_front))
+                threads.append(poot1_thread)
 
                 for t in threads:
                     t.start()
 
                 for t in threads:
                     t.join()
-                time.sleep(4)
+
 
 
 

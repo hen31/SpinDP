@@ -13,6 +13,8 @@ class Leg:
         self.last_x = 0
         self.last_y = 0
         self.last_z = 0
+        self.normal_x = 0
+        self.normal_y = 150
         self.leg_number = leg_number
         if leg_number > 3:
             leg_number -= 3
