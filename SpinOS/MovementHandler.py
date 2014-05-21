@@ -34,8 +34,8 @@ class MovementHandler:
 
 
 
-    min_height_mm = 25
-    max_height_mm = 200
+    min_height_mm = 75
+    max_height_mm = 175
 
     min_knee_degrees = 50
 

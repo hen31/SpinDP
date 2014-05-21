@@ -27,7 +27,7 @@ class SpinOS:
 
 #img = cam.getImage()
     def __init__(self):
-        print("SpinOS 0.1")
+        print("SpinOS 0.2")
         print("Group 5 IDP 2014 NHL")
         print("Default string encoding : " + str(sys.getdefaultencoding()).upper())
         SpinOS.logger = Logger(Logger.SENSOR_VALUES)
