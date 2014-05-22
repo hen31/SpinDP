@@ -60,6 +60,7 @@ class MoveState:
                 BalloonMode.movementHandler.move(0, 100, 0, 0)
                 time.sleep(BalloonMode.movementHandler.TIME_MOVE_ONE_CM * 10)
                 BalloonMode.movementHandler.move(0, 100, 0, 0)
+                pass
 
             else:
                 not_found_count += 1
@@ -72,7 +73,7 @@ class MoveState:
     def move_balloon_to_center(self, blob, center, color):
         BalloonMode.logger.logevent(MoveState.LOGGER_NAME, "Ballon " + color + " naar het midden bewegen", Logger.MESSAGE)
         verschil = self.diff_to_center(blob, center)
-        while abs(verschil) > 20 and BalloonMode.alive: #20 px marge voor het midden
+        while abs(verschil) > 50 and BalloonMode.alive: #20 px marge voor het midden
             print "Blob nog niet in het midden"
             if verschil > 0:
                 #5 graden naar links draaien
@@ -99,7 +100,7 @@ class MoveState:
         return True
 
     def balloon_in_center(self, blob, center, marge):
-        return abs(center - blob.x) > marge
+        return abs(center - blob.centroid) > marge
 
     def diff_to_center(self, blob, center):
         return center - blob.x

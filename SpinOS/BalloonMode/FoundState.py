@@ -18,10 +18,10 @@ class FoundState:
         if BalloonMode.alive:
             BalloonMode.logger.logevent(FoundState.LOGGER_NAME, "Vlak voor de ballon, kijken wanneer hij knapt " +parameters[0], Logger.MESSAGE)
 
-            found = self.find_balloon(parameters[0])
+            not_found_count = 0
 
-            while found and not_found_count >= 5 and BalloonMode.alive:
-                found = self.find_balloon(parameters[0])
+            while not_found_count <= 2 and BalloonMode.alive:
+                found = self.balloon_alive(parameters[0])
                 if not found:
                     not_found_count += 1
                 else:
@@ -34,7 +34,7 @@ class FoundState:
 
         return True
 
-    def find_balloon(self, color):
+    def balloon_alive(self, color):
         img = BalloonVision.get_image()
 
-        return BalloonVision.find_balloon(color, img, True)
+        return BalloonVision.find_balloon(color, img, True)[0]

@@ -59,14 +59,16 @@ class SearchState:
                 #TODO: beweeg 5 graden naar links
                 BalloonMode.movementHandler.move(0, 0, 180, 100)
                 time.sleep(BalloonMode.movementHandler.TIME_TURN_PER_DEGREE * 5)
+                pass
 
             elif not self.moveTo:
                 #TODO: beweeg 5 graden naar rechts
                 BalloonMode.movementHandler.move(0, 0, 181, 100)
                 time.sleep(BalloonMode.movementHandler.TIME_TURN_PER_DEGREE * 5)
+                pass
 
             img = BalloonVision.get_image()
-            search = BalloonVision.find_red_balloon(img)
+            search = BalloonVision.find_balloon(color, img)
 
         if not BalloonMode.alive:
             return False
@@ -98,6 +100,6 @@ class SearchState:
 
         balloonOrder.sort(key=lambda x: x.x)
 
-        balloonOrder = [self.balloonOrder[0].Name, self.balloonOrder[1].Name, self.balloonOrder[2].Name]
+        balloonOrder = [balloonOrder[0].Name, balloonOrder[1].Name, balloonOrder[2].Name]
 
         return balloonOrder
