@@ -1,34 +1,42 @@
 from SimpleCV import *
-import FoundState
-import MoveState
-import os, sys
+from TeerbalMode import TeerbalMode
+from TeerbalVision import TeerbalVision
+import os
+
 __author__ = 'Jeroen'
+
 
 class SearchState:
 
+    LEFT_X = 170
+    LEFT_Y = 0
+    RIGHT_X = 470
+    RIGHT_Y= 480
+
     def __init__(self):
-        #self.image_path = image_path
-        pass
+        self.index = 0
 
-    def search_teerbal(self):
+    def doe_stap(self):
+        aantal_gevonden = 0
+        from MoveState import MoveState
+        nextState = MoveState()
+        while aantal_gevonden != 3:
+            if TeerbalMode.alive == True:
+                array = TeerbalVision.foto_array()
+                found_row = self.checkRij(array[self.index])
+                if found_row == True:
+                    aantal_gevonden +=1
+                    nextState.doe_stap(found_row, array[self.index])
+                else:
+                    nextState.doe_stap(found_row, array[self.index])
+                self.index +=1
+        for e in nextState.pos_list:
+            print e.toString()
 
-        image_paths = [os.path.join(os.path.dirname(__file__) + "/TestImages",'teerbal.png'), os.path.join(os.path.dirname(__file__) + "/TestImages",'vooruit.png')]
-        rand = random.randrange(0,2)
-
-        self.image = Image(image_paths[rand])
-
-
-
-        if rand == 0:
-            print "FOTO: TEERBAL"
-        else:
-            print "FOTO: GEEN TEERBAL"
-
-        (h,s,v)= self.image.splitChannels()
-        bin_image = h.binarize(30)
-        blobs = bin_image.findBlobs(1,2000)
-
-        if blobs:
-            return True
-        else:
-            return False
+    def checkRij(self,imgpath):
+        index = 0
+        while index != len(imgpath):
+            if TeerbalVision.find_teerbal(imgpath[index]):
+                return True
+            index+=1
+        return False
