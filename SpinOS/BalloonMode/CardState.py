@@ -15,10 +15,30 @@ class CardState:
     LOGGER_NAME = "BalloonMode CardState"
 
     def __init__(self):
-        #img = Image("C:\Users\Robert\Desktop\\raspberrypi.jpg")
+        #redImg = Image("C:\Users\Robert\Desktop\\ballon\\red.jpg")
+        #greenImg = Image("C:\Users\Robert\Desktop\\ballon\\green.jpg")
+        #blueImg = Image("C:\Users\Robert\Desktop\\ballon\\blue.jpg")
+
+        #searchR = BalloonVision.find_red_balloon(redImg)
+        #searchG = BalloonVision.find_green_balloon(greenImg)
+        #searchB = BalloonVision.find_blue_balloon(blueImg)
+
+        #searchR[1].show(Color.RED)
+        #time.sleep(2)
+        #searchG[1].show(Color.GREEN)
+        #time.sleep(4)
+        #searchB[1].show(Color.BLUE)
+        #time.sleep(6)
+
+        #while True:
+        #    pass
+
+        #img = BalloonVision.get_image()
         #while True:
         #    img = Image("http://raspberrypi:8080/?action=snapshot")
-        #    search = BalloonVision.find_blue_balloon(img)
+
+        #    search = BalloonVision.find_balloon("green", img)
+
         #    if search[0]:
         #        search[1].show()
         pass
@@ -39,17 +59,17 @@ class CardState:
         blueBlob = None
         blobs = None
 
-        #img = BalloonVision.get_image()
+        img = BalloonVision.get_image()
         #img = Image("C:\\cards\\realCard1.jpg")
-        img = Image("C:\\muur\\card.jpg")
+        #img = Image("C:\\muur\\card.jpg")
         blobs = self.getBlobs(img)
 
         BalloonMode.logger.logevent(CardState.LOGGER_NAME, "Bezig met zoeken", Logger.MESSAGE)
 
         while blobs is False and BalloonMode.alive:
 
-            #img = BalloonVision.get_image()
-            img = Image("C:\\muur\\card.jpg")
+            img = BalloonVision.get_image()
+            #img = Image("C:\\muur\\card.jpg")
             blobs = self.getBlobs(img)
 
 
@@ -66,6 +86,7 @@ class CardState:
 
     def getBlobs(self, img):
         r = img.hueDistance(Color.RED).binarize(18)
+
         redBlobs = r.findBlobs()
 
         if redBlobs is None:
@@ -87,6 +108,7 @@ class CardState:
         redBlob.Name = "red"
 
         g = img.colorDistance((51, 194, 32)).binarize(105)
+
         greenBlobs = g.findBlobs()
 
         if greenBlobs is None:
@@ -105,6 +127,7 @@ class CardState:
 
         if len(goodGreenBlobs) == 0:
             g = img.colorDistance(Color.GREEN).binarize(65)
+
             greenBlobs = g.findBlobs()
 
             if greenBlobs is None:
@@ -123,6 +146,7 @@ class CardState:
         greenBlob.Name = "green"
 
         b = img.hueDistance(Color.BLUE).binarize(70)
+
         blueBlobs = b.findBlobs()
 
         if blueBlobs is None:

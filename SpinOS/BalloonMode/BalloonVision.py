@@ -1,6 +1,7 @@
 __author__ = 'Robert'
 
 from SimpleCV import Image
+import time
 
 
 class BalloonVision:
@@ -46,7 +47,7 @@ class BalloonVision:
                 #filter goede blob
                 for redBlob in redBlobs:
 
-                    if (redBlob.area() > 800 and not redBlob.isSquare(0.10) and redBlob.isCircle(0.40)) or (color_only and redBlob.area() > 800):
+                    if (redBlob.area() > 800 and not redBlob.isSquare(0.10) and redBlob.isCircle(0.40)) or (color_only and redBlob.area() > 20000):
                         goodRedBlobs.append(redBlob)
 
 
@@ -82,7 +83,7 @@ class BalloonVision:
                     break
 
                 for greenBlob in greenBlobs:
-                    if (greenBlob.isCircle(0.40) and greenBlob.area() > 800 and not greenBlob.isSquare(0.10)) or (color_only and greenBlob.area()):
+                    if (greenBlob.isCircle(0.40) and greenBlob.area() > 800 and not greenBlob.isSquare(0.10)) or (color_only and greenBlob.area() > 20000):
                         goodGreenBlobs.append(greenBlob)
 
                 if len(goodGreenBlobs) == 0:
@@ -98,7 +99,7 @@ class BalloonVision:
 
     @staticmethod
     def find_blue_balloon(img, color_only=False):
-        binValues = [115, 120, 125, 130, 135, 140, 145, 150]
+        binValues = [115, 120, 125, 130, 135, 140, 145]
 
         b = img.colorDistance((0,0,255))
 
@@ -116,7 +117,7 @@ class BalloonVision:
                     break
 
                 for blueBlob in blueBlobs:
-                    if (blueBlob.isCircle(0.40) and blueBlob.area() > 800 and not blueBlob.isSquare(0.10)) or (color_only and blueBlob.area() > 800):
+                    if (blueBlob.isCircle(0.40) and blueBlob.area() > 800 and not blueBlob.isSquare(0.10)) or (color_only and blueBlob.area() > 20000):
                         goodBlueBlobs.append(blueBlob)
 
                 if len(goodBlueBlobs) == 0:
