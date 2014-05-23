@@ -51,10 +51,10 @@ class SpinOS:
         self.main_thread = threading.Thread(target=self.run)
         self.main_thread.start()
 
-        #if platform.system() != "Windows":
-        #    from MPU6050 import MPU6050
-        #    self.MPU = MPU6050(SpinOS.logger)
-        #    self.MPU.start()
+        if platform.system() != "Windows":
+            from MPU6050 import MPU6050
+            self.MPU = MPU6050(SpinOS.logger)
+            self.MPU.start()
 
     def run(self):
         try:
@@ -107,7 +107,7 @@ class SpinOS:
                         self.current_mode.set_alive(True)
 
                     elif message[0] == COMMAND.SEND_SENSOR_DATA:
-                        data = "h1:10, h2:5<;>h1:9, h2:5<;>h1:8, h2:9<;>h1:3,h2:10"
+                        data = self.MPU.sensorlogger.get_log()
                         encoded = COMMAND.encode_message(COMMAND.SEND_SENSOR_DATA, data)
                         client.send_message(encoded)
 
