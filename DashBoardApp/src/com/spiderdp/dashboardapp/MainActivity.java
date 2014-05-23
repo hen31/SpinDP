@@ -5,7 +5,6 @@ import java.util.TimerTask;
 
 import android.os.Bundle;
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.app.ActionBar.Tab;
 import android.support.v4.app.FragmentActivity;
@@ -18,7 +17,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 	private ViewPager viewPager;
 	private PagerAdapter mAdapter;
 	private ActionBar actionBar;
-	private String[] tabs = { "Hellings hoek", "Accu spanning", "Log" };
+	private String[] tabs = { "Hellings hoek", "Accu spanning", "Log", "Livestream" };
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

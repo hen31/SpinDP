@@ -4,7 +4,6 @@ import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GraphView.LegendAlign;
 import com.jjoe64.graphview.GraphViewSeries;
 import com.jjoe64.graphview.GraphViewSeries.GraphViewSeriesStyle;
-import com.jjoe64.graphview.GraphViewStyle;
 import com.jjoe64.graphview.LineGraphView;
 
 import android.graphics.Color;
@@ -21,6 +20,7 @@ public class HellingsHoekFragment extends Fragment {
 	private GraphView graphView;
 	private GraphViewSeries series1;
 	private GraphViewSeries series2;
+	private GraphViewSeries series3;
 	
 	@Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -37,27 +37,29 @@ public class HellingsHoekFragment extends Fragment {
 			this.updateChart(data);
 			return;
 		}
-		GraphViewData[] dataHoek1 = new GraphViewData[data.length];
-		GraphViewData[] dataHoek2 = new GraphViewData[data.length];
+		GraphViewData[] dataYaw = new GraphViewData[data.length];
+		GraphViewData[] dataPitch = new GraphViewData[data.length];
+		GraphViewData[] dataRoll = new GraphViewData[data.length];
 		
 		for(int i = 0; i < data.length; i++){
-			String hoek1 = data[i].split("h1:")[1].split(",")[0];
-			String hoek2 = data[i].split("h2:")[1].split(",")[0];
+			String yaw = data[i].split("y:")[1].split(",")[0];
+			String pitch = data[i].split("p:")[1].split(",")[0];
+			String roll = data[i].split("r:")[1].split(",")[0];
 			
-			System.out.println("Hoek1 " +hoek1);
-			System.out.println("Hoek2 " +hoek2);
-			
-			dataHoek1[i] = new GraphViewData(i+1, Double.parseDouble(hoek1));
-			dataHoek2[i] = new GraphViewData(i+1, Double.parseDouble(hoek2));
+			dataYaw[i] = new GraphViewData(i+1, Double.parseDouble(yaw));
+			dataPitch[i] = new GraphViewData(i+1, Double.parseDouble(pitch));
+			dataRoll[i] = new GraphViewData(i+1, Double.parseDouble(roll));
 		}
 
-		series1 = new GraphViewSeries("Hoek 1", new GraphViewSeriesStyle(Color.BLUE, 5), dataHoek1);
-
-		series2 = new GraphViewSeries("Hoek 2", new GraphViewSeriesStyle(Color.BLACK, 5), dataHoek2);
-		 
-		GraphView graphView = new LineGraphView(view.getContext(), "Hellingshoek");
+		series1 = new GraphViewSeries("Yaw", new GraphViewSeriesStyle(Color.RED, 5), dataYaw);
+		series2 = new GraphViewSeries("Pitch", new GraphViewSeriesStyle(Color.GREEN, 5), dataPitch);
+		series3 = new GraphViewSeries("Roll", new GraphViewSeriesStyle(Color.BLUE, 5), dataRoll);
+		
+		
+		graphView = new LineGraphView(view.getContext(), "Hellingshoek");
 		graphView.addSeries(series1); // data
 		graphView.addSeries(series2);
+		graphView.addSeries(series3);
 		
 		graphView.setShowLegend(true);
 		graphView.setLegendAlign(LegendAlign.BOTTOM);
@@ -68,21 +70,22 @@ public class HellingsHoekFragment extends Fragment {
 	}
 	
 	public void updateChart(String[] data){
-		GraphViewData[] dataHoek1 = new GraphViewData[data.length];
-		GraphViewData[] dataHoek2 = new GraphViewData[data.length];
+		GraphViewData[] dataYaw = new GraphViewData[data.length];
+		GraphViewData[] dataPitch = new GraphViewData[data.length];
+		GraphViewData[] dataRoll = new GraphViewData[data.length];
 		
 		for(int i = 0; i < data.length; i++){
-			String hoek1 = data[i].split("h1:")[1].split(",")[0];
-			String hoek2 = data[i].split("h2:")[1].split(",")[0];
+			String yaw = data[i].split("y:")[1].split(",")[0];
+			String pitch = data[i].split("p:")[1].split(",")[0];
+			String roll = data[i].split("r:")[1].split(",")[0];
 			
-			System.out.println("Hoek1 " +hoek1);
-			System.out.println("Hoek2 " +hoek2);
-			
-			dataHoek1[i] = new GraphViewData(i+1, Double.parseDouble(hoek1));
-			dataHoek2[i] = new GraphViewData(i+1, Double.parseDouble(hoek2));
+			dataYaw[i] = new GraphViewData(i+1, Double.parseDouble(yaw));
+			dataPitch[i] = new GraphViewData(i+1, Double.parseDouble(pitch));
+			dataRoll[i] = new GraphViewData(i+1, Double.parseDouble(roll));
 		}
 		
-		series1.resetData(dataHoek1);
-		series2.resetData(dataHoek2);
+		series1.resetData(dataYaw);
+		series2.resetData(dataPitch);
+		series3.resetData(dataRoll);
 	}
 }
