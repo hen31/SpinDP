@@ -61,7 +61,7 @@ class MPU6050(Sensor):
                 # (this lets us immediately read more without waiting for an interrupt)
                 fifoCount -= self.packetSize
 
-                self.sensorlogger.log_waarde("yaw:{0:.3f} pitch:{1:.3f} roll:{2:.3f}".format(sensorData['yaw'], sensorData['pitch'], sensorData['roll']))
+                self.sensorlogger.log_waarde("y:{0:.3f}, p:{1:.3f}, r:{2:.3f}".format(sensorData['yaw'], sensorData['pitch'], sensorData['roll']))
 
             time.sleep(self.interval)
 
