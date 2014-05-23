@@ -60,7 +60,6 @@ class MoveState:
                 BalloonMode.movementHandler.move(0, 100, 0, 0)
                 time.sleep(BalloonMode.movementHandler.TIME_MOVE_ONE_CM * 10)
                 BalloonMode.movementHandler.move(0, 100, 0, 0)
-                pass
 
             else:
                 not_found_count += 1
