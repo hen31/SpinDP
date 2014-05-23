@@ -241,11 +241,11 @@ class MovementHandler:
         aantal_stappen = int(math.fabs(x_dif / 20)) + 1
         if aantal_stappen >15:
             aantal_stappen = 15
-        print(aantal_stappen)
+        #print(aantal_stappen)
         #x = 125
         #y = 150
 
-        print(x_dif)#-150
+        #print(x_dif)#-150
         x_stap = x_dif / aantal_stappen
         y_dif = y - leg.last_y
         #print(y_dif)
@@ -309,7 +309,7 @@ class MovementHandler:
                 if power_move == 0:
                     x_stap = 0
                     y_stap = 0
-                print(x_stap)
+                #print(x_stap)
                 rechtsom = False
                 if degrees_turn <= 180:
                     power_turn = degrees_turn
@@ -356,7 +356,7 @@ class MovementHandler:
                     right_back_y = y_stap - leg_back_y_turn
 
 
-                print(left_front_x)
+                #print(left_front_x)
                 threads = []
                 #print(self.last_x)
 
