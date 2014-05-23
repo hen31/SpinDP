@@ -80,5 +80,5 @@ class Serial(Sensor):
         self.voltage = value
         if self.voltageCounter == 0 or self.voltageCounter == 10:
             self.voltageCounter = 0
-            self.voltagelogger.log_waarde("v:{0:.2f}".format(self.voltage))
+            self.voltagelogger.log_waarde("{0:.2f}".format(self.voltage))
         self.mutex.release()

@@ -115,12 +115,7 @@ class SpinOS:
                         client.send_message(encoded)
 
                     elif message[0] == COMMAND.SEND_ACCU_DATA:
-                        data = ""
-                        from random import randint
-                        for i in xrange(0, 5):
-                            rand = randint(0, 100)
-                            data += `rand` + "<;>"
-                        data += "10"
+                        data = self.serial.voltagelogger.get_log()
                         encoded = COMMAND.encode_message(COMMAND.SEND_ACCU_DATA, data)
                         client.send_message(encoded)
 
