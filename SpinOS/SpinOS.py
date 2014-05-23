@@ -55,6 +55,9 @@ class SpinOS:
             from MPU6050 import MPU6050
             self.MPU = MPU6050(SpinOS.logger)
             self.MPU.start()
+            from Serial import Serial
+            self.serial = Serial(SpinOS.logger)
+            self.serial.start()
 
     def run(self):
         try:
@@ -114,7 +117,7 @@ class SpinOS:
                     elif message[0] == COMMAND.SEND_ACCU_DATA:
                         data = ""
                         from random import randint
-                        for i in xrange(0, 500):
+                        for i in xrange(0, 5):
                             rand = randint(0, 100)
                             data += `rand` + "<;>"
                         data += "10"
