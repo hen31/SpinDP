@@ -16,7 +16,7 @@ class SensorLogger:
 
     def log_waarde(self, waarde):
         self.mutex.acquire()
-        self.log_file.write(strftime("%H:%M:%S") + " - " + str(waarde) + "<;>")
+        self.log_file.write(str(waarde) + "<;>")
         self.mutex.release()
         self.logger.logevent(self.sensor_name,   "waarde : " + str(waarde), self.logger.SENSOR_VALUES)
 
