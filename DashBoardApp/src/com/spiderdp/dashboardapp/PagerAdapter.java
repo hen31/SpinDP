@@ -8,6 +8,7 @@ public class PagerAdapter extends FragmentPagerAdapter {
 	public static HellingsHoekFragment hellingsHoek = new HellingsHoekFragment();
 	public static AccuSpanningFragment accuSpanning = new AccuSpanningFragment();
 	public static LogFragment log = new LogFragment();
+	public static LivestreamFragment livestream = new LivestreamFragment();
 	
     public PagerAdapter(FragmentManager fm) {
         super(fm);
@@ -18,14 +19,13 @@ public class PagerAdapter extends FragmentPagerAdapter {
  
         switch (index) {
         case 0:
-            // Top Rated fragment activity
             return PagerAdapter.hellingsHoek;
         case 1:
-            // Games fragment activity
             return PagerAdapter.accuSpanning;
         case 2:
-            // Movies fragment activity
             return PagerAdapter.log;
+        case 3:
+        	return PagerAdapter.livestream;
         }
  
         return null;
@@ -34,6 +34,6 @@ public class PagerAdapter extends FragmentPagerAdapter {
     @Override
     public int getCount() {
         // get item count - equal to number of tabs
-        return 3;
+        return 4;
     }
 }

@@ -1,6 +1,7 @@
 import threading
 import time
 import math
+from SensorLogger import SensorLogger
 
 from Sensor import Sensor
 from PyComms.mpu6050base import MPU6050BASE
@@ -16,8 +17,7 @@ class MPU6050(Sensor):
 
     def __init__(self, logger):
         super(MPU6050, self).__init__(logger)
-        self.thread = threading.Thread(target=self.run)
-        self.mutex = threading.Semaphore(1)
+        self.sensorlogger = SensorLogger('MPU6050',logger)
         self.mpu = MPU6050BASE()
         self.mpu.dmpInitialize()
         self.mpu.setDMPEnabled(True)

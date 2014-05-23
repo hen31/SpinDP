@@ -36,8 +36,7 @@ public class ServerClient {
 	{
 		if(instance == null)
 		{
-			instance = new ServerClient("10.0.0.15");
-			//instance = new ServerClient("10.0.0.9");
+			instance = new ServerClient("192.168.10.1");
 		}
 		return instance;
 	}
@@ -45,8 +44,7 @@ public class ServerClient {
 	{
 		if(instance == null)
 		{
-			instance = new ServerClient("10.0.0.15");
-			//instance = new ServerClient("10.0.0.9");
+			instance = new ServerClient("192.168.10.1");
 		}
 		instance.activity = activity;
 		return instance;
@@ -102,8 +100,8 @@ public class ServerClient {
             try {
                 if (input.ready()) {
                 	final	String s = input.readLine();
-						    System.out.println("message from ip:" + client.getRemoteSocketAddress());
-						    System.out.println(s);
+						    //System.out.println("message from ip:" + client.getRemoteSocketAddress());
+						    //System.out.println(s);
 						    this.handleLine(s);
                 }
             } catch (IOException ex) {

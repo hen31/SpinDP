@@ -55,6 +55,9 @@ class SpinOS:
             from MPU6050 import MPU6050
             self.MPU = MPU6050(SpinOS.logger)
             self.MPU.start()
+            from Serial import Serial
+            self.serial = Serial(SpinOS.logger)
+            self.serial.start()
 
     def run(self):
         try:
@@ -112,12 +115,7 @@ class SpinOS:
                         client.send_message(encoded)
 
                     elif message[0] == COMMAND.SEND_ACCU_DATA:
-                        data = ""
-                        from random import randint
-                        for i in xrange(0, 500):
-                            rand = randint(0, 100)
-                            data += `rand` + "<;>"
-                        data += "10"
+                        data = self.serial.voltagelogger.get_log()
                         encoded = COMMAND.encode_message(COMMAND.SEND_ACCU_DATA, data)
                         client.send_message(encoded)
 

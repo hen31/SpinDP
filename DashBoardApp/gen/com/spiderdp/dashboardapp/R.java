@@ -26,16 +26,18 @@ public final class R {
     public static final class id {
         public static final int accu_spanning_graph=0x7f050002;
         public static final int hellings_hoek_graph=0x7f050004;
-        public static final int log_text_view=0x7f050005;
+        public static final int log_text_view=0x7f050006;
         public static final int menu_connect=0x7f050000;
         public static final int menu_get_data=0x7f050001;
         public static final int pager=0x7f050003;
+        public static final int webView=0x7f050005;
     }
     public static final class layout {
         public static final int accu_spanning_fragment=0x7f030000;
         public static final int activity_main=0x7f030001;
         public static final int hellings_hoek_fragment=0x7f030002;
-        public static final int log_fragment=0x7f030003;
+        public static final int livestream_fragment=0x7f030003;
+        public static final int log_fragment=0x7f030004;
     }
     public static final class menu {
         public static final int main=0x7f080000;
