@@ -28,43 +28,45 @@ class MPU6050(Sensor):
 
     def run(self):
         while self.alive:
-            # Get INT_STATUS byte
-            mpuIntStatus = self.mpu.getIntStatus()
-            if mpuIntStatus >= 2: # check for DMP data ready interrupt (this should happen frequently)
-                # get current FIFO count
-                fifoCount = self.mpu.getFIFOCount()
-
-                # check for overflow (this should never happen unless our code is too inefficient)
-                if fifoCount == 1024:
-                    # reset so we can continue cleanly
-                    self.mpu.resetFIFO()
-                    # print('FIFO overflow!')
-
-
-                # wait for correct available data length, should be a VERY short wait
-                fifoCount = self.mpu.getFIFOCount()
-                while fifoCount < self.packetSize:
-                    fifoCount = self.mpu.getFIFOCount()
-
-                result = self.mpu.getFIFOBytes(self.packetSize)
-                q = self.mpu.dmpGetQuaternion(result)
-                g = self.mpu.dmpGetGravity(q)
-                ypr = self.mpu.dmpGetYawPitchRoll(q, g)
-
-                sensorData = {'yaw': ypr['yaw'] * 180 / math.pi, 'pitch': ypr['pitch'] * 180 / math.pi, 'roll': ypr['roll'] * 180 / math.pi}
-                self.setValue(sensorData)
-
-                # print(ypr['yaw'] * 180 / math.pi),
-                # print(ypr['pitch'] * 180 / math.pi),
-                # print(ypr['roll'] * 180 / math.pi)
-
-                # track FIFO count here in case there is > 1 packet available
-                # (this lets us immediately read more without waiting for an interrupt)
-                fifoCount -= self.packetSize
-
-                self.sensorlogger.log_waarde("y:{0:.3f}, p:{1:.3f}, r:{2:.3f}".format(sensorData['yaw'], sensorData['pitch'], sensorData['roll']))
-
+            self.getValues()
             time.sleep(self.interval)
+
+    def getValues(self):
+        # Get INT_STATUS byte
+        mpuIntStatus = self.mpu.getIntStatus()
+        if mpuIntStatus >= 2: # check for DMP data ready interrupt (this should happen frequently)
+            # get current FIFO count
+            fifoCount = self.mpu.getFIFOCount()
+
+            # check for overflow (this should never happen unless our code is too inefficient)
+            if fifoCount == 1024:
+                # reset so we can continue cleanly
+                self.mpu.resetFIFO()
+                # print('FIFO overflow!')
+
+
+            # wait for correct available data length, should be a VERY short wait
+            fifoCount = self.mpu.getFIFOCount()
+            while fifoCount < self.packetSize:
+                fifoCount = self.mpu.getFIFOCount()
+
+            result = self.mpu.getFIFOBytes(self.packetSize)
+            q = self.mpu.dmpGetQuaternion(result)
+            g = self.mpu.dmpGetGravity(q)
+            ypr = self.mpu.dmpGetYawPitchRoll(q, g)
+
+            sensorData = {'yaw': ypr['yaw'] * 180 / math.pi, 'pitch': ypr['pitch'] * 180 / math.pi, 'roll': ypr['roll'] * 180 / math.pi}
+            self.setValue(sensorData)
+
+            # print(ypr['yaw'] * 180 / math.pi),
+            # print(ypr['pitch'] * 180 / math.pi),
+            # print(ypr['roll'] * 180 / math.pi)
+
+            # track FIFO count here in case there is > 1 packet available
+            # (this lets us immediately read more without waiting for an interrupt)
+            fifoCount -= self.packetSize
+
+            self.sensorlogger.log_waarde("y:{0:.3f}, p:{1:.3f}, r:{2:.3f}".format(sensorData['yaw'], sensorData['pitch'], sensorData['roll']))
 
     def stop(self):
         self.alive = False

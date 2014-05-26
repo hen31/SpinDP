@@ -25,24 +25,27 @@ class Serial(Sensor):
 
     def run(self):
         while self.alive:
-            response = self.ser.readline()
-            response = response.decode('ascii')
-            if len(response) > 2:
-                response = response.replace("\r\n","")
-                response = response.replace("\x00","")
-                response = response.replace("n'","")
-                response = response.replace("'","")
-                response = int(response)
-                if(response >= 2000 and response < 2500):
-                    sensor1 = response - 2000
-                    self.setSensor1(sensor1)
-                elif(response >= 2500 and response < 3000):
-                    sensor2 = response - 2500
-                    self.setSensor2(sensor2)
-                else:
-                    voltage = float(response) / float(100)
-                    self.setVoltage(voltage)
+            self.getValues()
             time.sleep(self.interval)
+
+    def getValues(self):
+        response = self.ser.readline()
+        response = response.decode('ascii')
+        if len(response) > 2:
+            response = response.replace("\r\n","")
+            response = response.replace("\x00","")
+            response = response.replace("n'","")
+            response = response.replace("'","")
+            response = int(response)
+            if(response >= 2000 and response < 2500):
+                sensor1 = response - 2000
+                self.setSensor1(sensor1)
+            elif(response >= 2500 and response < 3000):
+                sensor2 = response - 2500
+                self.setSensor2(sensor2)
+            else:
+                voltage = float(response) / float(100)
+                self.setVoltage(voltage)
 
     def stop(self):
         self.alive = False
