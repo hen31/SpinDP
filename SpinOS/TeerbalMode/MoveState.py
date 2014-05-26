@@ -25,7 +25,8 @@ class MoveState:
         gevonden = False
         if found:
             while TeerbalMode.alive and not gevonden:
-                gevonden = TeerbalVision.find_teerbal(foto_array[index])
+                (gevonden, buren) = TeerbalVision.find_teerbal(foto_array[index], True)
+
                 index+=1
                 if gevonden:
                     self.check_duplicate(gevonden)
@@ -105,7 +106,7 @@ class MoveState:
             self.pos_list.append(Coordinate(self.x,self.y,found,self.facing))
             self.turn_right()
             self.turn_right()
-            print self.aantal_stappen
+            #print self.aantal_stappen
             self.walk_forward(found)
             self.walk_back()
         else:

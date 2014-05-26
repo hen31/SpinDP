@@ -8,11 +8,6 @@ __author__ = 'Jeroen'
 
 class SearchState:
 
-    LEFT_X = 170
-    LEFT_Y = 0
-    RIGHT_X = 470
-    RIGHT_Y= 480
-
     def __init__(self):
         self.index = 0
 
@@ -23,11 +18,15 @@ class SearchState:
         while aantal_gevonden != 3:
             if TeerbalMode.alive == True:
                 array = TeerbalVision.foto_array()
+                print "AANTALGEVONDE:{}".format(aantal_gevonden)
+                print "KOLOM:{}".format(self.index)
                 found_row = self.checkRij(array[self.index])
                 if found_row == True:
+                    #print self.checkRij(array[self.index])
                     aantal_gevonden +=1
                     nextState.doe_stap(found_row, array[self.index])
                 else:
+                    print found_row
                     nextState.doe_stap(found_row, array[self.index])
                 self.index +=1
         for e in nextState.pos_list:
@@ -35,8 +34,8 @@ class SearchState:
 
     def checkRij(self,imgpath):
         index = 0
-        while index != len(imgpath):
-            if TeerbalVision.find_teerbal(imgpath[index]):
+        while index < len(imgpath):
+            if TeerbalVision.find_teerbal(imgpath[index], False):
                 return True
             index+=1
         return False

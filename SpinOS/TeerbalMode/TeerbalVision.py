@@ -21,15 +21,32 @@ class TeerbalVision:
         max_y = TeerbalVision.find_top(image)
         bin_image = image.colorDistance(Color.BLACK).binarize()
         blobs = bin_image.findBlobs(minsize=8000)
-        blobs = blobs.inside((180,max_y,450,480))
-        print blobs
+        inside_blobs = blobs.inside((180,max_y,450,480))
+        print inside_blobs
+        overlap_blobs = []
 
-        if blobs:
-            if check_for_neigbours:
-                blobs.overlaps()
-            else:
-                return True
+
+        for e in blobs:
+            if (e.x - e.width()/2) < 180 and e.x + e.width()/2>180 and e.y - e.height()/2 > max_y:
+                overlap_blobs.append(e)
+
+        #return een bool list als er op buren moet worden gecontroleerd,
+        #anders alleen een bool die aangeefrt of er een teerbal is gevonden
+        if check_for_neigbours:
+            if inside_blobs:
+                return (True,False)
+            elif overlap_blobs:
+                return (True,True)
+            #er zijn geen teerballen gevonden
+            return (False,False)
+        #er word niet gekeken of er buren zijn
+        if inside_blobs:
+            return True
+        elif overlap_blobs:
+            return True
+        #er zijn geen teerballen gevonden
         return False
+
 
     @staticmethod
     def foto_array():
@@ -38,7 +55,7 @@ class TeerbalVision:
             for x in xrange(0,len(simulateArray[y])):
                 simulateArray[y][x] = e = os.path.join(os.path.dirname(__file__) + "/TestImages",'vooruit.png')
 
-        simulateArray[0][5] = os.path.join(os.path.dirname(__file__) + "/TestImages",'boven rood.jpg')
-        simulateArray[1][5] = os.path.join(os.path.dirname(__file__) + "/TestImages",'boven rood.jpg')
-        simulateArray[4][14] = os.path.join(os.path.dirname(__file__) + "/TestImages",'boven rood.jpg')
+        simulateArray[0][2] = os.path.join(os.path.dirname(__file__) + "/TestImages",'boven rood.jpg')
+        simulateArray[1][2] = os.path.join(os.path.dirname(__file__) + "/TestImages",'boven rood.jpg')
+        simulateArray[3][3] = os.path.join(os.path.dirname(__file__) + "/TestImages",'boven rood.jpg')
         return simulateArray
