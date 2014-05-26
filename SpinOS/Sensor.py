@@ -10,7 +10,6 @@ class Sensor(threading.Thread):
     def __init__(self, logger):
         self.logger = logger
         self.thread = threading.Thread(target=self.run)
-        self.mutex = threading.Semaphore(1)
 
     def run(self):
         pass

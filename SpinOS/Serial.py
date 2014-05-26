@@ -14,11 +14,14 @@ class Serial(Sensor):
     voltage = 0
     voltageCounter = 0
 
-    def __init__(self, logger):
+    def __init__(self, logger, device):
         super(Serial, self).__init__(logger)
         self.voltagelogger = SensorLogger('Voltage',logger)
-        self.ser = serial.Serial("/dev/ttyUSB0", baudrate=9600, timeout=3.0)
+        self.ser = serial.Serial(device, baudrate=9600, timeout=3.0)
         self.ser.flushInput()
+        self.mutex1 = threading.Semaphore(1)
+        self.mutex2 = threading.Semaphore(1)
+        self.mutexVoltage = threading.Semaphore(1)
 
     def run(self):
         while self.alive:
@@ -48,37 +51,37 @@ class Serial(Sensor):
         self.thread.start()
 
     def getSensor1(self):
-        self.mutex.acquire()
+        self.mutex1.acquire()
         value = self.sensor1
-        self.mutex.release()
+        self.mutex1.release()
         return value
 
     def setSensor1(self, value):
-        self.mutex.acquire()
+        self.mutex1.acquire()
         self.sensor1 = value
-        self.mutex.release()
+        self.mutex1.release()
 
     def getSensor2(self):
-        self.mutex.acquire()
+        self.mutex2.acquire()
         value = self.sensor2
-        self.mutex.release()
+        self.mutex2.release()
         return value
 
     def setSensor2(self, value):
-        self.mutex.acquire()
+        self.mutex2.acquire()
         self.sensor2 = value
-        self.mutex.release()
+        self.mutex2.release()
 
     def getVoltage(self):
-        self.mutex.acquire()
+        self.mutexVoltage.acquire()
         value = self.voltage
-        self.mutex.release()
+        self.mutexVoltage.release()
         return value
 
     def setVoltage(self, value):
-        self.mutex.acquire()
+        self.mutexVoltage.acquire()
         self.voltage = value
         if self.voltageCounter == 0 or self.voltageCounter == 10:
             self.voltageCounter = 0
             self.voltagelogger.log_waarde("{0:.2f}".format(self.voltage))
-        self.mutex.release()
+        self.mutexVoltage.release()
