@@ -54,15 +54,19 @@ class SpinOS:
         if platform.system() != "Windows":
             from MPU6050 import MPU6050
             self.MPU = MPU6050(SpinOS.logger)
-            self.MPU.start()
+            #self.MPU.start()
             import os.path
             for i in xrange(0, 3):
-                device = "/dev/ttyUSB" + str(i)
-                if os.path.isfile(device):
+                serial_device = "/dev/ttyUSB" + str(i)
+                if os.path.isfile(serial_device):
                     from Serial import Serial
-                    self.serial = Serial(SpinOS.logger, device)
-                    self.serial.start()
+                    self.serial = Serial(SpinOS.logger, serial_device)
+                    #self.serial.start()
+                    self.serial_device = serial_device
                     break
+            self.sensor_running = True
+            self.sensor_thread = threading.Thread(target=self.runSensors())
+            self.sensor_thread.start()
 
     def run(self):
         try:
@@ -133,6 +137,13 @@ class SpinOS:
             self.shutdown()
 
                 #TODO act on message
+
+    def runSensors(self):
+        while self.sensor_running and self.running:
+            self.mpu.getValues()
+            if self.serial_device:
+                self.serial.getValues()
+            time.sleep(1)
 
     def shutdown(self):
         self.server.stop()
