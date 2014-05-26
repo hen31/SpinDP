@@ -55,9 +55,14 @@ class SpinOS:
             from MPU6050 import MPU6050
             self.MPU = MPU6050(SpinOS.logger)
             self.MPU.start()
-            from Serial import Serial
-            self.serial = Serial(SpinOS.logger)
-            self.serial.start()
+            import os.path
+            for i in xrange(0, 3):
+                device = "/dev/ttyUSB" + str(i)
+                if os.path.isfile(device):
+                    from Serial import Serial
+                    self.serial = Serial(SpinOS.logger, device)
+                    self.serial.start()
+                    break
 
     def run(self):
         try:

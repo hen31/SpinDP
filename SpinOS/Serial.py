@@ -14,10 +14,10 @@ class Serial(Sensor):
     voltage = 0
     voltageCounter = 0
 
-    def __init__(self, logger):
+    def __init__(self, logger, device):
         super(Serial, self).__init__(logger)
         self.voltagelogger = SensorLogger('Voltage',logger)
-        self.ser = serial.Serial("/dev/ttyUSB0", baudrate=9600, timeout=3.0)
+        self.ser = serial.Serial(device, baudrate=9600, timeout=3.0)
         self.ser.flushInput()
         self.mutex1 = threading.Semaphore(1)
         self.mutex2 = threading.Semaphore(1)
