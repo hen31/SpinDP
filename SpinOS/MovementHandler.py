@@ -169,22 +169,13 @@ class MovementHandler:
             time.sleep(2)
 
     def raise_leg(self, leg):
-        print("raise leg")
         if leg.leg_number >=1 and leg.leg_number<=3:
             self.group2_mutex.acquire()
         if leg.leg_number >=4 and leg.leg_number<=6:
             self.group_mutex.acquire()
-        alpha, beta, gamma = self.get_angles(leg.last_x, leg.last_y, leg.last_z)
+        leg.set_height(leg.get_height() + MovementHandler.raise_leg_angle )
 
-        dif_alpha = (leg.get_height() - (alpha + MovementHandler.raise_leg_angle))
-        dif_gamma = (leg.get_hip() - gamma)
-        dif_beta = (leg.get_knee() - beta)
-        leg.set_height(alpha + MovementHandler.raise_leg_angle )
-        leg.set_hip(gamma)
-        leg.set_knee(beta)
-        max_dif = max([dif_alpha, dif_gamma, dif_beta])
-
-        excution_time=max_dif * MovementHandler.time_per_degrees
+        excution_time=MovementHandler.raise_leg_angle * MovementHandler.time_per_degrees
         excution_time = math.fabs(excution_time)
         if excution_time < MovementHandler.min_exec_time:
             excution_time = MovementHandler.min_exec_time
@@ -193,7 +184,6 @@ class MovementHandler:
 
 
     def lower_leg(self, leg):
-        print("lower leg")
         alpha, beta, gamma = self.get_angles(leg.last_x, leg.last_y, leg.last_z)
 
         dif_alpha = (leg.get_height() - (alpha - MovementHandler.raise_leg_angle ))
@@ -217,7 +207,6 @@ class MovementHandler:
 
 
     def move_leg_lucht(self, leg, x , y, z):
-        print("move lucht")
         x_dif = x  - leg.last_x
         y_dif = y - leg.last_y
         alpha, beta, gamma = self.get_angles(x_dif+ leg.last_x, y_dif+leg.last_y, z)
@@ -237,15 +226,14 @@ class MovementHandler:
 
         time.sleep(excution_time)
         #time.sleep(MovementHandler.min_exec_time)
-        leg.last_y += y_dif
-        leg.last_x += x_dif
+        leg.last_y = y
+        leg.last_x = x
         leg.last_z = z
-		
+
 
 
 
     def move_leg_stilstaand(self, leg, x , y, z):
-        print("move stilstaand")
         x_dif = x  - leg.last_x
         aantal_stappen = int(math.fabs(x_dif / 20)) + 1
         if aantal_stappen >15:
@@ -259,8 +247,18 @@ class MovementHandler:
         y_dif = y - leg.last_y
         #print(y_dif)
         y_stap =  y_dif /aantal_stappen
+        aantal_stappen_y = int(math.fabs(x_dif / 20)) + 1
+        if aantal_stappen_y >15:
+            aantal_stappen_y = 15
+        if aantal_stappen_y > aantal_stappen:
+            aantal_stappen = aantal_stappen_y
         #print((leg.last_x +x_dif))
         for i in range(1, aantal_stappen + 1):
+            if y_stap * i > y_dif:
+                y_stap = 0
+            if x_stap * i > x_dif:
+                x_dif = 0
+
             alpha, beta, gamma = self.get_angles((x_stap * i)+ leg.last_x, (y_stap * i)+leg.last_y, z)
             #print(alpha)
             #print(beta)
@@ -281,8 +279,8 @@ class MovementHandler:
 
             time.sleep(excution_time)
         #time.sleep(MovementHandler.min_exec_time)
-        leg.last_y += y_dif
-        leg.last_x += x_dif
+        leg.last_y = y
+        leg.last_x = x
         leg.last_z = z
 
 
@@ -310,16 +308,13 @@ class MovementHandler:
                 z_mm_back -= (float(MovementHandler.max_height_mm - mm_height) / float(100)) * y
 
                 rad = math.radians(float(degrees_move))
-                #print("rad")
-                #print(rad)
-                #print("degree")
-                #print(degrees_move)
+
                 y_stap = math.sin(rad) * MovementHandler.stap_uitslag_y
                 x_stap = math.cos(rad) * MovementHandler.stap_uitslag
                 if power_move == 0:
                     x_stap = 0
                     y_stap = 0
-                #print(x_stap)
+
                 rechtsom = False
                 if degrees_turn <= 180:
                     power_turn = degrees_turn
@@ -365,14 +360,8 @@ class MovementHandler:
                     right_back_x = x_stap - leg_back_x_turn
                     right_back_y = y_stap - leg_back_y_turn
 
-
-                #print(left_front_x)
                 threads = []
-                #print(self.last_x)
 
-                new_x = self.legs[0].normal_x + left_front_x
-
-                new_y = self.legs[0].normal_y + left_front_y
                 # groep 1: 1,5,3
                 # groep 2: 4,2,6
                 if self.stand_gait == 1:
@@ -387,9 +376,9 @@ class MovementHandler:
                 elif self.stand_gait == 2:
                     poot1_thread = threading.Thread(target=self.move_leg_lucht, args=(self.legs[0],self.legs[0].normal_x + left_front_x,self.legs[0].normal_y + left_front_y, z_mm_front ))
                     threads.append(poot1_thread)
-                    poot3_thread = threading.Thread(target=self.move_leg_lucht, args=(self.legs[2], self.legs[2].normal_x + left_back_x,self.legs[2].normal_y + left_back_y, z_mm_middle))
+                    poot3_thread = threading.Thread(target=self.move_leg_lucht, args=(self.legs[2], self.legs[2].normal_x + left_back_x,self.legs[2].normal_y + left_back_y, z_mm_back))
                     threads.append(poot3_thread)
-                    poot5_thread = threading.Thread(target=self.move_leg_lucht, args=(self.legs[4], self.legs[4].normal_x - right_middle_x,self.legs[4].normal_y + right_middle_y, z_mm_back))
+                    poot5_thread = threading.Thread(target=self.move_leg_lucht, args=(self.legs[4], self.legs[4].normal_x - right_middle_x,self.legs[4].normal_y + right_middle_y, z_mm_middle))
                     threads.append(poot5_thread)
                     self.stand_gait += 1
 
@@ -413,11 +402,11 @@ class MovementHandler:
                     self.stand_gait += 2
                 elif self.stand_gait == 5:
                     #poten 2 naar voren
-                    poot2_thread = threading.Thread(target=self.move_leg_lucht, args=(self.legs[1],self.legs[0].normal_x + left_front_x,self.legs[0].normal_y + left_front_y, z_mm_middle))
+                    poot2_thread = threading.Thread(target=self.move_leg_lucht, args=(self.legs[1], self.legs[1].normal_x - left_middle_x, self.legs[1].normal_y + left_middle_y, z_mm_middle))
                     threads.append(poot2_thread)
-                    poot4_thread = threading.Thread(target=self.move_leg_lucht, args=(self.legs[3], self.legs[2].normal_x + left_back_x,self.legs[2].normal_y + left_back_y, z_mm_front))
+                    poot4_thread = threading.Thread(target=self.move_leg_lucht, args=(self.legs[3], self.legs[3].normal_x + right_front_x,self.legs[3].normal_y + right_front_y, z_mm_front))
                     threads.append(poot4_thread)
-                    poot6_thread = threading.Thread(target=self.move_leg_lucht, args=(self.legs[5], self.legs[4].normal_x - right_middle_x,self.legs[4].normal_y + right_middle_y, z_mm_back))
+                    poot6_thread = threading.Thread(target=self.move_leg_lucht, args=(self.legs[5], self.legs[5].normal_x + right_back_x,self.legs[5].normal_y + right_back_y, z_mm_back))
                     threads.append(poot6_thread)
 
                     #poten 1 naar nul stand
@@ -447,32 +436,31 @@ class MovementHandler:
                     self.stand_gait += 1
                 elif self.stand_gait == 7:
                     #poten 2 nul stand
-                    poot2_thread = threading.Thread(target=self.move_leg_stilstaand, args=(self.legs[1], self.legs[1].normal_x, self.legs[1].normal_y, z_mm_middle  ))
+                    poot2_thread = threading.Thread(target=self.move_leg_stilstaand, args=(self.legs[1], self.legs[1].normal_x, self.legs[1].normal_y, z_mm_middle))
                     threads.append(poot2_thread)
-                    poot4_thread = threading.Thread(target=self.move_leg_stilstaand, args=(self.legs[3], self.legs[3].normal_x, self.legs[3].normal_y, z_mm_front  ))
+                    poot4_thread = threading.Thread(target=self.move_leg_stilstaand, args=(self.legs[3], self.legs[3].normal_x, self.legs[3].normal_y, z_mm_front))
                     threads.append(poot4_thread)
-                    poot6_thread = threading.Thread(target=self.move_leg_stilstaand, args=(self.legs[5], self.legs[5].normal_x, self.legs[5].normal_y, z_mm_back  ))
+                    poot6_thread = threading.Thread(target=self.move_leg_stilstaand, args=(self.legs[5], self.legs[5].normal_x, self.legs[5].normal_y, z_mm_back))
                     threads.append(poot6_thread)
 
                     #poten 1 naar voren
-                    poot1_thread = threading.Thread(target=self.move_leg_lucht, args=(self.legs[0],self.legs[0].normal_x + left_front_x,self.legs[0].normal_y + left_front_y, z_mm_front))
+                    poot1_thread = threading.Thread(target=self.move_leg_lucht, args=(self.legs[0],self.legs[0].normal_x - left_front_x,self.legs[0].normal_y + left_front_y, z_mm_front))
                     threads.append(poot1_thread)
-                    poot3_thread = threading.Thread(target=self.move_leg_lucht, args=(self.legs[2], self.legs[2].normal_x + left_back_x,self.legs[2].normal_y + left_back_y, z_mm_middle ))
+                    poot3_thread = threading.Thread(target=self.move_leg_lucht, args=(self.legs[2], self.legs[2].normal_x + right_middle_x,self.legs[2].normal_y + right_middle_y, z_mm_middle ))
                     threads.append(poot3_thread)
-                    poot5_thread = threading.Thread(target=self.move_leg_lucht, args=(self.legs[4], self.legs[4].normal_x - right_middle_x,self.legs[4].normal_y + right_middle_y, z_mm_back))
+                    poot5_thread = threading.Thread(target=self.move_leg_lucht, args=(self.legs[4], self.legs[4].normal_x + right_back_x,self.legs[4].normal_y + right_back_y, z_mm_back))
                     threads.append(poot5_thread)
                     self.stand_gait = 3
 
 
                 for t in threads:
                     t.start()
-                
-                print("start")
 
                 for t in threads:
                     t.join()
-                print("join")
+
             self.last_height = height
+            time.sleep(0.1)
 
 
 
