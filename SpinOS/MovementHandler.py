@@ -70,7 +70,7 @@ class MovementHandler:
     def __init__(self):
         self.pwm = PWM(0x40)                # PWM for the first servo controller
         self.pwm.setPWMFreq(MovementHandler.PWM_FREQ)    # Set frequency to 50 Hz
-        self.pwm2 = PWM(0x41)               # PWM for the first servo controller
+        self.pwm2 = PWM(0x46)               # PWM for the first servo controller
         self.pwm2.setPWMFreq(MovementHandler.PWM_FREQ_1)   # Set frequency to 50 Hz
         self.legs = [Leg(1, self.pwm), Leg(2, self.pwm), Leg(3, self.pwm), Leg(4, self.pwm2), Leg(5, self.pwm2), Leg(6, self.pwm2)]
         self.move_degrees = 0

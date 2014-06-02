@@ -11,6 +11,7 @@ class ServerClient:
     ANDROID_CONTROLLER = 2
     GAMEPAD_CONTROLLER = 3
 
+    #serverclient aanmaken met socket en adres
     def __init__(self, client_socket, adress):
         self.client_socket = client_socket
         self.adress = adress
@@ -21,11 +22,12 @@ class ServerClient:
         self.listen_thread = threading.Thread(target=self.run)
         self.listen_thread.start()
 
+    #run methode die blijft lopen
+    #worden commando's ontvangen
     def run(self):
         while self.alive:
             time.sleep(0.2)
             f = self.client_socket.makefile()
-            #print("file made")
             l = f.readline()
             l = l.replace("\n", "")
             command_recieved = COMMAND.decode_message(l)
@@ -34,12 +36,14 @@ class ServerClient:
             self.mutex.release()
             self.send_message(COMMAND.encode_message(COMMAND.RECIEVED, [command_recieved[0]]))
 
+    #bericht sturen message is een string met als format: command<;>parameter1<;>parameter2
     def send_message(self, message):
         try:
             self.client_socket.send(message)
         except:
             a=0
 
+    #messages van deze client ophalen
     def recieve_messages(self):
         self.mutex.acquire()
         messagescopy = self.messages[:]
@@ -47,5 +51,6 @@ class ServerClient:
         self.mutex.release()
         return messagescopy
 
+    #alive op false zetten zodat thread ophoudt
     def stop(self):
         self.alive = False

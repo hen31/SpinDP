@@ -17,13 +17,16 @@ class PotenHoog:
         #3 en 4
         poten = [[1, 6], [2, 5], [3, 4]]
         for poot in poten:
+            DanceMode.movementHandler.legs[poot[0]].set_knee(0)
+            time.sleep(0.5)
             DanceMode.movementHandler.legs[poot[0]].set_hip(0)
             DanceMode.movementHandler.legs[poot[0]].set_height(0)
-            DanceMode.movementHandler.legs[poot[0]].set_knee(0)
 
+            DanceMode.movementHandler.legs[poot[1]].set_knee(0)
+            time.sleep(0.5)
             DanceMode.movementHandler.legs[poot[1]].set_hip(0)
             DanceMode.movementHandler.legs[poot[1]].set_height(0)
-            DanceMode.movementHandler.legs[poot[1]].set_knee(0)
+
             time.sleep(3)
 
             a,b,g = DanceMode.movementHandler.get_angles(DanceMode.movementHandler.legs[poot[0]].normal_x, DanceMode.movementHandler.legs[poot[0]].normal_y, DanceMode.movementHandler.legs[poot[0]].normal_z)

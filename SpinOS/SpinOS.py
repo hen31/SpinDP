@@ -55,8 +55,8 @@ class SpinOS:
             self.serial_device = None
             for i in xrange(0, 3):
                 serial_device = "/dev/ttyUSB" + str(i)
-				
-                if os.path.isfile(serial_device):
+                if os.path.exists(serial_device):
+                    print("runSensors")
                     from Serial import Serial
                     self.serial = Serial(SpinOS.logger, serial_device)
                     #self.serial.start()
@@ -108,7 +108,7 @@ class SpinOS:
                         self.mode = "balloon mode"
                         #set mode naar balloon mode
                         SpinOS.logger.logevent("SPINOS", "Mode set to " + self.mode, Logger.MESSAGE)
-                        self.current_mode = BalloonMode(self.movementHandler, self.logger)
+                        self.current_mode = BalloonMode(self.movementHandler, self.logger, self.serial)
                         self.current_mode.alive = True
                     elif message[0] == COMMAND.TO_TEERBAL_MODE:
                         #huidige mode alive false zodat threads stoppen
@@ -148,7 +148,8 @@ class SpinOS:
     #loop voor het ophalen van sensor waarden
     def runSensors(self):
         while self.sensor_running and self.running:
-            self.MPU.getValues()
+            if self.MPU:
+                self.MPU.getValues()
             if self.serial_device:
                 self.serial.getValues()
             time.sleep(1)

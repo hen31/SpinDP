@@ -12,3 +12,17 @@ c:\users\hendrik\documents\visual studio 2012\Projects\SpiderDashboard\SpiderDas
 c:\users\hendrik\documents\visual studio 2012\Projects\SpiderDashboard\SpiderDashboard\obj\Debug\SpiderDashboard.exe
 c:\users\hendrik\documents\visual studio 2012\Projects\SpiderDashboard\SpiderDashboard\obj\Debug\SpiderDashboard.pdb
 c:\users\hendrik\documents\visual studio 2012\Projects\SpiderDashboard\SpiderDashboard\bin\Debug\Renci.SshNet.dll
+C:\Users\Hendrik\Documents\GitHub\SpinDP\SpiderDashboard\SpiderDashboard\bin\Debug\SpiderDashboard.exe.config
+C:\Users\Hendrik\Documents\GitHub\SpinDP\SpiderDashboard\SpiderDashboard\obj\Debug\SpiderDashboard.exe
+C:\Users\Hendrik\Documents\GitHub\SpinDP\SpiderDashboard\SpiderDashboard\obj\Debug\SpiderDashboard.pdb
+C:\Users\Hendrik\Documents\GitHub\SpinDP\SpiderDashboard\SpiderDashboard\bin\Debug\SpiderDashboard.exe
+C:\Users\Hendrik\Documents\GitHub\SpinDP\SpiderDashboard\SpiderDashboard\bin\Debug\SpiderDashboard.pdb
+C:\Users\Hendrik\Documents\GitHub\SpinDP\SpiderDashboard\SpiderDashboard\bin\Debug\Renci.SshNet.dll
+C:\Users\Hendrik\Documents\GitHub\SpinDP\SpiderDashboard\SpiderDashboard\obj\Debug\SpiderDashboard.csprojResolveAssemblyReference.cache
+C:\Users\Hendrik\Documents\GitHub\SpinDP\SpiderDashboard\SpiderDashboard\obj\Debug\MainWindow.baml
+C:\Users\Hendrik\Documents\GitHub\SpinDP\SpiderDashboard\SpiderDashboard\obj\Debug\MainWindow.g.cs
+C:\Users\Hendrik\Documents\GitHub\SpinDP\SpiderDashboard\SpiderDashboard\obj\Debug\App.g.cs
+C:\Users\Hendrik\Documents\GitHub\SpinDP\SpiderDashboard\SpiderDashboard\obj\Debug\SpiderDashboard_MarkupCompile.cache
+C:\Users\Hendrik\Documents\GitHub\SpinDP\SpiderDashboard\SpiderDashboard\obj\Debug\SpiderDashboard.g.resources
+C:\Users\Hendrik\Documents\GitHub\SpinDP\SpiderDashboard\SpiderDashboard\obj\Debug\SpiderDashboard.Properties.Resources.resources
+C:\Users\Hendrik\Documents\GitHub\SpinDP\SpiderDashboard\SpiderDashboard\obj\Debug\SpiderDashboard.csproj.GenerateResource.Cache

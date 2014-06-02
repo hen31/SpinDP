@@ -8,10 +8,11 @@ class BalloonMode:
     logger = None
     movementHandler = None
 
-    def __init__(self, movementHandler, logger):
+    def __init__(self, movementHandler, logger, serial):
         self.set_alive(True)
         BalloonMode.logger = logger
         BalloonMode.movementHandler = movementHandler
+        BalloonMode.serial = serial
         self.thread = threading.Thread(target=self.run)
         self.thread.start()
 
