@@ -33,9 +33,14 @@ class SpinOS:
 
         #logger aanmaken
         self.movementHandler = MovementHandler()
+
+        #server maken op poort 15, omdat ie vrij is
         self.server = Server(15, SpinOS.logger)
+        #server starten
         self.server.startServer()
+        #server aan logger geven
         SpinOS.logger.set_server(self.server)
+
         #running op true zetten
         self.running = True
         #mode op manual zetten
@@ -43,6 +48,7 @@ class SpinOS:
         #server aanmaken en starten
 
         self.current_mode = ManualMode(self.movementHandler, self.logger)
+
         #main loop opstarten
         self.main_thread = threading.Thread(target=self.run)
         self.main_thread.start()
