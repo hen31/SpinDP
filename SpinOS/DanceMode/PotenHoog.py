@@ -12,26 +12,29 @@ class PotenHoog:
         pass
 
     def run(self):
-        # 1 en 6
-        DanceMode.movementHandler.raise_leg(1)
-        DanceMode.movementHandler.raise_leg(6)
-        time.sleep(1)
-        DanceMode.movementHandler.lower_leg(1)
-        DanceMode.movementHandler.lower_leg(6)
-        time.sleep(1)
-
-        #2 en 6
-        DanceMode.movementHandler.raise_leg(2)
-        DanceMode.movementHandler.raise_leg(5)
-        time.sleep(1)
-        DanceMode.movementHandler.lower_leg(2)
-        DanceMode.movementHandler.lower_leg(5)
-        time.sleep(1)
-
+        #1 en 6
+        #2 en 5
         #3 en 4
-        DanceMode.movementHandler.raise_leg(3)
-        DanceMode.movementHandler.raise_leg(4)
-        time.sleep(1)
-        DanceMode.movementHandler.lower_leg(3)
-        DanceMode.movementHandler.lower_leg(4)
-        time.sleep(1)
+        poten = [[1, 6], [2, 5], [3, 4]]
+        for poot in poten:
+            DanceMode.movementHandler.legs[poot[0]].set_hip(0)
+            DanceMode.movementHandler.legs[poot[0]].set_height(0)
+            DanceMode.movementHandler.legs[poot[0]].set_knee(0)
+
+            DanceMode.movementHandler.legs[poot[1]].set_hip(0)
+            DanceMode.movementHandler.legs[poot[1]].set_height(0)
+            DanceMode.movementHandler.legs[poot[1]].set_knee(0)
+            time.sleep(3)
+
+            a,b,g = DanceMode.movementHandler.get_angles(DanceMode.movementHandler.legs[poot[0]].normal_x, DanceMode.movementHandler.legs[poot[0]].normal_y, DanceMode.movementHandler.legs[poot[0]].normal_z)
+            a2,b2,g2 = DanceMode.movementHandler.get_angles(DanceMode.movementHandler.legs[poot[1]].normal_x, DanceMode.movementHandler.legs[poot[1]].normal_y, DanceMode.movementHandler.legs[poot[1]].normal_z)
+
+            DanceMode.movementHandler.legs[poot[0]].set_hip(a)
+            DanceMode.movementHandler.legs[poot[0]].set_height(b)
+            DanceMode.movementHandler.legs[poot[0]].set_knee(g)
+
+            DanceMode.movementHandler.legs[poot[1]].set_hip(a2)
+            DanceMode.movementHandler.legs[poot[1]].set_height(b2)
+            DanceMode.movementHandler.legs[poot[1]].set_knee(g2)
+            time.sleep(3)
+
