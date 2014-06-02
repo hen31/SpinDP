@@ -23,9 +23,6 @@ __author__ = 'Hendrik'
 class SpinOS:
 
     logger = None
-#cam = SimpleCV.Camera(prop_set={"width": 300, "height": 300})
-
-#img = cam.getImage()
     def __init__(self):
         print("SpinOS 0.2")
         print("Group 5 IDP 2014 NHL")
@@ -35,7 +32,6 @@ class SpinOS:
 
 
         #logger aanmaken
-
         self.movementHandler = MovementHandler()
         self.server = Server(15, SpinOS.logger)
         self.server.startServer()
@@ -70,15 +66,17 @@ class SpinOS:
             self.sensor_thread = threading.Thread(target=self.runSensors())
             self.sensor_thread.start()
 
+    #run methode, deze loopt in eigen thread en halen de commando's op
     def run(self):
         try:
             while self.running:
                 time.sleep(0.2)
-                message_list = self.server.get_messages()
+                message_list = self.server.get_messages()#berichten ophalen van serverclients
                 for message in message_list:
-                    client = message[0]
-                    message.remove(client)
-                    if message[0] == COMMAND.IDENTIFY:
+                    client = message[0]#client is eerste in lijst
+                    message.remove(client)#verwijderen uit lijst
+                    if message[0] == COMMAND.IDENTIFY:#if en elsif om te achterhalen welk commando is gegeven
+                        #kijken welk apparaat connect
                         if message[1] == "dashboard":
                             client.type = ServerClient.ANDROID_DASHBOARD
                             self.logger.logevent("SPINOS", "Connected - ANDROID_DASHBOARD", Logger.MESSAGE)
@@ -92,30 +90,39 @@ class SpinOS:
                             client.type = ServerClient.UNKNOWN
                             self.logger.logevent("SPINOS", "Connected - UNKNOWN", Logger.WARNING)
                     elif message[0] == COMMAND.KILL:
+                        #spider wordt uitegezet alle threads worden gestopt
                         self.logger.logevent("SPINOS", "KILLING SPIDER, OH NO!!!!!")
                         self.running = False
                         self.shutdown()
                     elif message[0] == COMMAND.TO_MANUAL:
+                        #huidige mode alive false zodat threads stoppen
                         self.current_mode.set_alive(False)
                         self.mode = "manual"
+                        #set mode naar manual besturing
                         SpinOS.logger.logevent("SPINOS", "Mode set to " + self.mode, Logger.MESSAGE)
                         self.current_mode = ManualMode(self.movementHandler, self.logger)
                         self.current_mode.alive = True
                     elif message[0] == COMMAND.TO_BALLOON_MODE:
+                        #huidige mode alive false zodat threads stoppen
                         self.current_mode.set_alive(False)
                         self.mode = "balloon mode"
+                        #set mode naar balloon mode
                         SpinOS.logger.logevent("SPINOS", "Mode set to " + self.mode, Logger.MESSAGE)
                         self.current_mode = BalloonMode(self.movementHandler, self.logger)
                         self.current_mode.alive = True
                     elif message[0] == COMMAND.TO_TEERBAL_MODE:
+                        #huidige mode alive false zodat threads stoppen
                         self.current_mode.set_alive(False)
                         self.mode = "teerbal mode"
+                        #mode naar teerbal zetten
                         SpinOS.logger.logevent("SPINOS", "Mode set to " + self.mode, Logger.MESSAGE)
                         self.current_mode = TeerbalMode()
                         self.current_mode.alive = True
                     elif message[0] == COMMAND.TO_DANCE_MODE:
+                        #huidige mode alive false zodat threads stoppen
                         self.current_mode.set_alive(False)
                         self.mode = "dance mode"
+                        #dance mode aanzetten
                         SpinOS.logger.logevent("SPINOS", "Mode set to " + self.mode, Logger.MESSAGE)
                         self.current_mode = DanceMode(self.movementHandler, self.logger)
                         self.current_mode.set_alive(True)
@@ -136,17 +143,17 @@ class SpinOS:
                         self.current_mode.process_command(command, message)
 
         except:
-            self.shutdown()
+            self.shutdown()#als er een exception optreedt wordt de spin gedood
 
-                #TODO act on message
-
+    #loop voor het ophalen van sensor waarden
     def runSensors(self):
         while self.sensor_running and self.running:
             self.MPU.getValues()
             if self.serial_device:
                 self.serial.getValues()
             time.sleep(1)
-
+            
+    #alle threads stoppen
     def shutdown(self):
         self.server.stop()
         self.movementHandler.die()
