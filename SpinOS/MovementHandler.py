@@ -172,6 +172,7 @@ class MovementHandler:
     #poten op vaste positie zetten
     def kalibreren(self):
         for i in [1]: #,4, 2, 5, 3, 6]:
+            #poten naar voren zetten
             leg = self.legs[i-1]
             leg.last_x = 0
             leg.last_y = 150
@@ -186,7 +187,9 @@ class MovementHandler:
         time.sleep(0.5)
         for i in [1]:#[ , 4, 2, 5, 3, 6]:
             leg = self.legs[i-1]
+            #hoeken ophalen van poten en op de nul positie zetten
             alpha, beta, gamma = self.get_angles(0, 150, MovementHandler.min_height_mm)
+            #poten op juiste posistie zetten
             leg.set_height(alpha+30)
             time.sleep(0.5)
             leg.set_hip(gamma)
@@ -198,7 +201,7 @@ class MovementHandler:
     #poot omhoog doen
     def raise_leg(self, leg):
         leg.set_height(leg.get_height() + MovementHandler.raise_leg_angle )
-
+        #tijd wachten zo lang het duurt om de servo te bewegen
         excution_time=MovementHandler.raise_leg_angle * MovementHandler.time_per_degrees
         excution_time = math.fabs(excution_time)
         if excution_time < MovementHandler.min_exec_time:
@@ -208,16 +211,19 @@ class MovementHandler:
 
     #poot omlaag doen
     def lower_leg(self, leg):
+        #hoeken uitrekenen
         alpha, beta, gamma = self.get_angles(leg.last_x, leg.last_y, leg.last_z)
-
+        #verschil tussen huidige hoek en nieuwe hoek berekenen
         dif_alpha = (leg.get_height() - (alpha - MovementHandler.raise_leg_angle ))
         dif_gamma = (leg.get_hip() - gamma)
         dif_beta = (leg.get_knee() - beta)
+        #hoeken van servo's zetten
         leg.set_height(alpha - MovementHandler.raise_leg_angle )
         leg.set_hip(gamma)
         leg.set_knee(beta)
+        #grootste verschil uitrekenen
         max_dif = max([dif_alpha, dif_gamma, dif_beta])
-
+        #tijd wachten tot dat de servo op zijn nieuwe posistie is
         excution_time=max_dif * MovementHandler.time_per_degrees
         excution_time = math.fabs(excution_time)
         if excution_time < MovementHandler.min_exec_time:
@@ -225,27 +231,31 @@ class MovementHandler:
 
         time.sleep(excution_time)
 
-
+    #poten bewegen terwijl ze omhoog staan
     def move_leg_lucht(self, leg, x , y, z):
+        #verschil uitrekken
         x_dif = x  - leg.last_x
         y_dif = y - leg.last_y
         alpha, beta, gamma = self.get_angles(x_dif+ leg.last_x, y_dif+leg.last_y, z)
+
+
         dif_alpha = (leg.get_height() - alpha)
         dif_gamma = (leg.get_hip() - gamma)
         dif_beta = (leg.get_knee() - beta)
+
+        #hoeken van servo's zetten
         leg.set_height(alpha + MovementHandler.raise_leg_angle )
         leg.set_hip(gamma)
         leg.set_knee(beta)
 
         max_dif = max([dif_alpha, dif_gamma, dif_beta])
-
+        #tijd wachten tot dat de servo op zijn nieuwe posistie is
         excution_time=max_dif * MovementHandler.time_per_degrees
         excution_time = math.fabs(excution_time)
         if excution_time < MovementHandler.min_exec_time:
             excution_time = MovementHandler.min_exec_time
 
         time.sleep(excution_time)
-        #time.sleep(MovementHandler.min_exec_time)
         leg.last_y = y
         leg.last_x = x
         leg.last_z = z
@@ -254,51 +264,54 @@ class MovementHandler:
 
 
     def move_leg_stilstaand(self, leg, x , y, z):
+        #verschil uitrekken
         x_dif = x  - leg.last_x
         aantal_stappen = int(math.fabs(x_dif / 20)) + 1
+        #aantal stappen uitrekken
         if aantal_stappen >15:
             aantal_stappen = 15
-        #print(aantal_stappen)
-        #x = 125
-        #y = 150
 
-        #print(x_dif)#-150
+        #lengte per stap uitrekken
         x_stap = x_dif / aantal_stappen
         y_dif = y - leg.last_y
-        #print(y_dif)
         y_stap =  y_dif /aantal_stappen
+
         aantal_stappen_y = int(math.fabs(x_dif / 20)) + 1
+
+        #zorgen dat het niet meer dan 15 stappen worden
         if aantal_stappen_y >15:
             aantal_stappen_y = 15
+
+        #grootste aantal stappen x of y is leidend
         if aantal_stappen_y > aantal_stappen:
             aantal_stappen = aantal_stappen_y
-        #print((leg.last_x +x_dif))
+        #voor elke stap de poot bewegen
         for i in range(1, aantal_stappen + 1):
+            #zorgen dat hij niet te ver gaat
             if y_stap * i > y_dif:
                 y_stap = 0
             if x_stap * i > x_dif:
                 x_dif = 0
 
+            #hoeken uitrekken
             alpha, beta, gamma = self.get_angles((x_stap * i)+ leg.last_x, (y_stap * i)+leg.last_y, z)
-            #print(alpha)
-            #print(beta)
-            #print(gamma)
-            #dif_alpha = (leg.get_height() - alpha)
+
+            #verschil uitrekken
             dif_gamma = (leg.get_hip() - gamma)
             dif_beta = (leg.get_knee() - beta)
-           # leg.set_height(alpha)
+
             leg.set_hip(gamma)
             leg.set_knee(beta)
 
             max_dif = max([dif_gamma, dif_beta])
-
+            #max verschil wachten tot servo's op juiste posistie staan
             excution_time=max_dif * MovementHandler.time_per_degrees
             excution_time = math.fabs(excution_time)
             if excution_time < MovementHandler.min_exec_time:
                 excution_time = MovementHandler.min_exec_time
 
             time.sleep(excution_time)
-        #time.sleep(MovementHandler.min_exec_time)
+
         leg.last_y = y
         leg.last_x = x
         leg.last_z = z
@@ -307,6 +320,7 @@ class MovementHandler:
     def movement(self):
         self.kalibreren()
         while True:
+            #variablen ophalen
             self.variable_mutex.acquire()
             power_internal = self.internal_power
             degrees_internal = self.internal_degrees
@@ -316,9 +330,14 @@ class MovementHandler:
             degrees_move = self.move_degrees
             height = self.height_setting
             self.variable_mutex.release()
+            #alleen bewegen als er input is
             if power_move != 0 or power_turn != 0 or height != self.last_height:
+                #y van internal beweging berekenen
                 y = int((((float(power_internal) * math.cos(self.degrees_to_radians(degrees_internal))) + 100) / 2)) - 50 #-50  - 50
+
+                #hoogte uitrekken in mmm
                 mm_height = MovementHandler.min_height_mm + (float(MovementHandler.max_height_mm - MovementHandler.min_height_mm) / float(100)) * float(height)
+
                 z_mm_front = mm_height
                 z_mm_front += (float(MovementHandler.max_height_mm - mm_height) / float(100)) * y
 
@@ -326,7 +345,7 @@ class MovementHandler:
 
                 z_mm_back = mm_height
                 z_mm_back -= (float(MovementHandler.max_height_mm - mm_height) / float(100)) * y
-
+                #uitrekken hoe de draaing is
                 rad = math.radians(float(degrees_move))
 
                 y_stap = math.sin(rad) * MovementHandler.stap_uitslag_y
@@ -335,20 +354,21 @@ class MovementHandler:
                     x_stap = 0
                     y_stap = 0
 
+                #kijken welke kant om wordt gedraaid
                 rechtsom = False
                 if degrees_turn <= 180:
                     power_turn = degrees_turn
                 else:
                     power_turn = 360 - degrees_turn
                     rechtsom = True
-
+                #x van poten uitrekken
                 leg_front_x_turn = (float(power_turn) / float(100)) * MovementHandler.max_uitslag_x_voor
                 leg_front_y_turn = (float(power_turn) / float(100)) * MovementHandler.max_uitslag_y_voor
                 leg_middle_x_turn = (float(power_turn) / float(100)) * MovementHandler.max_uitslag_x_midden
                 leg_middle_y_turn = (float(power_turn) / float(100)) * MovementHandler.max_uitslag_y_midden
                 leg_back_x_turn = (float(power_turn) / float(100)) * MovementHandler.max_uitslag_x_achter
                 leg_back_y_turn = (float(power_turn) / float(100)) * MovementHandler.max_uitslag_y_achter
-
+                #poten links en recht om uitrekken
                 if rechtsom:
                     left_front_x = x_stap + leg_front_x_turn
                     left_front_y = y_stap + leg_front_y_turn
@@ -384,6 +404,7 @@ class MovementHandler:
 
                 # groep 1: 1,5,3
                 # groep 2: 4,2,6
+                #gait code tot nu toe
                 if self.stand_gait == 1:
                     poot1_thread = threading.Thread(target=self.raise_leg, args=(self.legs[0],))
                     threads.append(poot1_thread)
