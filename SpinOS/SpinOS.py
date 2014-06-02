@@ -105,7 +105,7 @@ class SpinOS:
                         self.current_mode.set_alive(False)
                         self.mode = "balloon mode"
                         SpinOS.logger.logevent("SPINOS", "Mode set to " + self.mode, Logger.MESSAGE)
-                        self.current_mode = BalloonMode(self.movementHandler, self.logger)
+                        self.current_mode = BalloonMode(self.movementHandler, self.logger, self.serial)
                         self.current_mode.alive = True
                     elif message[0] == COMMAND.TO_TEERBAL_MODE:
                         self.current_mode.set_alive(False)
@@ -146,11 +146,7 @@ class SpinOS:
                 self.MPU.getValues()
             if self.serial_device:
                 self.serial.getValues()
-                print(self.serial.getSensor1())
-                print(self.serial.getSensor2())
-                print(self.serial.getVoltage())
-                print(self.serial.getButton())
-            time.sleep(0.1)
+            time.sleep(0.5)
 
     def shutdown(self):
         self.server.stop()

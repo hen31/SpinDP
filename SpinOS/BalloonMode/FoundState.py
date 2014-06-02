@@ -20,7 +20,19 @@ class FoundState:
 
             not_found_count = 0
             #aan
+            #Leg 1
+            leg1 = BalloonMode.movementHandler.legs[0]
+            last1 = [leg1.get_hip(),leg1.get_height(),leg1.get_knee()]
+            #Leg 4
+            leg4 = BalloonMode.movementHandler.legs[3]
+            last4 = [leg4.get_hip(),leg4.get_height(),leg4.get_knee()]
             while not_found_count <= 2 and BalloonMode.alive:
+                sensor1 = BalloonMode.serial.getSensor1()
+                sensor2 = BalloonMode.serial.getSensor2()
+
+                leg1.set_knee(sensor1)
+                leg4.set_knee(sensor2)
+
                 found = self.balloon_alive(parameters[0])
                 if not found:
                     not_found_count += 1
@@ -32,6 +44,8 @@ class FoundState:
             #uit poten resseten
             BalloonMode.logger.logevent(FoundState.LOGGER_NAME, "Balloon weg (geknapt)!", Logger.MESSAGE)
 
+            leg1.set_knee(last1[2])
+            leg4.set_knee(last4[2])
         return True
 
     def balloon_alive(self, color):
