@@ -119,17 +119,24 @@ class MovementHandler:
 
     #get gamma angle
     def get_gammma_angle(self, x, y):
+        #poot staat in een rechte hoek
         if y == 0:
             return math.pi/2.0
+        #tanges aanliggende zijde delen door de overstaande zijde
         return math.atan((float(x) / float(y)))
 
     #inverse kinematics hoeken berekenen, aan de hand van x,y,z in mm
     def get_angles(self, y, x, z):
 
+        #gamma hoek berekenen (hoek van de heup)
         gamma = self.get_gammma_angle(x, y)
+
+        #totale lengte poot berekenen
         L1 = math.sqrt((x*x)+(y*y))
+        #legte L berekenen
         L = math.sqrt((float(z) * float(z)) + math.pow((L1 - Leg.COXA), 2))
 
+        #hoek a1 berekenen waarbij waarde z_div_L tussen -1 en 1
         z_div_L =float(z) / float(L)
         if z_div_L < -1.0:
             z_div_L = -1
@@ -137,25 +144,30 @@ class MovementHandler:
             z_div_L = 1.0
         a1 = math.acos(z_div_L)
 
-        tibia2 = Leg.TIBIA * Leg.TIBIA
-        #print((tibia2 - (Leg.FEMUR * Leg.FEMUR) - (L * L)) / (-2 * Leg.FEMUR * L))
-        sum = (tibia2 - (Leg.FEMUR * Leg.FEMUR) - (L * L)) / (-2 * Leg.FEMUR * L)
+
+        #cosinus regel op driehoek Tibia, Femur, L om hoek a2 te berekenen
+        sum = (Leg.TIBIA * Leg.TIBIA - (Leg.FEMUR * Leg.FEMUR) - (L * L)) / (-2 * Leg.FEMUR * L)
         if sum < -1.0:
             sum = -1
         elif sum > 1.0:
             sum = 1.0
         a2 = math.acos(sum)
-        a = a1 + a2
+
+        alpha = a1 + a2
+
+        #cosinus regel op driehoek Tibia, Femur, L om hoek beta te berekenen
         sum = ((L * L) - (Leg.TIBIA * Leg.TIBIA) - (Leg.FEMUR * Leg.FEMUR)) / (-2 * Leg.TIBIA * Leg.FEMUR)
         if sum < -1.0:
             sum = -1
         elif sum > 1.0:
             sum = 1.0
         beta = math.acos(sum)
+
+        #gamma naar graden omzetten en indien deze <0 is ophogen
         gamma =math.degrees(gamma)
         if gamma < 0:
             gamma += 180
-        return (math.degrees(a), math.degrees(beta), gamma)
+        return (math.degrees(alpha), math.degrees(beta), gamma)
 
     #poten op vaste positie zetten
     def kalibreren(self):
