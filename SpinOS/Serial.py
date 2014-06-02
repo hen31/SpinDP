@@ -11,6 +11,7 @@ class Serial(Sensor):
 
     sensor1 = 0
     sensor2 = 0
+    button = False
     voltage = 0
     voltageCounter = 0
 
@@ -26,6 +27,7 @@ class Serial(Sensor):
         self.mutex1 = threading.Semaphore(1)
         self.mutex2 = threading.Semaphore(1)
         self.mutexVoltage = threading.Semaphore(1)
+        self.mutexButton = threading.Semaphore(1)
 
     def run(self):
         while self.alive:
@@ -35,31 +37,39 @@ class Serial(Sensor):
             time.sleep(self.interval)
 
     def getValues(self):
+        #self.ser.flushInput()
+        #print(self.ser.inWaiting())
         #Readline from serial
-        response = self.ser.readline()
-        #Decode response
-        response = response.decode('ascii')
-        #Checks if we need the response
-        if len(response) > 2:
-            #Remove characters that we don't need
-            response = response.replace("\r\n","")
-            response = response.replace("\x00","")
-            response = response.replace("n'","")
-            response = response.replace("'","")
-            #Convert to int
-            response = int(response)
-            #First glove sensor
-            if(response >= 2000 and response < 2500):
-                sensor1 = response - 2000
-                self.setSensor1(sensor1)
-            #Second glove sensor
-            elif(response >= 2500 and response < 3000):
-                sensor2 = response - 2500
-                self.setSensor2(sensor2)
-            #Voltage
-            else:
-                voltage = float(response) / float(100)
-                self.setVoltage(voltage)
+        responses = self.ser.readline()
+        responses = responses.decode('ascii')
+        #Remove characters that we don't need
+        responses = responses.replace("\r\n","")
+        responses = responses.replace("\x00","")
+        responses = responses.replace("n'","")
+        responses = responses.replace("'","")
+        responses = responses.split(',')
+        for response in responses:
+            #Checks if we need the response
+            if len(response) > 2:
+                #Convert to int
+                response = int(response)
+                #Voltage
+                if(response < 2000):
+                    voltage = float(response) / float(100)
+                    self.setVoltage(voltage)
+                #First glove sensor
+                if(response >= 2000 and response < 2500):
+                    sensor1 = response - 2000
+                    self.setSensor1(sensor1)
+                #Second glove sensor
+                elif(response >= 2500 and response < 3000):
+                    sensor2 = response - 2500
+                    self.setSensor2(sensor2)
+                elif(response == 3001):
+                    self.setButton(False)
+                elif(response == 3002):
+                    self.setButton(True)
+
 
     def stop(self):
         self.alive = False
@@ -88,6 +98,17 @@ class Serial(Sensor):
         self.mutex2.acquire()
         self.sensor2 = value
         self.mutex2.release()
+
+    def getButton(self):
+        self.mutexButton.acquire()
+        value = self.button
+        self.mutexButton.release()
+        return value
+
+    def setButton(self, value):
+        self.mutexButton.acquire()
+        self.button = value
+        self.mutexButton.release()
 
     def getVoltage(self):
         self.mutexVoltage.acquire()

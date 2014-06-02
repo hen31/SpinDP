@@ -59,8 +59,8 @@ class SpinOS:
             self.serial_device = None
             for i in xrange(0, 3):
                 serial_device = "/dev/ttyUSB" + str(i)
-				
-                if os.path.isfile(serial_device):
+                if os.path.exists(serial_device):
+                    print("runSensors")
                     from Serial import Serial
                     self.serial = Serial(SpinOS.logger, serial_device)
                     #self.serial.start()
@@ -142,10 +142,15 @@ class SpinOS:
 
     def runSensors(self):
         while self.sensor_running and self.running:
-            self.MPU.getValues()
+            if self.MPU:
+                self.MPU.getValues()
             if self.serial_device:
                 self.serial.getValues()
-            time.sleep(1)
+                print(self.serial.getSensor1())
+                print(self.serial.getSensor2())
+                print(self.serial.getVoltage())
+                print(self.serial.getButton())
+            time.sleep(0.1)
 
     def shutdown(self):
         self.server.stop()

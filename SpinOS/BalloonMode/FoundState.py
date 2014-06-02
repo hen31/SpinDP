@@ -19,7 +19,7 @@ class FoundState:
             BalloonMode.logger.logevent(FoundState.LOGGER_NAME, "Vlak voor de ballon, kijken wanneer hij knapt " +parameters[0], Logger.MESSAGE)
 
             not_found_count = 0
-
+            #aan
             while not_found_count <= 2 and BalloonMode.alive:
                 found = self.balloon_alive(parameters[0])
                 if not found:
@@ -29,7 +29,7 @@ class FoundState:
 
             if not BalloonMode.alive:
                 return
-
+            #uit poten resseten
             BalloonMode.logger.logevent(FoundState.LOGGER_NAME, "Balloon weg (geknapt)!", Logger.MESSAGE)
 
         return True
