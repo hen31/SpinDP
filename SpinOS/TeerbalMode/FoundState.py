@@ -8,6 +8,7 @@ class FoundState:
         #self.image_path = image_path
         pass
 
+    #methode die een geluids bestand afspeelt
     @staticmethod
     def play_sound():
         pygame.mixer.init()

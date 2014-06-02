@@ -48,14 +48,14 @@ class MoveState:
                         return False
                     #als de gevonden teerbal geen duplicaat is deze verwerken
                     else:
-                        print Coordinate(self.x,self.y,gevonden, self.facing).toString()
+
                         FoundState.play_sound()
                         self.move_row(gevonden)
                         return True
                 #als de gevonden teerbal geen duplicaat is deze verwerken
                 else:
                     if gevonden:
-                        print Coordinate(self.x,self.y,gevonden, self.facing).toString()
+
                         FoundState.play_sound()
                     self.move_row(gevonden)
             if not TeerbalMode.alive:
@@ -133,7 +133,7 @@ class MoveState:
             self.pos_list.append(Coordinate(self.x,self.y,found,self.facing))
             self.turn_right()
             self.turn_right()
-            #print self.aantal_stappen
+
             #eerst een stap vooruit doen om de locatie van de teerbal in te vullen op de routekaart!
             self.walk_forward(found)
             self.walk_back()

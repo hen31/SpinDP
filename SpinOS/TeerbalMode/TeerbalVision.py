@@ -22,10 +22,10 @@ class TeerbalVision:
         image = Image(image)
         max_y = TeerbalVision.find_top(image)
         bin_image = image.colorDistance(Color.BLACK).binarize()
+
         blobs = bin_image.findBlobs(minsize=8000)
         #variabele die de blobs binnen in het gebied bevat
         inside_blobs = blobs.inside((180,max_y,450,480))
-        print inside_blobs
         #variabele die de blobs die eventueel buren zijn bevat
         overlap_blobs = []
 
@@ -44,9 +44,7 @@ class TeerbalVision:
             #er zijn geen teerballen gevonden
             return (False,False)
         #er word niet gekeken of er buren zijn
-        if inside_blobs:
-            return True
-        elif overlap_blobs:
+        if inside_blobs or overlap_blobs:
             return True
         #er zijn geen teerballen gevonden
         return False

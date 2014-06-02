@@ -2,6 +2,7 @@ __author__ = 'Jeroen'
 
 class Coordinate:
 
+    #richtingen waar de spin naartoe kan kjken
     NORTH = 0
     EAST = 1
     SOUTH = 2
