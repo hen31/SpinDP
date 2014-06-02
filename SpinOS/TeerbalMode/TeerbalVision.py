@@ -8,6 +8,7 @@ class TeerbalVision:
     def __init__(self):
         pass
 
+    #methode die de rode afbakening herkend
     @staticmethod
     def find_top(image):
         bin_image = image.colorDistance(Color.RED).binarize()
@@ -15,17 +16,20 @@ class TeerbalVision:
         y_list = sorted(blobs.y())
         return y_list[-1]
 
+    #methode die de teerbal zoekt
     @staticmethod
     def find_teerbal(image, check_for_neigbours = False):
         image = Image(image)
         max_y = TeerbalVision.find_top(image)
         bin_image = image.colorDistance(Color.BLACK).binarize()
         blobs = bin_image.findBlobs(minsize=8000)
+        #variabele die de blobs binnen in het gebied bevat
         inside_blobs = blobs.inside((180,max_y,450,480))
         print inside_blobs
+        #variabele die de blobs die eventueel buren zijn bevat
         overlap_blobs = []
 
-
+        #zoeken of de gevonden blobs de lijn waar moet worden gekeken overschrijdt
         for e in blobs:
             if (e.x - e.width()/2) < 180 and e.x + e.width()/2>180 and e.y - e.height()/2 > max_y:
                 overlap_blobs.append(e)
@@ -56,6 +60,7 @@ class TeerbalVision:
                 simulateArray[y][x] = e = os.path.join(os.path.dirname(__file__) + "/TestImages",'vooruit.png')
 
         simulateArray[0][2] = os.path.join(os.path.dirname(__file__) + "/TestImages",'boven rood.jpg')
-        simulateArray[1][2] = os.path.join(os.path.dirname(__file__) + "/TestImages",'boven rood.jpg')
-        simulateArray[3][3] = os.path.join(os.path.dirname(__file__) + "/TestImages",'boven rood.jpg')
+        simulateArray[1][2] = os.path.join(os.path.dirname(__file__) + "/TestImages",'dupelicate.jpg')
+        simulateArray[3][3] = os.path.join(os.path.dirname(__file__) + "/TestImages",'dupelicate.jpg')
+        simulateArray[4][13] = os.path.join(os.path.dirname(__file__) + "/TestImages",'boven rood.jpg')
         return simulateArray
