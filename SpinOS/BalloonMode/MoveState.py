@@ -42,7 +42,7 @@ class MoveState:
         area = 0
         not_found_count = 0
 
-        #TODO: vooruit lopen
+        #vooruit lopen
         BalloonMode.movementHandler.move(0, 100, 0, 0)
         time.sleep(BalloonMode.movementHandler.TIME_MOVE_ONE_CM * 10)
         BalloonMode.movementHandler.move(0, 0, 0, 0)
