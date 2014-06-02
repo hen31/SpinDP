@@ -12,46 +12,46 @@ __author__ = 'Hendrik'
 
 
 class Server:
-    portnumber = 10
 
 
+    #constuctor voor server
     def __init__(self, port, Log):
         self.portnumber = port
-        self.s = socket.socket()  # Create a socket object
+        self.s = socket.socket()  #Socket aanmaken
         if platform.system() == "Windows":
-            self.host = socket.gethostname()  # Get local machine name
+            self.host = socket.gethostname()  #lokale host gebruiken op windows
         else:
             self.host = "192.168.10.1"
         self.listen_thread = threading.Thread(target=self.run)
         self.log = Log
-        self.clients = list()#list of all connected clients
+        self.clients = list()#Lijst van alle verbonden clients
         self.alive =True
 
     def startServer(self):
-        self.s.bind((self.host, self.portnumber))  # Bind to the port
-        self.s.listen(5)#max number of waiting clients
-        self.listen_thread.start()#thread to listen to new clients
+        self.s.bind((self.host, self.portnumber)) #naar poort luisteren
+        self.s.listen(5)#maximaal aantal clients die wachten
+        self.listen_thread.start()#thread om te luisteren naar nieuwe verbindingen
         self.log.logevent("Server", "started port " + str(self.portnumber) + " Host: " + str(self.host), Logger.MESSAGE)
 
     def run(self):
         while self.alive:
             time.sleep(0.2)
             try:
-                c, addr = self.s.accept()  # Establish connection with client.
-                self.log.logevent("Server", "Got connection from: " + str(addr), Logger.MESSAGE)
-                clientobj = ServerClient(c, str(addr))#create client object
-                self.clients.append(clientobj)
+                c, addr = self.s.accept()  #Connectie met client maken
+                self.log.logevent("Server", "Got connection from: " + str(addr), Logger.MESSAGE) #log bericht aanmaken
+                clientobj = ServerClient(c, str(addr))#client object aanmaken
+                self.clients.append(clientobj)#toevoegen aan lijst met verbonden clients
             except:
-                b=1
+                pass
 
 
-
+    #berichten van alle clients ophalen
     def get_messages(self):
         messages = list()
         for client in self.clients:
                 messages = messages + client.recieve_messages()
         return messages
-
+    #server stoppen, alle stream sluiten
     def stop(self):
         self.alive = False
         for c in self.clients:

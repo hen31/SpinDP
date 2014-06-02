@@ -9,14 +9,14 @@ class Logger:
     MESSAGE = 0
     WARNING = 1
     ERROR = 2
-
+    #min priority aanvankelijk van deze waarde worden berichten wel of niet getoond
     def __init__(self, min_priority):
         self.min_log_priority = min_priority
         self.server = None
-
+    #server object zetten
     def set_server(self, ser):
         self.server = ser
-
+    #loggen van een event, module is van waar gelogd wordt message is het bericht en priority is wat is de prioriteit dat het getoond wordt
     def logevent(self, module, message, priority=0):
         if priority >= self.min_log_priority:
             print(str(module).upper() + str(" - ") + str(message))
@@ -25,6 +25,7 @@ class Logger:
                     if c.type == ServerClient.ANDROID_DASHBOARD:
                         c.send_message(COMMAND.encode_message(COMMAND.LOG_ENTRY, [str(module).upper() + str(" - ") + str(message)]))
 
+    #log level omzetten in een string
     def get_loglevel_string(self):
         if self.min_log_priority == Logger.SENSOR_VALUES:
             return "SENSOR_VALUES"
