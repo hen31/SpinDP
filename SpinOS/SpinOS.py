@@ -56,8 +56,10 @@ class SpinOS:
             self.MPU = MPU6050(SpinOS.logger)
             #self.MPU.start()
             import os.path
+            self.serial_device = None
             for i in xrange(0, 3):
                 serial_device = "/dev/ttyUSB" + str(i)
+				
                 if os.path.isfile(serial_device):
                     from Serial import Serial
                     self.serial = Serial(SpinOS.logger, serial_device)
@@ -140,7 +142,7 @@ class SpinOS:
 
     def runSensors(self):
         while self.sensor_running and self.running:
-            self.mpu.getValues()
+            self.MPU.getValues()
             if self.serial_device:
                 self.serial.getValues()
             time.sleep(1)
