@@ -48,6 +48,9 @@ class SearchState:
                     moveState.doe_stap([self.colors[i], blob])
 
     def find_balloon(self, color):
+        if not BalloonMode.alive:
+            return False
+
         BalloonMode.logger.logevent(SearchState.LOGGER_NAME, "Zoeken naar ballon " + color, Logger.MESSAGE)
 
         img = BalloonVision.get_image()
@@ -76,6 +79,9 @@ class SearchState:
         return search[1]
 
     def get_balloon_order(self):
+        if not BalloonMode.alive:
+            return False
+
         #Alle balonnen kunnen gezien worden
         img = BalloonVision.get_image()
 

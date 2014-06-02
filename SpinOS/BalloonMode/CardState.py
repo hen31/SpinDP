@@ -59,12 +59,12 @@ class CardState:
         blueBlob = None
         blobs = None
 
+        BalloonMode.logger.logevent(CardState.LOGGER_NAME, "Bezig met zoeken", Logger.MESSAGE)
+
         img = BalloonVision.get_image()
         #img = Image("C:\\cards\\realCard1.jpg")
         #img = Image("C:\\muur\\card.jpg")
         blobs = self.getBlobs(img)
-
-        BalloonMode.logger.logevent(CardState.LOGGER_NAME, "Bezig met zoeken", Logger.MESSAGE)
 
         while blobs is False and BalloonMode.alive:
 
