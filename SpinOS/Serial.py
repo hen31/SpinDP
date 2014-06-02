@@ -37,8 +37,6 @@ class Serial(Sensor):
             time.sleep(self.interval)
 
     def getValues(self):
-        #self.ser.flushInput()
-        #print(self.ser.inWaiting())
         #Readline from serial
         responses = self.ser.readline()
         responses = responses.decode('ascii')
@@ -47,7 +45,9 @@ class Serial(Sensor):
         responses = responses.replace("\x00","")
         responses = responses.replace("n'","")
         responses = responses.replace("'","")
+        #split the line
         responses = responses.split(',')
+        #loop through the responses
         for response in responses:
             #Checks if we need the response
             if len(response) > 2:
@@ -65,61 +65,73 @@ class Serial(Sensor):
                 elif(response >= 2500 and response < 3000):
                     sensor2 = response - 2500
                     self.setSensor2(sensor2)
+                #Light sensor off
                 elif(response == 3001):
                     self.setButton(False)
+                #Light sensor on
                 elif(response == 3002):
                     self.setButton(True)
 
 
     def stop(self):
+        #Stop loop
         self.alive = False
 
     def start(self):
+        #Start loop
         self.thread.start()
 
     def getSensor1(self):
+        #Mutex
         self.mutex1.acquire()
         value = self.sensor1
         self.mutex1.release()
         return value
 
     def setSensor1(self, value):
+        #Mutex
         self.mutex1.acquire()
         self.sensor1 = value
         self.mutex1.release()
 
     def getSensor2(self):
+        #Mutex
         self.mutex2.acquire()
         value = self.sensor2
         self.mutex2.release()
         return value
 
     def setSensor2(self, value):
+        #Mutex
         self.mutex2.acquire()
         self.sensor2 = value
         self.mutex2.release()
 
     def getButton(self):
+        #Mutex
         self.mutexButton.acquire()
         value = self.button
         self.mutexButton.release()
         return value
 
     def setButton(self, value):
+        #Mutex
         self.mutexButton.acquire()
         self.button = value
         self.mutexButton.release()
 
     def getVoltage(self):
+        #Mutex
         self.mutexVoltage.acquire()
         value = self.voltage
         self.mutexVoltage.release()
         return value
 
     def setVoltage(self, value):
+        #Mutex
         self.mutexVoltage.acquire()
         self.voltage = value
-        #Log every second
+        #Log every ten times
         if self.voltageCounter == 0 or self.voltageCounter == 10:
             self.voltageCounter = 0
             self.voltagelogger.log_waarde("{0:.2f}".format(self.voltage))

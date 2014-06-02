@@ -47,21 +47,28 @@ class SpinOS:
         self.main_thread = threading.Thread(target=self.run)
         self.main_thread.start()
 
+        #Check of we op de raspberry pi zitten
         if platform.system() != "Windows":
+            #import mpu
             from MPU6050 import MPU6050
             self.MPU = MPU6050(SpinOS.logger)
-            #self.MPU.start()
+            #import os.path om te kijken of de arduino er is
             import os.path
             self.serial_device = None
+            #loop door verschillende usb devices. De naam veranderd namelijk soms
             for i in xrange(0, 3):
+                #de naam van de usb
                 serial_device = "/dev/ttyUSB" + str(i)
+                #kijk of de usb er is
                 if os.path.exists(serial_device):
-                    print("runSensors")
+                    #als de arduino er is moeten we serial importen
                     from Serial import Serial
+                    #maak een nieuwe serial
                     self.serial = Serial(SpinOS.logger, serial_device)
-                    #self.serial.start()
+                    #sla de naam van de arduino op
                     self.serial_device = serial_device
                     break
+            #start de sensor thread
             self.sensor_running = True
             self.sensor_thread = threading.Thread(target=self.runSensors())
             self.sensor_thread.start()
@@ -149,10 +156,12 @@ class SpinOS:
     def runSensors(self):
         while self.sensor_running and self.running:
             if self.MPU:
+                #haal de waarde op van de MPU6050
                 self.MPU.getValues()
             if self.serial_device:
+                #haal de waardes op van de arduino
                 self.serial.getValues()
-            time.sleep(1)
+            time.sleep(0.5)
             
     #alle threads stoppen
     def shutdown(self):

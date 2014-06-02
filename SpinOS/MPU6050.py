@@ -12,10 +12,11 @@ class MPU6050(Sensor):
     # Interval in seconds
     interval = 1
 
-    # Value
+    # Default value
     current_value = {'yaw': 0, 'pitch': 0, 'roll': 0}
 
     def __init__(self, logger):
+        #initialize
         super(MPU6050, self).__init__(logger)
         self.sensorlogger = SensorLogger('MPU6050',logger)
         self.mutex = threading.Semaphore(1)
@@ -26,6 +27,7 @@ class MPU6050(Sensor):
         # get expected DMP packet size for later comparison
         self.packetSize = self.mpu.dmpGetFIFOPacketSize()
 
+    #get Values
     def run(self):
         while self.alive:
             self.getValues()
@@ -55,24 +57,29 @@ class MPU6050(Sensor):
             g = self.mpu.dmpGetGravity(q)
             ypr = self.mpu.dmpGetYawPitchRoll(q, g)
 
+            #save sensordata
             sensorData = {'yaw': ypr['yaw'] * 180 / math.pi, 'pitch': ypr['pitch'] * 180 / math.pi, 'roll': ypr['roll'] * 180 / math.pi}
             self.setValue(sensorData)
             fifoCount -= self.packetSize
 
+            #log sensor
             self.sensorlogger.log_waarde("y:{0:.3f}, p:{1:.3f}, r:{2:.3f}".format(sensorData['yaw'], sensorData['pitch'], sensorData['roll']))
-
+    #stop thread
     def stop(self):
         self.alive = False
 
+    #start thread
     def start(self):
         self.thread.start()
 
+    #get yaw, pith, roll
     def getValue(self):
         self.mutex.acquire()
         value = self.current_value
         self.mutex.release()
         return value
 
+    #set sensorData
     def setValue(self, value):
         self.mutex.acquire()
         self.current_value = value
