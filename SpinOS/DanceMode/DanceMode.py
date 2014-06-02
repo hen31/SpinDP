@@ -23,4 +23,3 @@ class DanceMode:
 
     def process_command(self, command, message):
         pass
-

@@ -57,13 +57,6 @@ class MPU6050(Sensor):
 
             sensorData = {'yaw': ypr['yaw'] * 180 / math.pi, 'pitch': ypr['pitch'] * 180 / math.pi, 'roll': ypr['roll'] * 180 / math.pi}
             self.setValue(sensorData)
-
-            # print(ypr['yaw'] * 180 / math.pi),
-            # print(ypr['pitch'] * 180 / math.pi),
-            # print(ypr['roll'] * 180 / math.pi)
-
-            # track FIFO count here in case there is > 1 packet available
-            # (this lets us immediately read more without waiting for an interrupt)
             fifoCount -= self.packetSize
 
             self.sensorlogger.log_waarde("y:{0:.3f}, p:{1:.3f}, r:{2:.3f}".format(sensorData['yaw'], sensorData['pitch'], sensorData['roll']))

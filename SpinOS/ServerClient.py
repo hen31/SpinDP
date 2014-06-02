@@ -24,13 +24,15 @@ class ServerClient:
     def run(self):
         while self.alive:
             time.sleep(0.2)
-            for l in self.client_socket.makefile('r'):
-                l = l.replace("\n", "")
-                command_recieved = COMMAND.decode_message(l)
-                self.mutex.acquire()
-                self.messages.append([self] + command_recieved)
-                self.mutex.release()
-                self.send_message(COMMAND.encode_message(COMMAND.RECIEVED, [command_recieved[0]]))
+            f = self.client_socket.makefile()
+            #print("file made")
+            l = f.readline()
+            l = l.replace("\n", "")
+            command_recieved = COMMAND.decode_message(l)
+            self.mutex.acquire()
+            self.messages.append([self] + command_recieved)
+            self.mutex.release()
+            self.send_message(COMMAND.encode_message(COMMAND.RECIEVED, [command_recieved[0]]))
 
     def send_message(self, message):
         try:
