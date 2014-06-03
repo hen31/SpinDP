@@ -173,8 +173,6 @@ class BalloonVision:
         for binValue in binValues:
             bin = distance.binarize(binValue)
 
-            bin.show()
-
             blobs = bin.findBlobs()
 
             goodBlobs = []
@@ -195,6 +193,4 @@ class BalloonVision:
                 else:
                     blob = goodBlobs[-1]
                     blob.Name = name
-                    #blob.show()
-                    #time.sleep(1)
                     return goodBlobs[-1]
