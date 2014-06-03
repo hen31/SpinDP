@@ -157,3 +157,44 @@ class BalloonVision:
                 found = False
 
         return [found, blob]
+
+    @staticmethod
+    def recognize_card():
+        binRed = [100, 105, 110, 115]
+        binGreen = [120, 125, 130, 135, 140]
+        binBlue = [130, 135, 140, 145, 150]
+        img = BalloonVision.get_image()
+        return [BalloonVision.recognize_card_color(img, (255,0,0), binRed, "red"), BalloonVision.recognize_card_color(img, (0,255,0), binGreen, "green"), BalloonVision.recognize_card_color(img, (0,0,255), binBlue, "blue")]
+
+    @staticmethod
+    def recognize_card_color(img, rgb, binValues, name):
+        distance = img.colorDistance(rgb)
+
+        for binValue in binValues:
+            bin = distance.binarize(binValue)
+
+            bin.show()
+
+            blobs = bin.findBlobs()
+
+            goodBlobs = []
+            blob = None
+            found = False
+
+            if blobs is not None and len(blobs) > 0:
+                if len(blobs) > 15:
+                    break
+
+                for blob in blobs:
+                    ratio = (float(float(blob.height())/float(blob.width())))
+                    if ratio > 0.6 and ratio < 1.2 and blob.area() > 5000:
+                        goodBlobs.append(blob)
+
+                if len(goodBlobs) == 0:
+                    return False
+                else:
+                    blob = goodBlobs[-1]
+                    blob.Name = name
+                    #blob.show()
+                    #time.sleep(1)
+                    return goodBlobs[-1]
