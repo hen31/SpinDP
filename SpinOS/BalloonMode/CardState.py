@@ -1,11 +1,10 @@
 import pygame
 import os
 import time
-from BalloonMode import BalloonMode
+
 from BalloonVision import BalloonVision
 from Logger import Logger
 from SearchState import SearchState
-from SimpleCV import Image, Color
 
 __author__ = 'Robert'
 
@@ -15,7 +14,8 @@ class CardState:
     LOGGER_NAME = "BalloonMode CardState"
 
     #Constructor
-    def __init__(self):
+    def __init__(self, ballonmode):
+        self.balloonmode = ballonmode
         #redImg = Image("C:\Users\Robert\Desktop\\ballon\\red.jpg")
         #greenImg = Image("C:\Users\Robert\Desktop\\ballon\\green.jpg")
         #blueImg = Image("C:\Users\Robert\Desktop\\ballon\\blue.jpg")
@@ -46,7 +46,7 @@ class CardState:
 
     def doe_stap(self, parameters):
         #Balloonmode moet nog alive zijn
-        if BalloonMode.alive:
+        if self.balloonmode.alive:
             #Kaart herkennen
             colorOrder = self.recognize_card()
             #Kleurenkaart goed herkend?
@@ -56,7 +56,7 @@ class CardState:
                 time.sleep(2)
 
                 #Volgende state opstarten
-                nextState = SearchState()
+                nextState = SearchState(self.balloonmode)
                 nextState.doe_stap([colorOrder])
 
     def recognize_card(self):
@@ -65,7 +65,7 @@ class CardState:
         blueBlob = None
         blobs = None
 
-        BalloonMode.logger.logevent(CardState.LOGGER_NAME, "Bezig met zoeken", Logger.MESSAGE)
+        self.balloonmode.logger.logevent(CardState.LOGGER_NAME, "Bezig met zoeken", Logger.MESSAGE)
 
         #img = Image("C:\\cards\\realCard1.jpg")
         #img = Image("C:\\muur\\card.jpg")
@@ -74,18 +74,18 @@ class CardState:
         blobs = BalloonVision.recognize_card()
 
         #Zolang er geen blobs zijn gevonden en we alive zijn. Door blijven zoeken
-        while not blobs[0] or not blobs[1] or not blobs[2] and BalloonMode.alive:
+        while not blobs[0] or not blobs[1] or not blobs[2] and self.balloonmode.alive:
 
             blobs = BalloonVision.recognize_card()
 
         #Voorbij de while, kaart wordt voorgehouden. Of niet meer alive
-        if not BalloonMode.alive:
+        if not self.balloonmode.alive:
             return False
 
         #Blobs in variabelen zetten
         redBlob, greenBlob, blueBlob = blobs
 
-        BalloonMode.logger.logevent(CardState.LOGGER_NAME, "Gevonden.", Logger.MESSAGE)
+        self.balloonmode.logger.logevent(CardState.LOGGER_NAME, "Gevonden.", Logger.MESSAGE)
         #Blobs sorteren op y (hoogte)
         blobs.sort(key=lambda x: x.y)
 

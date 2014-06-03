@@ -1,7 +1,7 @@
 __author__ = 'Robert'
 
 import threading
-
+from CardState import CardState
 class BalloonMode:
 
     #Alive variabele, alle states controleren hierop
@@ -26,9 +26,9 @@ class BalloonMode:
         self.thread.start()
 
     def run(self):
-        #Volgende state opstarten
-        from CardState import CardState
-        state = CardState()
+        #Volgendee opstarten
+
+        state = CardState(self)
         state.doe_stap([])
 
     def set_alive(self, value):
