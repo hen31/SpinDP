@@ -10,8 +10,8 @@ class Aftikken:
 
     def run(self):
         for x in range(0, 4):
-            hip = DanceMode.movementHandler.legs[0].get_heigt()
-            DanceMode.movementHandler.legs[0].set_heigt(hip-20)
+            heigt = DanceMode.movementHandler.legs[0].get_heigt()
+            DanceMode.movementHandler.legs[0].set_heigt(heigt-20)
             time.sleep(1)
-            DanceMode.movementHandler.legs[0].set_heigt(hip)
+            DanceMode.movementHandler.legs[0].set_heigt(heigt)
             time.sleep(1)
