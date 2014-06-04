@@ -42,8 +42,14 @@ class MovementHandler:
     min_exec_time = 0.05
 
     #uitslag van een stap
-    stap_uitslag = 100
-    stap_uitslag_y = 50
+    stap_uitslag_front = 60
+    stap_uitslag_y_front = 75
+
+    stap_uitslag_middle = 40
+    stap_uitslag_y_middle = 50
+
+    stap_uitslag_back = 40
+    stap_uitslag_y_back = 50
 
     #maximale uitslag voor poten
     max_uitslag_x_voor = 50
@@ -73,6 +79,9 @@ class MovementHandler:
         self.pwm2 = PWM(0x46)               # PWM for the first servo controller
         self.pwm2.setPWMFreq(MovementHandler.PWM_FREQ_1)   # Set frequency to 50 Hz
         self.legs = [Leg(1, self.pwm), Leg(2, self.pwm), Leg(3, self.pwm), Leg(4, self.pwm2), Leg(5, self.pwm2), Leg(6, self.pwm2)]
+        self.legs[0].normal_x = 0
+        self.legs[0].normal_y = 125
+        self.legs[0].angle_afwijking = -23
         self.move_degrees = 0
         self.move_power = 0
         self.turn_degrees = 0
@@ -130,11 +139,10 @@ class MovementHandler:
 
         #gamma hoek berekenen (hoek van de heup)
         gamma = self.get_gammma_angle(x, y)
-
         #totale lengte poot berekenen
-        L1 = math.sqrt((x*x)+(y*y))
+        L1 = math.sqrt((float(x)*float(x))+(float(y)*float(y)))
         #legte L berekenen
-        L = math.sqrt((float(z) * float(z)) + math.pow((L1 - Leg.COXA), 2))
+        L = math.sqrt((float(z) * float(z)) + (float((L1 - Leg.COXA)) * float((L1 - Leg.COXA))))
 
         #hoek a1 berekenen waarbij waarde z_div_L tussen -1 en 1
         z_div_L =float(z) / float(L)
@@ -146,7 +154,7 @@ class MovementHandler:
 
 
         #cosinus regel op driehoek Tibia, Femur, L om hoek a2 te berekenen
-        sum = (Leg.TIBIA * Leg.TIBIA - (Leg.FEMUR * Leg.FEMUR) - (L * L)) / (-2 * Leg.FEMUR * L)
+        sum = ((Leg.TIBIA * Leg.TIBIA) - (Leg.FEMUR * Leg.FEMUR) - (L * L)) / (-2 * Leg.FEMUR * L)
         if sum < -1.0:
             sum = -1
         elif sum > 1.0:
@@ -266,32 +274,38 @@ class MovementHandler:
     def move_leg_stilstaand(self, leg, x , y, z):
         #verschil uitrekken
         x_dif = x  - leg.last_x
-        aantal_stappen = int(math.fabs(x_dif / 20)) + 1
+        aantal_stappen = 20
         #aantal stappen uitrekken
         if aantal_stappen >15:
-            aantal_stappen = 15
+            aantal_stappen = int(math.fabs(x_dif / 20)) + 1
 
         #lengte per stap uitrekken
         x_stap = x_dif / aantal_stappen
         y_dif = y - leg.last_y
         y_stap =  y_dif /aantal_stappen
 
-        aantal_stappen_y = int(math.fabs(x_dif / 20)) + 1
+        aantal_stappen_y = int(math.fabs(y_dif / 20)) + 1
 
         #zorgen dat het niet meer dan 15 stappen worden
         if aantal_stappen_y >15:
             aantal_stappen_y = 15
-
+        max_y_reached = False
+        max_x_reached = False
         #grootste aantal stappen x of y is leidend
         if aantal_stappen_y > aantal_stappen:
             aantal_stappen = aantal_stappen_y
         #voor elke stap de poot bewegen
         for i in range(1, aantal_stappen + 1):
             #zorgen dat hij niet te ver gaat
-            if y_stap * i > y_dif:
-                y_stap = 0
-            if x_stap * i > x_dif:
-                x_dif = 0
+            if y_stap * i > y_dif and max_y_reached == False:
+                y_dif = y_dif - y_stap * i
+                max_y_reached= True
+            elif max_y_reached == True:
+				y_dif = 0 
+            if x_stap * i > x_dif and max_x_reached == False:
+                x_dif = x_dif - x_stap * i
+            elif max_y_reached == True:
+				x_dif = 0 
 
             #hoeken uitrekken
             alpha, beta, gamma = self.get_angles((x_stap * i)+ leg.last_x, (y_stap * i)+leg.last_y, z)
@@ -348,11 +362,24 @@ class MovementHandler:
                 #uitrekken hoe de draaing is
                 rad = math.radians(float(degrees_move))
 
-                y_stap = math.sin(rad) * MovementHandler.stap_uitslag_y
-                x_stap = math.cos(rad) * MovementHandler.stap_uitslag
+                y_stap_front = math.sin(rad) * MovementHandler.stap_uitslag_y_front
+                x_stap_front = math.cos(rad) * MovementHandler.stap_uitslag_front
+
+                y_stap_back = math.sin(rad) * MovementHandler.stap_uitslag_y_back
+                x_stap_back = math.cos(rad) * MovementHandler.stap_uitslag_back
+
+                y_stap_middle = math.sin(rad) * MovementHandler.stap_uitslag_y_middle
+                x_stap_middle = math.cos(rad) * MovementHandler.stap_uitslag_middle
+
                 if power_move == 0:
-                    x_stap = 0
-                    y_stap = 0
+                    y_stap_front = 0
+                    x_stap_front = 0
+
+                    y_stap_back = 0
+                    x_stap_back = 0
+
+                    y_stap_middle = 0
+                    x_stap_middle = 0
 
                 #kijken welke kant om wordt gedraaid
                 rechtsom = False
@@ -370,35 +397,35 @@ class MovementHandler:
                 leg_back_y_turn = (float(power_turn) / float(100)) * MovementHandler.max_uitslag_y_achter
                 #poten links en recht om uitrekken
                 if rechtsom:
-                    left_front_x = x_stap + leg_front_x_turn
-                    left_front_y = y_stap + leg_front_y_turn
-                    right_front_x = x_stap - leg_front_x_turn
-                    right_front_y = y_stap - leg_front_y_turn
+                    left_front_x = x_stap_front + leg_front_x_turn
+                    left_front_y = y_stap_front + leg_front_y_turn
+                    right_front_x = x_stap_front - leg_front_x_turn
+                    right_front_y = y_stap_front - leg_front_y_turn
 
-                    left_middle_x = x_stap - leg_middle_x_turn
-                    left_middle_y = y_stap - leg_middle_y_turn
-                    right_middle_x = x_stap + leg_middle_x_turn
-                    right_middle_y = y_stap + leg_middle_y_turn
+                    left_middle_x = x_stap_middle - leg_middle_x_turn
+                    left_middle_y = y_stap_middle - leg_middle_y_turn
+                    right_middle_x = x_stap_middle + leg_middle_x_turn
+                    right_middle_y = y_stap_middle + leg_middle_y_turn
 
-                    left_back_x = x_stap - leg_back_x_turn
-                    left_back_y = y_stap - leg_back_y_turn
-                    right_back_x = x_stap + leg_back_x_turn
-                    right_back_y = y_stap + leg_back_y_turn
+                    left_back_x = x_stap_back - leg_back_x_turn
+                    left_back_y = y_stap_back - leg_back_y_turn
+                    right_back_x = x_stap_back + leg_back_x_turn
+                    right_back_y = y_stap_back + leg_back_y_turn
                 else:
-                    left_front_x = x_stap - leg_front_x_turn
-                    left_front_y = y_stap - leg_front_y_turn
-                    right_front_x = x_stap + leg_front_x_turn
-                    right_front_y = y_stap + leg_front_y_turn
+                    left_front_x = x_stap_front - leg_front_x_turn
+                    left_front_y = y_stap_front - leg_front_y_turn
+                    right_front_x = x_stap_front + leg_front_x_turn
+                    right_front_y = y_stap_front + leg_front_y_turn
 
-                    left_middle_x = x_stap + leg_middle_x_turn
-                    left_middle_y = y_stap + leg_middle_y_turn
-                    right_middle_x = x_stap - leg_middle_x_turn
-                    right_middle_y = y_stap - leg_middle_y_turn
+                    left_middle_x = x_stap_middle + leg_middle_x_turn
+                    left_middle_y = y_stap_middle + leg_middle_y_turn
+                    right_middle_x = x_stap_middle - leg_middle_x_turn
+                    right_middle_y = y_stap_middle - leg_middle_y_turn
 
-                    left_back_x = x_stap + leg_back_x_turn
-                    left_back_y = y_stap + leg_back_y_turn
-                    right_back_x = x_stap - leg_back_x_turn
-                    right_back_y = y_stap - leg_back_y_turn
+                    left_back_x = x_stap_back + leg_back_x_turn
+                    left_back_y = y_stap_back + leg_back_y_turn
+                    right_back_x = x_stap_back - leg_back_x_turn
+                    right_back_y = y_stap_back - leg_back_y_turn
 
                 threads = []
 
@@ -440,7 +467,7 @@ class MovementHandler:
                     threads.append(poot4_thread)
                     poot6_thread = threading.Thread(target=self.raise_leg, args=(self.legs[5],))
                     threads.append(poot6_thread)
-                    self.stand_gait += 2
+                    self.stand_gait += 1
                 elif self.stand_gait == 6:
                     #poten 2 naar voren
                     poot2_thread = threading.Thread(target=self.move_leg_lucht, args=(self.legs[1], self.legs[1].normal_x - left_middle_x, self.legs[1].normal_y + left_middle_y, z_mm_middle))
@@ -451,7 +478,7 @@ class MovementHandler:
                     threads.append(poot6_thread)
 
                     #poten 1 naar nul stand
-                    poot1_thread = threading.Thread(target=self.move_leg_stilstaand, args=(self.legs[0], self.legs[0].normal_x, self.legs[0].normal_y, z_mm_front  ))
+                    poot1_thread = threading.Thread(target=self.move_leg_stilstaand, args=(self.legs[0], self.legs[0].normal_x , self.legs[0].normal_y, z_mm_front  ))
                     threads.append(poot1_thread)
                     poot3_thread = threading.Thread(target=self.move_leg_stilstaand, args=(self.legs[2], self.legs[2].normal_x, self.legs[2].normal_y, z_mm_middle))
                     threads.append(poot3_thread)
@@ -503,7 +530,3 @@ class MovementHandler:
 
             self.last_height = height
             time.sleep(0.1)
-
-
-
-

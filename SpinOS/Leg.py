@@ -19,6 +19,7 @@ class Leg:
         #normal leg position
         self.normal_x = 0
         self.normal_y = 100
+        self.angle_afwijking = 0
         #leg number
         self.leg_number = leg_number
         #auto assign
@@ -49,7 +50,7 @@ class Leg:
 
     #set knee
     def set_knee(self, degree):
-        self.knee.set_servo(degree)
+        self.knee.set_servo(degree- self.angle_afwijking)
 
     #get knee
     def get_knee(self):

@@ -167,7 +167,7 @@ class SpinOS:
             if self.serial_device:
                 #haal de waardes op van de arduino
                 self.serial.getValues()
-            time.sleep(0.5)
+            time.sleep(0.3)
             
     #alle threads stoppen
     def shutdown(self):
