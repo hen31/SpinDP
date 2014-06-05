@@ -39,6 +39,8 @@ class BalloonMode:
     def set_alive(self, value):
         #Alive variabele value geven
         BalloonMode.alive = value
+        if not value:
+            self.thread._stop()
 
     def process_command(self, command, message):
         pass
