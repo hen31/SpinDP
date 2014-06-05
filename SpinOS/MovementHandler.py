@@ -135,7 +135,11 @@ class MovementHandler:
         return math.atan((float(x) / float(y)))
 
     #inverse kinematics hoeken berekenen, aan de hand van x,y,z in mm
-    def get_angles(self, y, x, z):
+    def get_angles(self, y, x, z, leg):
+        if leg.leg_number in [1, 4, 3, 6]:
+            #is voor of achter dus x en y schuifen op
+            x = int(x * math.cos(0.4014257279587))
+            y = int(y * math.sin(0.4014257279587))
 
         #gamma hoek berekenen (hoek van de heup)
         gamma = self.get_gammma_angle(x, y)
@@ -185,7 +189,7 @@ class MovementHandler:
             leg.last_x = 0
             leg.last_y = 150
             leg.last_z = MovementHandler.min_height_mm
-            alpha, beta, gamma = self.get_angles(200, 150, MovementHandler.min_height_mm)
+            alpha, beta, gamma = self.get_angles(200, 150, MovementHandler.min_height_mm, leg)
             leg.set_height(alpha+30)
             time.sleep(0.5)
             leg.set_hip(gamma)
@@ -196,7 +200,7 @@ class MovementHandler:
         for i in [1]:#[ , 4, 2, 5, 3, 6]:
             leg = self.legs[i-1]
             #hoeken ophalen van poten en op de nul positie zetten
-            alpha, beta, gamma = self.get_angles(0, 150, MovementHandler.min_height_mm)
+            alpha, beta, gamma = self.get_angles(0, 150, MovementHandler.min_height_mm, leg)
             #poten op juiste posistie zetten
             leg.set_height(alpha+30)
             time.sleep(0.5)
@@ -220,7 +224,7 @@ class MovementHandler:
     #poot omlaag doen
     def lower_leg(self, leg):
         #hoeken uitrekenen
-        alpha, beta, gamma = self.get_angles(leg.last_x, leg.last_y, leg.last_z)
+        alpha, beta, gamma = self.get_angles(leg.last_x, leg.last_y, leg.last_z, leg)
         #verschil tussen huidige hoek en nieuwe hoek berekenen
         dif_alpha = (leg.get_height() - (alpha - MovementHandler.raise_leg_angle ))
         dif_gamma = (leg.get_hip() - gamma)
@@ -244,7 +248,7 @@ class MovementHandler:
         #verschil uitrekken
         x_dif = x  - leg.last_x
         y_dif = y - leg.last_y
-        alpha, beta, gamma = self.get_angles(x_dif+ leg.last_x, y_dif+leg.last_y, z)
+        alpha, beta, gamma = self.get_angles(x_dif+ leg.last_x, y_dif+leg.last_y, z, leg)
 
 
         dif_alpha = (leg.get_height() - alpha)
@@ -308,7 +312,7 @@ class MovementHandler:
 				x_dif = 0 
 
             #hoeken uitrekken
-            alpha, beta, gamma = self.get_angles((x_stap * i)+ leg.last_x, (y_stap * i)+leg.last_y, z)
+            alpha, beta, gamma = self.get_angles((x_stap * i)+ leg.last_x, (y_stap * i)+leg.last_y, z, leg)
 
             #verschil uitrekken
             dif_gamma = (leg.get_hip() - gamma)
