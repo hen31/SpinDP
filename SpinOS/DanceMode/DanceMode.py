@@ -26,7 +26,7 @@ class DanceMode:
 
     def run(self):
         DanceMode.logger.logevent("DanceMode", "Beginnen met dansen", Logger.MESSAGE)
-        danceOrder = [Aftikken(), PushUps(), Zwaaien(), PotenHoog(), Wippen(), Rondje(), ZijwaartseWipLoop(), Einde()]
+        danceOrder = [Aftikken(self.movementHandler), PushUps(self.movementHandler), Zwaaien(self.movementHandler), PotenHoog(self.movementHandler), Wippen(self.movementHandler), Rondje(self.movementHandler), ZijwaartseWipLoop(self.movementHandler), Einde(self.movementHandler)]
         for dance in danceOrder:
             if DanceMode.alive:
                 DanceMode.logger.logevent("DanceMode", dance.__class__ + " dansen", Logger.MESSAGE)

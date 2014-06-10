@@ -1,6 +1,4 @@
-from DanceMode import DanceMode
 import time
-from DanceMode.DanceMode import DanceMode
 
 __author__ = 'Robert'
 
@@ -9,14 +7,16 @@ class ZijwaartseWipLoop:
 
     MOVE_DISTANCE = 10
 
-    def __init__(self, movement):
-        pass
+    movementHandler = None
+
+    def __init__(self, movementhandler):
+        self.movementHandler = movementhandler
 
     def run(self):
 
         #naar rechts lopen
-        DanceMode.movementHandler.move(270,100,0,0)
-        time.sleep(DanceMode.movementHandler.TIME_MOVE_ONE_CM* ZijwaartseWipLoop.MOVE_DISTANCE)
+        self.movementHandler.move(270,100,0,0)
+        time.sleep(self.movementHandler.TIME_MOVE_ONE_CM* ZijwaartseWipLoop.MOVE_DISTANCE)
 
         #links omhoog
         self.poot_omhoog(0)
@@ -35,8 +35,8 @@ class ZijwaartseWipLoop:
         self.reset(4)
         self.reset(5)
 
-        DanceMode.movementHandler.move(90,100,0,0)
-        time.sleep(DanceMode.movementHandler.TIME_MOVE_ONE_CM* (ZijwaartseWipLoop.MOVE_DISTANCE*2))
+        self.movementHandler.move(90,100,0,0)
+        time.sleep(self.movementHandler.TIME_MOVE_ONE_CM* (ZijwaartseWipLoop.MOVE_DISTANCE*2))
 
         #rechts omhoog
         self.poot_omhoog(5)
@@ -55,33 +55,33 @@ class ZijwaartseWipLoop:
         self.reset(4)
         self.reset(5)
 
-        DanceMode.movementHandler.move(270,100,0,0)
-        time.sleep(DanceMode.movementHandler.TIME_MOVE_ONE_CM* ZijwaartseWipLoop.MOVE_DISTANCE)
+        self.movementHandler.move(270,100,0,0)
+        time.sleep(self.movementHandler.TIME_MOVE_ONE_CM* ZijwaartseWipLoop.MOVE_DISTANCE)
 
 
     #gooit de desbetreffende poot omhoog
     def beweeg_middelste(self, leg_index):
-        alpha, beta, gamma = DanceMode.movementHandler.get_angles(DanceMode.movementHandler.legs[leg_index].normal_x, DanceMode.movementHandler.legs[leg_index].normal_y, 100)
-        DanceMode.movementHandler.legs[leg_index].set_height(alpha)
-        DanceMode.movementHandler.legs[leg_index].set_hip(gamma)
-        DanceMode.movementHandler.legs[leg_index].set_knee(beta)
+        alpha, beta, gamma = self.movementHandler.get_angles(self.movementHandler.legs[leg_index].normal_x, self.movementHandler.legs[leg_index].normal_y, 100)
+        self.movementHandler.legs[leg_index].set_height(alpha)
+        self.movementHandler.legs[leg_index].set_hip(gamma)
+        self.movementHandler.legs[leg_index].set_knee(beta)
 
     def reset(self, leg_index):
-        alpha, beta, gamma = DanceMode.movementHandler.get_angles(0,0,0)
-        DanceMode.movementHandler.legs[leg_index].set_height(alpha)
-        DanceMode.movementHandler.legs[leg_index].set_hip(gamma)
-        DanceMode.movementHandler.legs[leg_index].set_knee(beta)
+        alpha, beta, gamma = self.movementHandler.get_angles(0,0,0)
+        self.movementHandler.legs[leg_index].set_height(alpha)
+        self.movementHandler.legs[leg_index].set_hip(gamma)
+        self.movementHandler.legs[leg_index].set_knee(beta)
 
 
     def poot_omhoog(self, leg_index):
-        alpha, beta, gamma = DanceMode.movementHandler.get_angles(DanceMode.movementHandler.legs[leg_index].normal_x, DanceMode.movementHandler.legs[leg_index].normal_y, 175)
-        DanceMode.movementHandler.legs[leg_index].set_height(alpha)
-        DanceMode.movementHandler.legs[leg_index].set_hip(gamma)
-        DanceMode.movementHandler.legs[leg_index].set_knee(beta)
+        alpha, beta, gamma = self.movementHandler.get_angles(self.movementHandler.legs[leg_index].normal_x, self.movementHandler.legs[leg_index].normal_y, 175)
+        self.movementHandler.legs[leg_index].set_height(alpha)
+        self.movementHandler.legs[leg_index].set_hip(gamma)
+        self.movementHandler.legs[leg_index].set_knee(beta)
 
     def poot_omlaag(self, leg_index):
-        alpha, beta, gamma = DanceMode.movementHandler.get_angles(DanceMode.movementHandler.legs[leg_index].normal_x, DanceMode.movementHandler.legs[leg_index].normal_y, 75)
-        DanceMode.movementHandler.legs[leg_index].set_height(alpha)
-        DanceMode.movementHandler.legs[leg_index].set_hip(gamma)
-        DanceMode.movementHandler.legs[leg_index].set_knee(beta)
+        alpha, beta, gamma = self.movementHandler.get_angles(self.movementHandler.legs[leg_index].normal_x, self.movementHandler.legs[leg_index].normal_y, 75)
+        self.movementHandler.legs[leg_index].set_height(alpha)
+        self.movementHandler.legs[leg_index].set_hip(gamma)
+        self.movementHandler.legs[leg_index].set_knee(beta)
 

@@ -1,4 +1,3 @@
-from DanceMode import DanceMode
 import time
 
 __author__ = 'Robert'
@@ -6,18 +5,20 @@ __author__ = 'Robert'
 
 class Wippen:
 
-    def __init__(self):
-        pass
+    movementHandler = None
+
+    def __init__(self, movementhandler):
+        self.movementHandler = movementhandler
 
     def run(self):
         for x in range(0,4):
-            DanceMode.movementHandler.raise_leg(DanceMode.movementHandler.legs[0])
-            DanceMode.movementHandler.raise_leg(DanceMode.movementHandler.legs[3])
-            DanceMode.movementHandler.lower_leg(DanceMode.movementHandler.legs[2])
-            DanceMode.movementHandler.lower_leg(DanceMode.movementHandler.legs[5])
+            self.movementHandler.raise_leg(self.movementHandler.legs[0])
+            self.movementHandler.raise_leg(self.movementHandler.legs[3])
+            self.movementHandler.lower_leg(self.movementHandler.legs[2])
+            self.movementHandler.lower_leg(self.movementHandler.legs[5])
             time.sleep(1)
-            DanceMode.movementHandler.raise_leg(DanceMode.movementHandler.legs[2])
-            DanceMode.movementHandler.raise_leg(DanceMode.movementHandler.legs[5])
-            DanceMode.movementHandler.lower_leg(DanceMode.movementHandler.legs[0])
-            DanceMode.movementHandler.lower_leg(DanceMode.movementHandler.legs[3])
+            self.movementHandler.raise_leg(self.movementHandler.legs[2])
+            self.movementHandler.raise_leg(self.movementHandler.legs[5])
+            self.movementHandler.lower_leg(self.movementHandler.legs[0])
+            self.movementHandler.lower_leg(self.movementHandler.legs[3])
             time.sleep(1)
