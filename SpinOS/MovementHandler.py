@@ -42,7 +42,7 @@ class MovementHandler:
     min_exec_time = 0.05
 
     #uitslag van een stap
-    stap_uitslag_front = 60
+    stap_uitslag_front = 50
     stap_uitslag_y_front = 75
 
     stap_uitslag_middle = 40
@@ -79,9 +79,11 @@ class MovementHandler:
         self.pwm2 = PWM(0x46)               # PWM for the first servo controller
         self.pwm2.setPWMFreq(MovementHandler.PWM_FREQ_1)   # Set frequency to 50 Hz
         self.legs = [Leg(1, self.pwm), Leg(2, self.pwm), Leg(3, self.pwm), Leg(4, self.pwm2), Leg(5, self.pwm2), Leg(6, self.pwm2)]
-        self.legs[0].normal_x = 20
-        self.legs[0].normal_y = 125
-        self.legs[0].angle_afwijking = -23
+
+        self.legs[0].normal_x = 100
+        self.legs[0].normal_y = 100
+        self.legs[0].angle_afwijking = -22
+
         self.move_degrees = 0
         self.move_power = 0
         self.turn_degrees = 0
@@ -136,10 +138,10 @@ class MovementHandler:
 
     #inverse kinematics hoeken berekenen, aan de hand van x,y,z in mm
     def get_angles(self, y, x, z, leg):
-        if leg.leg_number in [1, 4, 3, 6]:
+        #if leg.leg_number in [1, 4, 3, 6]:
             #is voor of achter dus x en y schuifen op
-            x = int(x * math.cos(0.4014257279587))
-            y = int(y * math.sin(0.4014257279587))
+        #    x = int(x * math.cos(0.4014257279587))
+        #    y = int(y * math.sin(0.4014257279587))
 
         #gamma hoek berekenen (hoek van de heup)
         gamma = self.get_gammma_angle(x, y)
@@ -187,9 +189,9 @@ class MovementHandler:
             #poten naar voren zetten
             leg = self.legs[i-1]
             leg.last_x = 0
-            leg.last_y = 150
+            leg.last_y = 75
             leg.last_z = MovementHandler.min_height_mm
-            alpha, beta, gamma = self.get_angles(200, 150, MovementHandler.min_height_mm, leg)
+            alpha, beta, gamma = self.get_angles(0, 150, MovementHandler.min_height_mm, leg)
             leg.set_height(alpha+30)
             time.sleep(0.5)
             leg.set_hip(gamma)
@@ -278,10 +280,10 @@ class MovementHandler:
     def move_leg_stilstaand(self, leg, x , y, z):
         #verschil uitrekken
         x_dif = x  - leg.last_x
-        aantal_stappen = 20
+        aantal_stappen = int(math.fabs(x_dif / 20)) + 1
         #aantal stappen uitrekken
         if aantal_stappen >15:
-            aantal_stappen = int(math.fabs(x_dif / 20)) + 1
+            aantal_stappen = 15
 
         #lengte per stap uitrekken
         x_stap = x_dif / aantal_stappen
@@ -482,11 +484,11 @@ class MovementHandler:
                     threads.append(poot6_thread)
 
                     #poten 1 naar nul stand
-                    poot1_thread = threading.Thread(target=self.move_leg_stilstaand, args=(self.legs[0], self.legs[0].normal_x , self.legs[0].normal_y, z_mm_front  ))
+                    poot1_thread = threading.Thread(target=self.move_leg_stilstaand, args=(self.legs[0], self.legs[0].normal_x + x_stap_front, self.legs[0].normal_y, z_mm_front  ))
                     threads.append(poot1_thread)
-                    poot3_thread = threading.Thread(target=self.move_leg_stilstaand, args=(self.legs[2], self.legs[2].normal_x, self.legs[2].normal_y, z_mm_middle))
+                    poot3_thread = threading.Thread(target=self.move_leg_stilstaand, args=(self.legs[2], self.legs[2].normal_x + x_stap_back, self.legs[2].normal_y, z_mm_middle))
                     threads.append(poot3_thread)
-                    poot5_thread = threading.Thread(target=self.move_leg_stilstaand, args=(self.legs[4], self.legs[4].normal_x, self.legs[4].normal_y, z_mm_back))
+                    poot5_thread = threading.Thread(target=self.move_leg_stilstaand, args=(self.legs[4], self.legs[4].normal_x - x_stap_middle, self.legs[4].normal_y, z_mm_back))
                     threads.append(poot5_thread)
                     self.stand_gait +=1
                 elif self.stand_gait == 7:

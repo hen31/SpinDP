@@ -34,7 +34,7 @@ class Leg:
 
     #set hip
     def set_hip(self, degree):
-        self.hip.set_servo(degree)
+        self.hip.set_servo(degree - self.angle_afwijking)
 
     #get hip
     def get_hip(self):
@@ -50,7 +50,7 @@ class Leg:
 
     #set knee
     def set_knee(self, degree):
-        self.knee.set_servo(degree- self.angle_afwijking)
+        self.knee.set_servo(degree)
 
     #get knee
     def get_knee(self):
