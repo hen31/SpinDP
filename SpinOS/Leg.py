@@ -18,7 +18,7 @@ class Leg:
         self.last_z = 0
         #normal leg position
         self.normal_x = 0
-        self.normal_y = 100
+        self.normal_y = 130
         self.angle_afwijking = 0
         #leg number
         self.leg_number = leg_number
