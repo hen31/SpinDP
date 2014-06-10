@@ -189,7 +189,7 @@ class MovementHandler:
             leg.last_x = 0
             leg.last_y = 150
             leg.last_z = MovementHandler.min_height_mm
-            alpha, beta, gamma = self.get_angles(50, 150, MovementHandler.min_height_mm, leg)
+            alpha, beta, gamma = self.get_angles(20, 150, MovementHandler.min_height_mm, leg)
             leg.set_height(alpha+30)
             time.sleep(0.5)
             leg.set_hip(gamma)
