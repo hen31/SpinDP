@@ -42,14 +42,14 @@ class MovementHandler:
     min_exec_time = 0.05
 
     #uitslag van een stap
-    stap_uitslag_front = 60
-    stap_uitslag_y_front = 75
+    stap_uitslag_front = 20
+    stap_uitslag_y_front = 20
 
-    stap_uitslag_middle = 40
-    stap_uitslag_y_middle = 50
+    stap_uitslag_middle = 20
+    stap_uitslag_y_middle = 20
 
-    stap_uitslag_back = 40
-    stap_uitslag_y_back = 50
+    stap_uitslag_back = 20
+    stap_uitslag_y_back = 20
 
     #maximale uitslag voor poten
     max_uitslag_x_voor = 50
@@ -189,7 +189,7 @@ class MovementHandler:
             leg.last_x = 0
             leg.last_y = 150
             leg.last_z = MovementHandler.min_height_mm
-            alpha, beta, gamma = self.get_angles(200, 150, MovementHandler.min_height_mm, leg)
+            alpha, beta, gamma = self.get_angles(50, 150, MovementHandler.min_height_mm, leg)
             leg.set_height(alpha+30)
             time.sleep(0.5)
             leg.set_hip(gamma)
