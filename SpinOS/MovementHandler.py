@@ -79,9 +79,9 @@ class MovementHandler:
         self.pwm2 = PWM(0x46)               # PWM for the first servo controller
         self.pwm2.setPWMFreq(MovementHandler.PWM_FREQ_1)   # Set frequency to 50 Hz
         self.legs = [Leg(1, self.pwm), Leg(2, self.pwm), Leg(3, self.pwm), Leg(4, self.pwm2), Leg(5, self.pwm2), Leg(6, self.pwm2)]
-        #self.legs[0].normal_x = 0
-        #self.legs[0].normal_y = 125
-        #self.legs[0].angle_afwijking = -23
+        self.legs[0].normal_x = 20
+        self.legs[0].normal_y = 125
+        self.legs[0].angle_afwijking = -23
         self.move_degrees = 0
         self.move_power = 0
         self.turn_degrees = 0
@@ -136,10 +136,10 @@ class MovementHandler:
 
     #inverse kinematics hoeken berekenen, aan de hand van x,y,z in mm
     def get_angles(self, y, x, z, leg):
-        #if leg.leg_number in [1, 4, 3, 6]:
+        if leg.leg_number in [1, 4, 3, 6]:
             #is voor of achter dus x en y schuifen op
-        #    x = int(x * math.cos(0.4014257279587))
-        #    y = int(y * math.sin(0.4014257279587))
+            x = int(x * math.cos(0.4014257279587))
+            y = int(y * math.sin(0.4014257279587))
 
         #gamma hoek berekenen (hoek van de heup)
         gamma = self.get_gammma_angle(x, y)

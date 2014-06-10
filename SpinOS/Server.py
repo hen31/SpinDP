@@ -18,10 +18,11 @@ class Server:
     def __init__(self, port, Log):
         self.portnumber = port
         self.s = socket.socket()  #Socket aanmaken
+        self.s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         if platform.system() == "Windows":
             self.host = socket.gethostname()  #lokale host gebruiken op windows
         else:
-            self.host = "192.168.10.1"
+            self.host = "0.0.0.0"
         self.listen_thread = threading.Thread(target=self.run)
         self.log = Log
         self.clients = list()#Lijst van alle verbonden clients
