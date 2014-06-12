@@ -299,11 +299,20 @@ class MovementHandler:
         #voor elke stap de poot bewegen
         for i in range(1, aantal_stappen + 1):
 
-            if math.fabs(i* x_stap) > x_dif or max_x_reached == True:
+        if x_dif >0:
+            if (i* x_stap) > x_dif or max_x_reached == True:
                 x_stap = 0
                 max_x_reached = True
-
-            if math.fabs(i* y_stap) > y_dif or max_y_reached == True:
+        else:
+            if (i* x_stap) < x_dif or max_x_reached == True:
+                x_stap = 0
+                max_x_reached = True
+        if y_dif > 0:
+            if (i* y_stap) > y_dif or max_y_reached == True:
+                y_stap = 0
+                max_y_reached = True
+        else:
+            if (i* y_stap) < y_dif or max_y_reached == True:
                 y_stap = 0
                 max_y_reached = True
 
