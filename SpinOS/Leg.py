@@ -22,15 +22,17 @@ class Leg:
         self.angle_afwijking = 0
         #leg number
         self.leg_number = leg_number
-        #auto assign
-        if leg_number > 2:
-            leg_number -= 2
-        leg_number -= 1
 
-        #assign servos
-        self.hip = Servo((leg_number) *3, pwm)
-        self.height = Servo((leg_number)*3+1, pwm)
-        self.knee = Servo((leg_number)*3+2, pwm)
+        if leg_number == 1 or leg_number == 3:
+            self.hip = Servo(0, pwm)
+            self.height = Servo(1, pwm)
+            self.knee = Servo(2, pwm)
+
+        elif leg_number == 2 or leg_number == 4:
+            self.hip = Servo(6, pwm)
+            self.height = Servo(7, pwm)
+            self.knee = Servo(8, pwm)
+
 
     #set hip
     def set_hip(self, degree):
