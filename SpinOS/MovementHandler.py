@@ -5,28 +5,24 @@ from Adafruit_PWM_Servo_Driver import PWM
 from Leg import Leg
 
 __author__ = 'Ruben en Hendrik'
-#Layout van poten van spin
-#       14
-#       25
-#       36
-#Lopen gebeurt op gait manier de poten zijn dan als volgt
-# groep 1: 1,5,3
-# groep 2: 4,2,6
 
 
-# 6 mogelijkheden groep is in de lucht groep staat op de grond
-# groep 1 omhoog aan het bewegen, groep 2 op de grond
-# groep 1 naar voren/achteren aan het bewegen, groep 2 op de grond
-# groep 1 naar beneden aan het bewegen, groep 2 op de grond
-# groep 2 omhoog aan het bewegen, groep 1 op de grond
-# groep 2 naar voren/achteren aan het bewegen, groep 1 op de grond
-# groep 2 naar beneden aan het bewegen, groep 1 op de grond
+"""
+Layout van poten van spin
+       1 3
+       2 4
 
-# het aansturen van het lopen gebeurt in de movement methode, deze loopt op zijn eigen thread doorlopend
-# dit gebeurt om stoteren tijdens het lopen te voorkomen,
-# het laatste commando dat is gegeven wordt door lopend uitgevoerd
+ - Poot 1 naar voren
+ - Poot 4 naar voren
+ - Poot 2 naar voren
+ - Poot 3 naar voren
 
-# als er een verandering van commando's is worden de waarde's waarmee de berekingen worden uitgevoerd opnieuw berekend
+Poten 2 en 4 kunnen niet te ver naar voren, anders valt de spin om
+
+Vervolgens:
+ Alle op de grond naar achteren bewegen
+
+"""
 
 class MovementHandler:
 
@@ -42,23 +38,8 @@ class MovementHandler:
     min_exec_time = 0.05
 
     #uitslag van een stap
-    stap_uitslag_front = 50
-    stap_uitslag_y_front = 50
-
-    stap_uitslag_middle = 50
-    stap_uitslag_y_middle = 50
-
-    stap_uitslag_back = -50
-    stap_uitslag_y_back = 50
-
-    #maximale uitslag voor poten
-    max_uitslag_x_voor = 50
-    max_uitslag_x_midden = 50
-    max_uitslag_x_achter = 50
-
-    max_uitslag_y_voor = 50
-    max_uitslag_y_midden = 50
-    max_uitslag_y_achter = 50
+    stap_uitslag = 50
+    stap_uitslag_y = 50
 
     #aantal graden dat de poot omhoog gaat
     raise_leg_angle = 15
@@ -78,7 +59,7 @@ class MovementHandler:
         self.pwm.setPWMFreq(MovementHandler.PWM_FREQ)    # Set frequency to 50 Hz
         self.pwm2 = PWM(0x46)               # PWM for the first servo controller
         self.pwm2.setPWMFreq(MovementHandler.PWM_FREQ_1)   # Set frequency to 50 Hz
-        self.legs = [Leg(1, self.pwm), Leg(2, self.pwm), Leg(3, self.pwm), Leg(4, self.pwm2), Leg(5, self.pwm2), Leg(6, self.pwm2)]
+        self.legs = [Leg(1, self.pwm), Leg(2, self.pwm), Leg(3, self.pwm), Leg(4, self.pwm2)]
 
         self.legs[0].normal_x = 100
         self.legs[0].normal_y = 100
@@ -190,7 +171,7 @@ class MovementHandler:
 
     #poten op vaste positie zetten
     def kalibreren(self):
-        for i in [1 ,4, 2, 5, 3, 6]:
+        for i in [1, 3, 2, 4]:
             #poten naar voren zetten
             leg = self.legs[i-1]
             leg.last_x = 0
@@ -202,11 +183,6 @@ class MovementHandler:
             leg.set_hip(gamma)
             leg.set_knee(beta)
             time.sleep(0.5)
-
-        time.sleep(0.5)
-        for i in [1 , 4, 2, 5, 3, 6]:
-            leg = self.legs[i-1]
-            #hoeken ophalen van poten en op de nul positie zetten
             alpha, beta, gamma = self.get_angles(0, 150, MovementHandler.min_height_mm, leg)
             #poten op juiste posistie zetten
             leg.set_height(alpha+30)
@@ -283,7 +259,68 @@ class MovementHandler:
 
 
     def move_leg_stilstaand(self, leg, x , y, z):
-        pass
+        #verschil uitrekken
+        x_dif = x  - leg.last_x
+        aantal_stappen = int(math.fabs(x_dif / 20)) + 1
+        #aantal stappen uitrekken
+        if aantal_stappen >15:
+            aantal_stappen = 15
+
+        #lengte per stap uitrekken
+
+        y_dif = y - leg.last_y
+
+
+        aantal_stappen_y = int(math.fabs(y_dif / 20)) + 1
+
+        #zorgen dat het niet meer dan 15 stappen worden
+        if aantal_stappen_y >15:
+            aantal_stappen_y = 15
+        max_y_reached = False
+        max_x_reached = False
+        #grootste aantal stappen x of y is leidend
+        if aantal_stappen_y > aantal_stappen:
+            aantal_stappen = aantal_stappen_y
+
+
+        x_stap = x_dif / aantal_stappen
+        y_stap =  y_dif /aantal_stappen
+        #voor elke stap de poot bewegen
+        for i in range(1, aantal_stappen + 1):
+
+            if (i* x_stap) > x_dif or max_x_reached == True:
+                x_stap = 0
+                max_x_reached = True
+
+            if (i* y_stap) > y_dif or max_y_reached == True:
+                y_stap = 0
+                max_y_reached = True
+
+            new_x = (x_stap)+ leg.last_x
+            new_y = (y_stap)+leg.last_y
+            #hoeken uitrekken
+            alpha, beta, gamma = self.get_angles(new_x, new_y, z, leg)
+
+            #verschil uitrekken
+            dif_gamma = (leg.get_hip() - gamma)
+            dif_beta = (leg.get_knee() - beta)
+
+            leg.set_hip(gamma)
+            leg.set_knee(beta)
+
+            max_dif = max([dif_gamma, dif_beta])
+            #max verschil wachten tot servo's op juiste posistie staan
+            excution_time=max_dif * MovementHandler.time_per_degrees
+            excution_time = math.fabs(excution_time)
+            if excution_time < MovementHandler.min_exec_time:
+                excution_time = MovementHandler.min_exec_time
+
+            leg.last_y = new_y
+            leg.last_x = new_x
+            leg.last_z = z
+
+            time.sleep(excution_time)
+
 
 
     def movement(self):
@@ -301,4 +338,39 @@ class MovementHandler:
             self.variable_mutex.release()
             #alleen bewegen als er input is
             if power_move != 0 or power_turn != 0 or height != self.last_height:
-                pass
+                rad = math.radians(float(degrees_move))
+
+                #hoogte uitrekken in mmm
+                mm_height = MovementHandler.min_height_mm + (float(MovementHandler.max_height_mm - MovementHandler.min_height_mm) / float(100)) * float(height)
+
+                y_stap = math.sin(rad) * MovementHandler.stap_uitslag_y
+                x_stap = math.cos(rad) * MovementHandler.stap_uitslag
+
+                if power_move == 0:
+                    y_stap_front = 0
+                    x_stap_front = 0
+
+                    y_stap_back = 0
+                    x_stap_back = 0
+
+                #Poten op volgorde omhoog, verplaatsen en weer naar beneden brengen
+                self.raise_leg(self.legs[0])
+                self.move_leg_lucht(self.legs[0], self.legs[0].normal_x + x_stap, self.legs[0].normal_y + y_stap, mm_height)
+                self.lower_leg(self.legs[0])
+
+                self.raise_leg(self.legs[3])
+                self.move_leg_lucht(self.legs[3], self.legs[3].normal_x - x_stap, self.legs[3].normal_y - y_stap, mm_height)
+                self.lower_leg(self.legs[3])
+
+                self.raise_leg(self.legs[2])
+                self.move_leg_lucht(self.legs[2], self.legs[2].normal_x - x_stap, self.legs[2].normal_y - y_stap, mm_height)
+                self.lower_leg(self.legs[2])
+
+                self.raise_leg(self.legs[1])
+                self.move_leg_lucht(self.legs[1], self.legs[1].normal_x + x_stap, self.legs[1].normal_y + y_stap, mm_height)
+                self.lower_leg(self.legs[1])
+
+                #Alle poten weer terug in de normaal stand brengen
+                for leg in self.legs:
+                    self.move_leg_stilstaand(leg, leg.normal_x, leg.normal_y, mm_height)
+

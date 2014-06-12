@@ -23,8 +23,8 @@ class Leg:
         #leg number
         self.leg_number = leg_number
         #auto assign
-        if leg_number > 3:
-            leg_number -= 3
+        if leg_number > 2:
+            leg_number -= 2
         leg_number -= 1
 
         #assign servos
