@@ -38,8 +38,8 @@ class MovementHandler:
     min_exec_time = 0.05
 
     #uitslag van een stap
-    stap_uitslag = 50
-    stap_uitslag_y = 50
+    stap_uitslag = 60
+    stap_uitslag_y = 27
 
     #aantal graden dat de poot omhoog gaat
     raise_leg_angle = 15
@@ -60,21 +60,24 @@ class MovementHandler:
         self.pwm2 = PWM(0x46)               # PWM for the first servo controller
         self.pwm2.setPWMFreq(MovementHandler.PWM_FREQ_1)   # Set frequency to 50 Hz
         self.legs = [Leg(1, self.pwm), Leg(2, self.pwm), Leg(3, self.pwm), Leg(4, self.pwm2)]
-        self.legs[0].normal_x = 100
-        self.legs[0].normal_y = 100
+        self.legs[0].normal_x = 20
+        self.legs[0].normal_y = 117
         self.legs[0].angle_afwijking = -22
-        self.legs[1].normal_x = 100
-        self.legs[1].normal_y = 75
+
+        self.legs[1].normal_x = -20
+        self.legs[1].normal_y = 117
         self.legs[1].angle_afwijking = 22
 
 
 
-        self.legs[2].normal_x = -100
-        self.legs[2].normal_y = 100
+        self.legs[2].normal_x = -20
+        self.legs[2].normal_y = 117
         self.legs[2].angle_afwijking = -22
-        self.legs[3].normal_x = -100
-        self.legs[3].normal_y = 75
+
+        self.legs[3].normal_x = 20
+        self.legs[3].normal_y = 117
         self.legs[3].angle_afwijking = 22
+
         self.move_degrees = 0
         self.move_power = 0
         self.turn_degrees = 0
