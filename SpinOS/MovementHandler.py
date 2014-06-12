@@ -347,27 +347,24 @@ class MovementHandler:
                 x_stap = math.cos(rad) * MovementHandler.stap_uitslag
 
                 if power_move == 0:
-                    y_stap_front = 0
-                    x_stap_front = 0
-
-                    y_stap_back = 0
-                    x_stap_back = 0
+                    y_stap = 0
+                    x_stap = 0
 
                 #Poten op volgorde omhoog, verplaatsen en weer naar beneden brengen
                 self.raise_leg(self.legs[0])
-                self.move_leg_lucht(self.legs[0], self.legs[0].normal_x + x_stap, self.legs[0].normal_y + y_stap, mm_height)
+                self.move_leg_lucht(self.legs[0], self.legs[0].normal_x + x_stap, self.legs[0].normal_y - y_stap, mm_height)
                 self.lower_leg(self.legs[0])
 
                 self.raise_leg(self.legs[3])
-                self.move_leg_lucht(self.legs[3], self.legs[3].normal_x - x_stap, self.legs[3].normal_y - y_stap, mm_height)
+                self.move_leg_lucht(self.legs[3], (self.legs[3].normal_x * -1) - x_stap, self.legs[3].normal_y + y_stap, mm_height)
                 self.lower_leg(self.legs[3])
 
                 self.raise_leg(self.legs[2])
-                self.move_leg_lucht(self.legs[2], self.legs[2].normal_x - x_stap, self.legs[2].normal_y - y_stap, mm_height)
+                self.move_leg_lucht(self.legs[2], (self.legs[2].normal_x * -1) - x_stap, self.legs[2].normal_y + y_stap, mm_height)
                 self.lower_leg(self.legs[2])
 
                 self.raise_leg(self.legs[1])
-                self.move_leg_lucht(self.legs[1], self.legs[1].normal_x + x_stap, self.legs[1].normal_y + y_stap, mm_height)
+                self.move_leg_lucht(self.legs[1], self.legs[1].normal_x + x_stap, self.legs[1].normal_y - y_stap, mm_height)
                 self.lower_leg(self.legs[1])
 
                 #Alle poten weer terug in de normaal stand brengen
