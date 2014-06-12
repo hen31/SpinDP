@@ -376,6 +376,14 @@ class MovementHandler:
                 self.lower_leg(self.legs[1])
 
                 #Alle poten weer terug in de normaal stand brengen
+                threads = []
                 for leg in self.legs:
-                    self.move_leg_stilstaand(leg, leg.normal_x, leg.normal_y, mm_height)
+                    thread = threading.Thread(target=self.move_leg_stilstaand, args=(leg, leg.normal_x, leg.normal_y, mm_height,))
+                    threads.append(thread)
+
+                for thread in threads:
+                    thread.start()
+
+                for thread in threads:
+                    thread.join()
 
