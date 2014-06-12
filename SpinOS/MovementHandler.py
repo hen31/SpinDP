@@ -59,7 +59,7 @@ class MovementHandler:
         self.pwm.setPWMFreq(MovementHandler.PWM_FREQ)    # Set frequency to 50 Hz
         self.pwm2 = PWM(0x46)               # PWM for the first servo controller
         self.pwm2.setPWMFreq(MovementHandler.PWM_FREQ_1)   # Set frequency to 50 Hz
-        self.legs = [Leg(1, self.pwm), Leg(2, self.pwm), Leg(3, self.pwm), Leg(4, self.pwm2)]
+        self.legs = [Leg(1, self.pwm), Leg(2, self.pwm), Leg(3, self.pwm2), Leg(4, self.pwm2)]
         self.legs[0].normal_x = 20
         self.legs[0].normal_y = 117
         self.legs[0].angle_afwijking = -22
@@ -224,7 +224,7 @@ class MovementHandler:
         dif_gamma = (leg.get_hip() - gamma)
         dif_beta = (leg.get_knee() - beta)
         #hoeken van servo's zetten
-        leg.set_height(alpha - MovementHandler.raise_leg_angle )
+        leg.set_height(alpha)
         leg.set_hip(gamma)
         leg.set_knee(beta)
         #grootste verschil uitrekenen
@@ -299,11 +299,11 @@ class MovementHandler:
         #voor elke stap de poot bewegen
         for i in range(1, aantal_stappen + 1):
 
-            if (i* x_stap) > x_dif or max_x_reached == True:
+            if math.fabs(i* x_stap) > x_dif or max_x_reached == True:
                 x_stap = 0
                 max_x_reached = True
 
-            if (i* y_stap) > y_dif or max_y_reached == True:
+            if math.fabs(i* y_stap) > y_dif or max_y_reached == True:
                 y_stap = 0
                 max_y_reached = True
 
@@ -389,4 +389,6 @@ class MovementHandler:
 
                 for thread in threads:
                     thread.join()
+
+                self.last_height = height
 
