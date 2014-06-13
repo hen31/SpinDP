@@ -29,13 +29,13 @@ class MovementHandler:
 
     #minmaale en maximale hoogte van onderkant servo ten opzichte van grond
     min_height_mm = 75
-    max_height_mm = 175
+    max_height_mm = 125
 
     #time for turning one degree
-    time_per_degrees = 0.01
+    time_per_degrees = 0.005
 
     #min execution time, for servo chip
-    min_exec_time = 0.05
+    min_exec_time = 0.03
 
     #uitslag van een stap
     stap_uitslag = 60
@@ -72,11 +72,11 @@ class MovementHandler:
 
         self.legs[2].normal_x = -20
         self.legs[2].normal_y = 117
-        self.legs[2].angle_afwijking = -22
+        self.legs[2].angle_afwijking = 22
 
         self.legs[3].normal_x = 20
         self.legs[3].normal_y = 117
-        self.legs[3].angle_afwijking = 22
+        self.legs[3].angle_afwijking = -22
 
         self.move_degrees = 0
         self.move_power = 0
@@ -86,7 +86,7 @@ class MovementHandler:
         self.internal_degrees = 0
         self.internal_power = 0
         self.variable_mutex = threading.Semaphore(1)
-        self.group_mutex = threading.Semaphore(3)
+        self.group_mutex = threading.Semaphore(0)
         self.group2_mutex = threading.Semaphore(3)
         self.stand_gait = 1 #gait 0 is alle poten op de grond na kaliberen
         thread_main = threading.Thread(target=self.movement)
@@ -272,10 +272,10 @@ class MovementHandler:
     def move_leg_stilstaand(self, leg, x , y, z):
         #verschil uitrekken
         x_dif = x  - leg.last_x
-        aantal_stappen = int(math.fabs(x_dif / 20)) + 1
+        aantal_stappen = 8 #int(math.fabs(x_dif / 20)) + 1
         #aantal stappen uitrekken
-        if aantal_stappen >15:
-            aantal_stappen = 15
+        #if aantal_stappen >15:
+        #    aantal_stappen = 15
 
         #lengte per stap uitrekken
 
@@ -285,13 +285,13 @@ class MovementHandler:
         aantal_stappen_y = int(math.fabs(y_dif / 20)) + 1
 
         #zorgen dat het niet meer dan 15 stappen worden
-        if aantal_stappen_y >15:
-            aantal_stappen_y = 15
+        #if aantal_stappen_y >15:
+        #    aantal_stappen_y = 15
         max_y_reached = False
         max_x_reached = False
         #grootste aantal stappen x of y is leidend
-        if aantal_stappen_y > aantal_stappen:
-            aantal_stappen = aantal_stappen_y
+        #if aantal_stappen_y > aantal_stappen:
+        #    aantal_stappen = aantal_stappen_y
 
 
         x_stap = x_dif / aantal_stappen
@@ -318,23 +318,25 @@ class MovementHandler:
 
             new_x = (x_stap)+ leg.last_x
             new_y = (y_stap)+leg.last_y
+
             #hoeken uitrekken
             alpha, beta, gamma = self.get_angles(new_x, new_y, z, leg)
 
             #verschil uitrekken
-            dif_gamma = (leg.get_hip() - gamma)
-            dif_beta = (leg.get_knee() - beta)
+            dif_gamma = abs(leg.get_hip() - gamma)
+            dif_beta = abs(leg.get_knee() - beta)
 
             leg.set_hip(gamma)
             leg.set_knee(beta)
 
             max_dif = max([dif_gamma, dif_beta])
             #max verschil wachten tot servo's op juiste posistie staan
-            excution_time=max_dif * MovementHandler.time_per_degrees
-            excution_time = math.fabs(excution_time)
+            excution_time = max_dif * MovementHandler.time_per_degrees
+
             if excution_time < MovementHandler.min_exec_time:
                 excution_time = MovementHandler.min_exec_time
 
+            excution_time = math.fabs(excution_time)
             leg.last_y = new_y
             leg.last_x = new_x
             leg.last_z = z
@@ -389,6 +391,7 @@ class MovementHandler:
 
                 #Alle poten weer terug in de normaal stand brengen
                 threads = []
+                excution_times = []
                 for leg in self.legs:
                     if leg.leg_number in [1, 2]:
                         thread = threading.Thread(target=self.move_leg_stilstaand, args=(leg, leg.normal_x - x_stap, leg.normal_y + y_stap, mm_height,))
@@ -402,6 +405,5 @@ class MovementHandler:
 
                 for thread in threads:
                     thread.join()
-
                 self.last_height = height
 
