@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Live Stream</title>
+</head>
+<style type="text/css">
+*{
+margin: 0;
+padding: 0;
+overflow: hidden;
+}
+</style>
+<body>
+	<img id="stream" src="http://192.168.10.1:8080/?action=stream" />
+</body>
+<script type="text/javascript">
+	img = document.getElementById("stream");
+	img.height = screen.height
+	img.width = screen.width
+</script>
+
+</html>
