@@ -438,32 +438,32 @@ class MovementHandler:
                 if degrees_turn >= 5 and degrees_turn <= 355:
                     if degrees_turn > 180:
                         #linksom
-                        y_stap_links = y_stap + MovementHandler.turn_y
-                        y_stap_rechts = y_stap - MovementHandler.turn_y
+                        y_stap1 = y_stap + MovementHandler.turn_y
+                        y_stap2 = y_stap - MovementHandler.turn_y
                     else:
                         #rechtsom
-                        y_stap_links = y_stap - MovementHandler.turn_y
-                        y_stap_rechts = y_stap + MovementHandler.turn_y
+                        y_stap1 = y_stap - MovementHandler.turn_y
+                        y_stap2 = y_stap + MovementHandler.turn_y
 
                 else:
-                    y_stap_links = y_stap
-                    y_stap_rechts = y_stap
+                    y_stap1 = y_stap
+                    y_stap2 = y_stap
 
                 #Poten op volgorde omhoog, verplaatsen en weer naar beneden brengen
                 self.raise_leg(self.legs[0])
-                self.move_leg_lucht(self.legs[0], self.legs[0].normal_x + x_stap, self.legs[0].normal_y - y_stap_links, mm_height)
+                self.move_leg_lucht(self.legs[0], self.legs[0].normal_x + x_stap, self.legs[0].normal_y - y_stap1, mm_height)
                 self.lower_leg(self.legs[0])
 
                 self.raise_leg(self.legs[3])
-                self.move_leg_lucht(self.legs[3], self.legs[3].normal_x - x_stap, self.legs[3].normal_y + y_stap_rechts, mm_height)
+                self.move_leg_lucht(self.legs[3], self.legs[3].normal_x - x_stap, self.legs[3].normal_y + y_stap1, mm_height)
                 self.lower_leg(self.legs[3])
 
                 self.raise_leg(self.legs[2])
-                self.move_leg_lucht(self.legs[2], self.legs[2].normal_x - x_stap, self.legs[2].normal_y + y_stap_rechts, mm_height)
+                self.move_leg_lucht(self.legs[2], self.legs[2].normal_x - x_stap, self.legs[2].normal_y + y_stap2, mm_height)
                 self.lower_leg(self.legs[2])
 
                 self.raise_leg(self.legs[1])
-                self.move_leg_lucht(self.legs[1], self.legs[1].normal_x + x_stap, self.legs[1].normal_y - y_stap_links, mm_height)
+                self.move_leg_lucht(self.legs[1], self.legs[1].normal_x + x_stap, self.legs[1].normal_y - y_stap2, mm_height)
                 self.lower_leg(self.legs[1])
 
                 #Alle poten weer terug in de normaal stand brengen
