@@ -31,7 +31,7 @@ class Leg:
         elif leg_number == 2 or leg_number == 4:
             self.hip = Servo(6, pwm)
             self.height = Servo(7, pwm)
-            self.knee = Servo(15, pwm)
+            self.knee = Servo(8, pwm)
 
 
     #set hip
