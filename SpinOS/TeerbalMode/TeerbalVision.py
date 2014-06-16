@@ -5,6 +5,12 @@ __author__ = 'Jeroen'
 
 class TeerbalVision:
 
+    GET_IMAGE = os.path.join(os.path.dirname(__file__) + "/TestImages",'1.jpg')
+    ESTIMATED_MIDDLE = 30
+    #True = link, False = Rechts
+    LAATST_GEDRAAID = None
+    LAST_BLOB_SIZE = 0
+
     def __init__(self):
         pass
 
@@ -18,47 +24,91 @@ class TeerbalVision:
 
     #methode die de teerbal zoekt
     @staticmethod
-    def find_teerbal(image, check_for_neigbours = False):
+    def find_teerbal(image):
         image = Image(image)
-        max_y = TeerbalVision.find_top(image)
-        bin_image = image.colorDistance(Color.BLACK).binarize()
+        bin_image  = image.colorDistance(Color.BLACK).binarize(50)
+        blobs = bin_image.findBlobs(minsize=3000)
 
-        blobs = bin_image.findBlobs(minsize=8000)
-        #variabele die de blobs binnen in het gebied bevat
-        inside_blobs = blobs.inside((180,max_y,450,480))
-        #variabele die de blobs die eventueel buren zijn bevat
-        overlap_blobs = []
-
-        #zoeken of de gevonden blobs de lijn waar moet worden gekeken overschrijdt
-        for e in blobs:
-            if (e.x - e.width()/2) < 180 and e.x + e.width()/2>180 and e.y - e.height()/2 > max_y:
-                overlap_blobs.append(e)
-
-        #return een bool list als er op buren moet worden gecontroleerd,
-        #anders alleen een bool die aangeefrt of er een teerbal is gevonden
-        if check_for_neigbours:
-            if inside_blobs:
-                return (True,False)
-            elif overlap_blobs:
-                return (True,True)
-            #er zijn geen teerballen gevonden
-            return (False,False)
-        #er word niet gekeken of er buren zijn
-        if inside_blobs or overlap_blobs:
+        # bin_image.show()
+        # time.sleep(2)
+        if blobs:
+            # for e in blobs:
+            #     e.show()
+            # time.sleep(2)
             return True
-        #er zijn geen teerballen gevonden
         return False
+
+    @staticmethod
+    #return values representeren (Teerbal is nog in zicht, draai recht, draai links) indien links en recht allebei False
+    #zijn dan staat de spin gecentreerd en kan hij vooruit lopen
+    def center_on_teerbal(img):
+
+        image = Image(img)
+        bin_image = image.colorDistance(Color.BLACK).binarize(50)
+        blobs = bin_image.findBlobs()
+        if blobs:
+            if blobs[-1].x > (image.width/2) - TeerbalVision.ESTIMATED_MIDDLE and blobs[-1].x < (image.width/2) + TeerbalVision.ESTIMATED_MIDDLE:
+                TeerbalVision.LAST_BLOB_SIZE = blobs[-1].area()
+                return (True,False,False)
+            elif blobs[-1].x < image.width:
+                #draai naar links
+                TeerbalVision.LAATST_GEDRAAID = True
+                return (True,False,True)
+            elif blobs[-1].x > image.width:
+                #draai naar rechts
+                TeerbalVision.LAATST_GEDRAAID = False
+                return (True,True,False)
+        else:
+            #Teerbal is verdwenen, HELP
+            return (False,False,False)
+
+    @staticmethod
+    def teerbal_found(img):
+        image = Image(img)
+        bin_image = image.colorDistance(Color.BLACK).binarize(50)
+        blobs = bin_image.findBlobs()
+        if blobs:
+            if blobs[-1].onImageEdge(tolerance=1):
+                return (False,True)
+            else:
+                return (False,False)
+        else:
+            return (True,False)
+
+
+
 
 
     @staticmethod
-    def foto_array():
-        simulateArray = [[0 for xs in xrange(15)] for xs in xrange(8)]
-        for y in xrange(0,len(simulateArray)):
-            for x in xrange(0,len(simulateArray[y])):
-                simulateArray[y][x] = e = os.path.join(os.path.dirname(__file__) + "/TestImages",'vooruit.png')
+    #returns (found,verdwenen,centrated)
+    def isCentrated(img):
+        image = Image(img)
+        bin_image = image.colorDistance(Color.BLACK).binarize(50)
+        blobs = bin_image.findBlobs()
+        if blobs:
+            cor = blobs[-1].bottomLeftCorner()
+            y = cor[1]
+            if blobs[-1].x > (image.width/2) - TeerbalVision.ESTIMATED_MIDDLE and blobs[-1].x < (image.width/2) + TeerbalVision.ESTIMATED_MIDDLE:
+                TeerbalVision.LAST_BLOB_SIZE = blobs[-1].area()
+                if y > 450:
+                    return (True,False,True)
+                else:
+                    return (False, False,True)
+            else:
+                TeerbalVision.LAST_BLOB_SIZE = blobs[-1].area()
+                if y > 450:
+                    return (True, False, False)
+                else:
+                    return (False,False,False)
+        #er ligt geen teerbal meer!
+        return (False,True,False)
 
-        simulateArray[0][2] = os.path.join(os.path.dirname(__file__) + "/TestImages",'boven rood.jpg')
-        simulateArray[1][2] = os.path.join(os.path.dirname(__file__) + "/TestImages",'dupelicate.jpg')
-        simulateArray[3][3] = os.path.join(os.path.dirname(__file__) + "/TestImages",'dupelicate.jpg')
-        simulateArray[4][13] = os.path.join(os.path.dirname(__file__) + "/TestImages",'boven rood.jpg')
-        return simulateArray
+    @staticmethod
+    def lost():
+        if TeerbalVision.LAATST_GEDRAAID:
+            #draai rechts
+            return False
+        else:
+            #draai links
+            return True
+

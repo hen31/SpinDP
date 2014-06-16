@@ -1,5 +1,5 @@
 import pygame
-import os, sys
+import os
 __author__ = 'Jeroen'
 
 class FoundState:
