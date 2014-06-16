@@ -42,7 +42,6 @@ class MovementHandler:
     stap_uitslag_y = 27
 
     turn_x = 10
-    turn_y = 5
 
     #aantal graden dat de poot omhoog gaat
     raise_leg_angle = 15
@@ -435,15 +434,18 @@ class MovementHandler:
                 y_stap = math.sin(rad) * MovementHandler.stap_uitslag_y
                 x_stap = math.cos(rad) * MovementHandler.stap_uitslag
 
+                if power_move == 0:
+                    x_stap = 0
+
                 if degrees_turn >= 5 and degrees_turn <= 355:
                     if degrees_turn > 180:
                         #linksom
-                        y_stap1 = y_stap + MovementHandler.turn_y
-                        y_stap2 = y_stap - MovementHandler.turn_y
+                        y_stap1 = MovementHandler.stap_uitslag_y
+                        y_stap2 = -MovementHandler.stap_uitslag_y
                     else:
                         #rechtsom
-                        y_stap1 = y_stap - MovementHandler.turn_y
-                        y_stap2 = y_stap + MovementHandler.turn_y
+                        y_stap1 = -MovementHandler.stap_uitslag_y
+                        y_stap2 = MovementHandler.stap_uitslag_y
 
                 else:
                     y_stap1 = y_stap
@@ -455,11 +457,11 @@ class MovementHandler:
                 self.lower_leg(self.legs[0])
 
                 self.raise_leg(self.legs[3])
-                self.move_leg_lucht(self.legs[3], self.legs[3].normal_x - x_stap, self.legs[3].normal_y + y_stap1, mm_height)
+                self.move_leg_lucht(self.legs[3], self.legs[3].normal_x - x_stap, self.legs[3].normal_y + y_stap2, mm_height)
                 self.lower_leg(self.legs[3])
 
                 self.raise_leg(self.legs[2])
-                self.move_leg_lucht(self.legs[2], self.legs[2].normal_x - x_stap, self.legs[2].normal_y + y_stap2, mm_height)
+                self.move_leg_lucht(self.legs[2], self.legs[2].normal_x - x_stap, self.legs[2].normal_y + y_stap1, mm_height)
                 self.lower_leg(self.legs[2])
 
                 self.raise_leg(self.legs[1])
