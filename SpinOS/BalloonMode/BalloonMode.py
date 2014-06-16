@@ -261,7 +261,7 @@ class MoveState:
     def move_balloon_to_center(self, blob, center, color):
         self.balloonmode.logger.logevent(MoveState.LOGGER_NAME, "Ballon " + color + " naar het midden bewegen", Logger.MESSAGE)
         verschil = self.diff_to_center(blob, center)
-        while abs(verschil) > 50 and self.balloonmode.alive: #20 px marge voor het midden
+        while abs(verschil) > 50 and self.balloonmode.alive: #50 px marge voor het midden
             print "Blob nog niet in het midden"
             if verschil > 0:
                 #5 graden naar links draaien
