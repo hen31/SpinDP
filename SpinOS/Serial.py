@@ -3,6 +3,7 @@ import time
 import threading
 from Sensor import Sensor
 from SensorLogger import SensorLogger
+import os
 
 
 class Serial(Sensor):
@@ -135,4 +136,7 @@ class Serial(Sensor):
         if self.voltageCounter == 0 or self.voltageCounter == 10:
             self.voltageCounter = 0
             self.voltagelogger.log_waarde("{0:.2f}".format(self.voltage))
+            if self.voltageCounter  <=9.2 and self.voltageCounter != 0 :
+                os.system("sudo poweroff")
+
         self.mutexVoltage.release()
