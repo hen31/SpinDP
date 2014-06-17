@@ -483,9 +483,9 @@ class MovementHandler:
 
                 for legmove in self.legs:
                     if legmove.leg_number in [1, 2]:
-                        thread = threading.Thread(target=self.move_leg_stilstaand, args=(legmove, legmove.normal_x - x_stap, legmove.normal_y + y_stap, mm_height,max_execution,))
+                        thread = threading.Thread(target=self.move_leg_stilstaand, args=(legmove, legmove.normal_x, legmove.normal_y, mm_height,max_execution,))
                     else:
-                        thread = threading.Thread(target=self.move_leg_stilstaand, args=(legmove, legmove.normal_x + x_stap, legmove.normal_y - y_stap, mm_height,max_execution,))
+                        thread = threading.Thread(target=self.move_leg_stilstaand, args=(legmove, legmove.normal_x, legmove.normal_y, mm_height,max_execution,))
 
                     threads.append(thread)
 
