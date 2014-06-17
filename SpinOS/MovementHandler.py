@@ -44,7 +44,7 @@ class MovementHandler:
     turn_x = 10
 
     #aantal graden dat de poot omhoog gaat
-    raise_leg_angle = 15
+    raise_leg_angle = 35
 
     #time per degree
     TIME_TURN_PER_DEGREE = 2
