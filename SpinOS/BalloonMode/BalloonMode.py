@@ -16,8 +16,10 @@ class BalloonMode:
     #Movement handler, zo kan er gelopen worden
     movementHandler = None
 
+    SpinOS = None
+
     #Constructor
-    def __init__(self, movementHandler, logger, serial):
+    def __init__(self, movementHandler, logger, serial, spin_os):
         #Alive aanzetten
         self.set_alive(True)
         #Logger instellen
@@ -26,6 +28,7 @@ class BalloonMode:
         BalloonMode.movementHandler = movementHandler
         #Serial instellen
         BalloonMode.serial = serial
+        BalloonMode.SpinOS = spin_os
         #Thread opstarten
         self.thread = threading.Thread(target=self.run)
         self.thread.start()
@@ -44,6 +47,7 @@ class BalloonMode:
 
     def process_command(self, command, message):
         pass
+
 #In de cardstate wordt de kleurenkaart herkend
 class CardState:
 
@@ -89,7 +93,6 @@ class CardState:
             if colorOrder is not False:
                 #Geluid afspelen
                 self.play_sound()
-                time.sleep(2)
 
                 #Volgende state opstarten
                 nextState = SearchState(self.balloonmode)
@@ -129,11 +132,10 @@ class CardState:
 
     #Methode om het herkend geluid af te spelen
     def play_sound(self):
-        pygame.mixer.init()
-        pygame.mixer.music.load(os.path.join(os.path.dirname(__file__) + "/Sound",'herkend.wav'))
-        pygame.mixer.music.play()
-        while pygame.mixer.music.get_busy():
-            continue
+        self.balloonmode.spin_os.play_sound(0.5)
+        time.sleep(0.1)
+        self.balloonmode.spin_os.play_sound(0.5)
+
 
 #In de FoundState is de ballon gevonden en wordt er gewacht todat deze kapot gaat
 class FoundState:
