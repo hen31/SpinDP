@@ -13,6 +13,7 @@ from SensorLogger import SensorLogger
 from ServerClient import ServerClient
 from TeerbalMode.TeerbalMode import TeerbalMode
 from DanceMode import DanceMode
+import RPi.GPIO as GPIO
 
 __author__ = 'Hendrik'
 
@@ -29,6 +30,9 @@ class SpinOS:
         print("Default string encoding : " + str(sys.getdefaultencoding()).upper())
         SpinOS.logger = Logger(Logger.SENSOR_VALUES)
         print("Logger level : " + SpinOS.logger.get_loglevel_string())
+
+        GPIO.setmode(GPIO.BOARD) ## Use board pin numbering
+        GPIO.setup(11, GPIO.OUT)
 
 
         #logger aanmaken
@@ -78,6 +82,13 @@ class SpinOS:
             self.sensor_running = True
             self.sensor_thread = threading.Thread(target=self.runSensors())
             self.sensor_thread.start()
+
+    @staticmethod
+    def play_sound(time):
+        GPIO.output(11,True)
+        time.sleep(time)
+        GPIO.output(11,False)
+        GPIO.cleanup()
 
     #run methode, deze loopt in eigen thread en halen de commando's op
     def run(self):
