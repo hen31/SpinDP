@@ -23,8 +23,13 @@ class Leg:
         #leg number
         self.leg_number = leg_number
 
-        if leg_number == 1 or leg_number == 3:
+        if leg_number == 1:
             self.hip = Servo(0, pwm)
+            self.height = Servo(1, pwm)
+            self.knee = Servo(2, pwm)
+
+        if leg_number == 3:
+            self.hip = Servo(13, pwm)
             self.height = Servo(1, pwm)
             self.knee = Servo(2, pwm)
 
