@@ -38,13 +38,13 @@ class MovementHandler:
     min_exec_time = 0.03
 
     #uitslag van een stap
-    stap_uitslag = 50
+    stap_uitslag = 25
     stap_uitslag_y = 27
 
     turn_x = 10
 
     #aantal graden dat de poot omhoog gaat
-    raise_leg_angle = 35
+    raise_leg_angle = 25
 
     #time per degree
     TIME_TURN_PER_DEGREE = 2
@@ -66,6 +66,7 @@ class MovementHandler:
         #self.legs[0].normal_y = 117
         self.legs[0].normal_y = 80
         self.legs[0].angle_afwijking = -22
+        self.legs[0].angle_afwijking_knee = 0
 
         self.legs[1].normal_x = -20
         #self.legs[1].normal_y = 117
@@ -84,6 +85,7 @@ class MovementHandler:
         #self.legs[3].normal_y = 117
         self.legs[3].angle_afwijking = -22
 
+        self.voor = True
         self.move_degrees = 0
         self.move_power = 0
         self.turn_degrees = 0
@@ -186,27 +188,7 @@ class MovementHandler:
 
     #poten op vaste positie zetten
     def kalibreren(self):
-        for i in [1, 3, 2, 4]:
-            #poten naar voren zetten
-            leg = self.legs[i-1]
-            leg.last_x = 0
-            leg.last_y = 75
-            leg.last_z = MovementHandler.min_height_mm
-            alpha, beta, gamma = self.get_angles(50, 150, MovementHandler.min_height_mm, leg)
-            leg.set_height(alpha+30)
-            time.sleep(0.5)
-            leg.set_hip(gamma)
-            leg.set_knee(beta)
-            time.sleep(0.5)
-            alpha, beta, gamma = self.get_angles(0, 150, MovementHandler.min_height_mm, leg)
-            #poten op juiste posistie zetten
-            leg.set_height(alpha+30)
-            time.sleep(0.5)
-            leg.set_hip(gamma)
-            leg.set_knee(beta)
-            time.sleep(0.5)
-            leg.set_height(alpha)
-            time.sleep(2)
+        pass
 
     #poot omhoog doen
     def raise_leg(self, leg):
@@ -450,23 +432,47 @@ class MovementHandler:
                 else:
                     y_stap1 = y_stap
                     y_stap2 = y_stap
+                if self.voor == True:
 
-                #Poten op volgorde omhoog, verplaatsen en weer naar beneden brengen
-                self.raise_leg(self.legs[0])
-                self.move_leg_lucht(self.legs[0], self.legs[0].normal_x + x_stap, self.legs[0].normal_y - y_stap1, mm_height)
-                self.lower_leg(self.legs[0])
+                    #Poten op volgorde omhoog, verplaatsen en weer naar beneden brengen
+                    self.raise_leg(self.legs[1])
+                    self.move_leg_lucht(self.legs[1], self.legs[1].normal_x + x_stap, self.legs[1].normal_y - y_stap1, mm_height)
+                    self.lower_leg(self.legs[1])
 
-                self.raise_leg(self.legs[3])
-                self.move_leg_lucht(self.legs[3], self.legs[3].normal_x - x_stap, self.legs[3].normal_y + y_stap2, mm_height)
-                self.lower_leg(self.legs[3])
+                    self.raise_leg(self.legs[3])
+                    self.move_leg_lucht(self.legs[3], self.legs[3].normal_x - x_stap, self.legs[3].normal_y + y_stap2, mm_height)
+                    self.lower_leg(self.legs[3])
 
-                self.raise_leg(self.legs[2])
-                self.move_leg_lucht(self.legs[2], self.legs[2].normal_x - x_stap, self.legs[2].normal_y + y_stap1, mm_height)
-                self.lower_leg(self.legs[2])
 
-                self.raise_leg(self.legs[1])
-                self.move_leg_lucht(self.legs[1], self.legs[1].normal_x + x_stap, self.legs[1].normal_y - y_stap2, mm_height)
-                self.lower_leg(self.legs[1])
+                    self.raise_leg(self.legs[0])
+                    self.move_leg_lucht(self.legs[0], self.legs[0].normal_x + x_stap, self.legs[0].normal_y - y_stap2, mm_height)
+                    self.lower_leg(self.legs[0])
+
+                    self.raise_leg(self.legs[2])
+                    self.move_leg_lucht(self.legs[2], self.legs[2].normal_x - x_stap, self.legs[2].normal_y + y_stap1, mm_height)
+                    self.lower_leg(self.legs[2])
+                    self.voor = False
+                else:
+                                   #Poten op volgorde omhoog, verplaatsen en weer naar beneden brengen
+                    self.raise_leg(self.legs[3])
+                    self.move_leg_lucht(self.legs[3], self.legs[3].normal_x - x_stap, self.legs[3].normal_y + y_stap2, mm_height)
+                    self.lower_leg(self.legs[3])
+
+                    self.raise_leg(self.legs[1])
+                    self.move_leg_lucht(self.legs[1], self.legs[1].normal_x + x_stap, self.legs[1].normal_y - y_stap1, mm_height)
+                    self.lower_leg(self.legs[1])
+
+                    self.raise_leg(self.legs[2])
+                    self.move_leg_lucht(self.legs[2], self.legs[2].normal_x - x_stap, self.legs[2].normal_y + y_stap1, mm_height)
+                    self.lower_leg(self.legs[2])
+
+                    self.raise_leg(self.legs[0])
+                    self.move_leg_lucht(self.legs[0], self.legs[0].normal_x + x_stap, self.legs[0].normal_y - y_stap2, mm_height)
+                    self.lower_leg(self.legs[0])
+
+                    self.voor = True
+
+
 
                 #Alle poten weer terug in de normaal stand brengen
                 threads = []

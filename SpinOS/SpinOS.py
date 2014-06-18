@@ -34,7 +34,7 @@ class SpinOS:
         GPIO.setmode(GPIO.BOARD) ## Use board pin numbering
         GPIO.setup(11, GPIO.OUT)
 
-
+        SpinOS.play_sound(2)
         #logger aanmaken
         self.movementHandler = MovementHandler()
 
@@ -84,9 +84,9 @@ class SpinOS:
             self.sensor_thread.start()
 
     @staticmethod
-    def play_sound(time):
+    def play_sound(time_to_sleep):
         GPIO.output(11,True)
-        time.sleep(time)
+        time.sleep(float(time_to_sleep))
         GPIO.output(11,False)
         GPIO.cleanup()
 
