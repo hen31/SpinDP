@@ -16,8 +16,10 @@ class BalloonMode:
     #Movement handler, zo kan er gelopen worden
     movementHandler = None
 
+    SpinOS = None
+
     #Constructor
-    def __init__(self, movementHandler, logger, serial):
+    def __init__(self, movementHandler, logger, serial, spin_os):
         #Alive aanzetten
         self.set_alive(True)
         #Logger instellen
@@ -26,6 +28,7 @@ class BalloonMode:
         BalloonMode.movementHandler = movementHandler
         #Serial instellen
         BalloonMode.serial = serial
+        BalloonMode.SpinOS = spin_os
         #Thread opstarten
         self.thread = threading.Thread(target=self.run)
         self.thread.start()
@@ -44,6 +47,7 @@ class BalloonMode:
 
     def process_command(self, command, message):
         pass
+
 #In de cardstate wordt de kleurenkaart herkend
 class CardState:
 
@@ -89,7 +93,6 @@ class CardState:
             if colorOrder is not False:
                 #Geluid afspelen
                 self.play_sound()
-                time.sleep(2)
 
                 #Volgende state opstarten
                 nextState = SearchState(self.balloonmode)
@@ -129,11 +132,10 @@ class CardState:
 
     #Methode om het herkend geluid af te spelen
     def play_sound(self):
-        pygame.mixer.init()
-        pygame.mixer.music.load(os.path.join(os.path.dirname(__file__) + "/Sound",'herkend.wav'))
-        pygame.mixer.music.play()
-        while pygame.mixer.music.get_busy():
-            continue
+        self.balloonmode.spin_os.play_sound(0.5)
+        time.sleep(0.1)
+        self.balloonmode.spin_os.play_sound(0.5)
+
 
 #In de FoundState is de ballon gevonden en wordt er gewacht todat deze kapot gaat
 class FoundState:
@@ -150,26 +152,12 @@ class FoundState:
         #self.balloonmode nog wel alive
         if self.balloonmode.alive:
             self.balloonmode.logger.logevent(FoundState.LOGGER_NAME, "Vlak voor de ballon, kijken wanneer hij knapt " +parameters[0], Logger.MESSAGE)
+            self.play_sound()
 
             not_found_count = 0
 
-            #aan
-            #Leg 1
-            leg1 = self.balloonmode.movementHandler.legs[0]
-            last1 = [leg1.get_hip(),leg1.get_height(),leg1.get_knee()]
-            #Leg 4
-            leg4 = self.balloonmode.movementHandler.legs[3]
-            last4 = [leg4.get_hip(),leg4.get_height(),leg4.get_knee()]
-
-
             #Not found count <= 2 en self.balloonmode nog alive
             while not_found_count <= 2 and self.balloonmode.alive:
-
-                sensor1 = self.balloonmode.serial.getSensor1()
-                sensor2 = self.balloonmode.serial.getSensor2()
-
-                leg1.set_knee(sensor1)
-                leg4.set_knee(sensor2)
 
                 #Ballon nog gevonden?
                 found = self.balloon_alive(parameters[0])
@@ -180,11 +168,8 @@ class FoundState:
 
             if not self.balloonmode.alive:
                 return
-            #uit poten resseten
-            self.balloonmode.logger.logevent(FoundState.LOGGER_NAME, "Balloon weg (geknapt)!", Logger.MESSAGE)
 
-            leg1.set_knee(last1[2])
-            leg4.set_knee(last4[2])
+            self.balloonmode.logger.logevent(FoundState.LOGGER_NAME, "Balloon weg (geknapt)!", Logger.MESSAGE)
 
         return True
 
@@ -195,6 +180,11 @@ class FoundState:
 
         #Blob vinden
         return BalloonVision.find_balloon(color, img, True)[0]
+
+    #Methode om geluid af te spelen wanneer een ballon gevonden is
+    def play_sound(self):
+        self.balloonmode.spin_os.play_sound(1)
+
 class MoveState:
 
     LOGGER_NAME = "self.balloonmode MoveState"
@@ -245,6 +235,9 @@ class MoveState:
             search = BalloonVision.find_balloon(color, img, True)
 
             if search[0]:
+                #Ballon als nodig naar het midden krijgen.
+                self.move_balloon_to_center(search[1], center, color)
+                
                 area = search[1].area()
                 self.balloonmode.movementHandler.move(0, 100, 0, 0)
                 time.sleep(self.balloonmode.movementHandler.TIME_MOVE_ONE_CM * 10)
@@ -292,6 +285,7 @@ class MoveState:
 
     def diff_to_center(self, blob, center):
         return center - blob.x
+
 class SearchState:
 
     LOGGER_NAME = "BalloonMode SearchState"

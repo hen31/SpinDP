@@ -132,7 +132,7 @@ class SpinOS:
                         self.mode = "balloon mode"
                         #set mode naar balloon mode
                         SpinOS.logger.logevent("SPINOS", "Mode set to " + self.mode, Logger.MESSAGE)
-                        self.current_mode = BalloonMode(self.movementHandler, self.logger, self.serial)
+                        self.current_mode = BalloonMode(self.movementHandler, self.logger, self.serial, self)
                         self.current_mode.alive = True
                     elif message[0] == COMMAND.TO_TEERBAL_MODE:
                         #huidige mode alive false zodat threads stoppen
@@ -140,7 +140,7 @@ class SpinOS:
                         self.mode = "teerbal mode"
                         #mode naar teerbal zetten
                         SpinOS.logger.logevent("SPINOS", "Mode set to " + self.mode, Logger.MESSAGE)
-                        self.current_mode = TeerbalMode()
+                        self.current_mode = TeerbalMode(self)
                         self.current_mode.alive = True
                     elif message[0] == COMMAND.TO_DANCE_MODE:
                         #huidige mode alive false zodat threads stoppen
