@@ -560,11 +560,11 @@ class MovementHandler:
                 max_execution = 0.0
                 for leg in self.legs:
                     if leg.leg_number in [1, 2]:
-                        exec_time = self.get_excution_time(leg, leg.normal_x - x_stap, leg.normal_y + y_stap, mm_height)
+                        exec_time = self.get_excution_time(leg, leg.normal_x, leg.normal_y + y_stap, mm_height)
                         if exec_time >max_execution:
                             max_execution = exec_time
                     else:
-                        exec_time = self.get_excution_time(leg, leg.normal_x + x_stap, leg.normal_y - y_stap, mm_height)
+                        exec_time = self.get_excution_time(leg, leg.normal_x, leg.normal_y - y_stap, mm_height)
                         if exec_time >max_execution:
                             max_execution = exec_time
 

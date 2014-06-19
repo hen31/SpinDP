@@ -222,7 +222,7 @@ class MoveState:
         time.sleep(self.balloonmode.movementHandler.TIME_MOVE_ONE_STEP * 5)
         self.balloonmode.movementHandler.move(0, 0, 0, 0)
 
-        while area < 20000 and self.balloonmode.alive:
+        while area < 300000 and self.balloonmode.alive:
             if not_found_count >= 5:
                 self.balloonmode.logger.logevent(MoveState.LOGGER_NAME, color + " ballon kwijt, wat nu?!", Logger.MESSAGE)
                 return False
@@ -280,7 +280,8 @@ class MoveState:
         return abs(center - blob.centroid) > marge
 
     def diff_to_center(self, blob, center):
-        return center - blob.x
+        blobCenter = blob.bottomLeftCorner[0] + (blob.width / 2)
+        return center - blobCenter
 
 class SearchState:
 
@@ -313,10 +314,10 @@ class SearchState:
                 if i > 0: #De eerste ballon kan de spin al zien, niet nodig om te draaien dan.
                     if self.balloonOrder.index(self.colors[i-1]) > self.balloonOrder.index(self.colors[i]):
                         #Naar links draaien
-                        self.moveTo = True
+                        self.moveTo = False
                     else:
                         #Naar rechts draaien
-                        self.moveTo = False
+                        self.moveTo = True
 
                 blob = self.find_balloon(self.colors[i])
                 if blob is not False:
@@ -338,14 +339,14 @@ class SearchState:
             if self.moveTo:
                 #TODO: beweeg 5 graden naar links
                 self.balloonmode.movementHandler.move(0, 0, 180, 100)
-                time.sleep(self.balloonmode.movementHandler.TIME_TURN_PER_DEGREE * 5)
+                time.sleep(self.balloonmode.movementHandler.TIME_TURN * 5)
                 self.balloonmode.movementHandler.move(0, 0, 0, 0)
                 pass
 
             elif not self.moveTo:
                 #TODO: beweeg 5 graden naar rechts
                 self.balloonmode.movementHandler.move(0, 0, 181, 100)
-                time.sleep(self.balloonmode.movementHandler.TIME_TURN_PER_DEGREE * 5)
+                time.sleep(self.balloonmode.movementHandler.TIME_TURN * 5)
                 self.balloonmode.movementHandler.move(0, 0, 0, 0)
                 pass
 
