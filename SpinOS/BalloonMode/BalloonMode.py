@@ -19,15 +19,13 @@ class BalloonMode:
     SpinOS = None
 
     #Constructor
-    def __init__(self, movementHandler, logger, serial, spin_os):
+    def __init__(self, movementHandler, logger, spin_os):
         #Alive aanzetten
         self.set_alive(True)
         #Logger instellen
         BalloonMode.logger = logger
         #MovementHandler instellen
         BalloonMode.movementHandler = movementHandler
-        #Serial instellen
-        BalloonMode.serial = serial
         BalloonMode.SpinOS = spin_os
         #Thread opstarten
         self.thread = threading.Thread(target=self.run)
@@ -42,8 +40,6 @@ class BalloonMode:
     def set_alive(self, value):
         #Alive variabele value geven
         BalloonMode.alive = value
-        if not value:
-            self.thread._stop()
 
     def process_command(self, command, message):
         pass
@@ -132,9 +128,9 @@ class CardState:
 
     #Methode om het herkend geluid af te spelen
     def play_sound(self):
-        self.balloonmode.spin_os.play_sound(0.5)
+        BalloonMode.SpinOS.play_sound(0.5)
         time.sleep(0.1)
-        self.balloonmode.spin_os.play_sound(0.5)
+        BalloonMode.SpinOS.play_sound(0.5)
 
 
 #In de FoundState is de ballon gevonden en wordt er gewacht todat deze kapot gaat
@@ -183,14 +179,14 @@ class FoundState:
 
     #Methode om geluid af te spelen wanneer een ballon gevonden is
     def play_sound(self):
-        self.balloonmode.spin_os.play_sound(1)
+        BalloonMode.SpinOS.play_sound(2)
 
 class MoveState:
 
     LOGGER_NAME = "self.balloonmode MoveState"
 
     def __init__(self, ballonmode):
-        self.self.balloonmode = ballonmode
+        self.balloonmode = ballonmode
         pass
 
     def doe_stap(self, parameters):
@@ -223,7 +219,7 @@ class MoveState:
 
         #vooruit lopen
         self.balloonmode.movementHandler.move(0, 100, 0, 0)
-        time.sleep(self.balloonmode.movementHandler.TIME_MOVE_ONE_CM * 10)
+        time.sleep(self.balloonmode.movementHandler.TIME_MOVE_ONE_STEP * 5)
         self.balloonmode.movementHandler.move(0, 0, 0, 0)
 
         while area < 20000 and self.balloonmode.alive:
@@ -240,8 +236,8 @@ class MoveState:
                 
                 area = search[1].area()
                 self.balloonmode.movementHandler.move(0, 100, 0, 0)
-                time.sleep(self.balloonmode.movementHandler.TIME_MOVE_ONE_CM * 10)
-                self.balloonmode.movementHandler.move(0, 100, 0, 0)
+                time.sleep(self.balloonmode.movementHandler.TIME_MOVE_ONE_STEP * 5)
+                self.balloonmode.movementHandler.move(0, 0, 0, 0)
 
             else:
                 not_found_count += 1
@@ -254,18 +250,18 @@ class MoveState:
     def move_balloon_to_center(self, blob, center, color):
         self.balloonmode.logger.logevent(MoveState.LOGGER_NAME, "Ballon " + color + " naar het midden bewegen", Logger.MESSAGE)
         verschil = self.diff_to_center(blob, center)
-        while abs(verschil) > 50 and self.balloonmode.alive: #50 px marge voor het midden
+        while abs(verschil) > 100 and self.balloonmode.alive: #100 px marge voor het midden
             print "Blob nog niet in het midden"
             if verschil > 0:
                 #5 graden naar links draaien
-                self.balloonmode.movementHandler(0, 0, 181, 100)
-                time.sleep(self.balloonmode.movementHandler.TIME_TURN_PER_DEGREE * 5)
-                self.balloonmode.movementHandler(0, 0, 0, 0)
+                self.balloonmode.movementHandler.move(0, 0, 181, 100)
+                time.sleep(self.balloonmode.movementHandler.TIME_TURN)
+                self.balloonmode.movementHandler.move(0, 0, 0, 0)
             else:
                 #5 graden naar rechts draaien
-                self.balloonmode.movementHandler(0, 0, 180, 100)
-                time.sleep(self.balloonmode.movementHandler.TIME_TURN_PER_DEGREE * 5)
-                self.balloonmode.movementHandler(0, 0, 0, 0)
+                self.balloonmode.movementHandler.move(0, 0, 180, 100)
+                time.sleep(self.balloonmode.movementHandler.TIME_TURN)
+                self.balloonmode.movementHandler.move(0, 0, 0, 0)
 
             img = BalloonVision.get_image()
             search = BalloonVision.find_balloon(color, img)
@@ -291,7 +287,7 @@ class SearchState:
     LOGGER_NAME = "BalloonMode SearchState"
 
     def __init__(self, ballonmode):
-        self.balloonmode= ballonmode
+        self.balloonmode = ballonmode
         self.colors = []
         self.balloonOrder = []
         self.moveTo = None #true = left, false = right
@@ -343,12 +339,14 @@ class SearchState:
                 #TODO: beweeg 5 graden naar links
                 self.balloonmode.movementHandler.move(0, 0, 180, 100)
                 time.sleep(self.balloonmode.movementHandler.TIME_TURN_PER_DEGREE * 5)
+                self.balloonmode.movementHandler.move(0, 0, 0, 0)
                 pass
 
             elif not self.moveTo:
                 #TODO: beweeg 5 graden naar rechts
                 self.balloonmode.movementHandler.move(0, 0, 181, 100)
                 time.sleep(self.balloonmode.movementHandler.TIME_TURN_PER_DEGREE * 5)
+                self.balloonmode.movementHandler.move(0, 0, 0, 0)
                 pass
 
             img = BalloonVision.get_image()
