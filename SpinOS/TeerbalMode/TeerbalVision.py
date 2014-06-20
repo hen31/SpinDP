@@ -21,7 +21,8 @@ class TeerbalVision:
 
     #methode die de rode afbakening herkend
     @staticmethod
-    def find_top(image):
+    def find_top(img):
+        image = Image(img)
         bin_image = image.colorDistance(Color.RED).binarize()
         blobs = bin_image.findBlobs(minsize=3000)
         y_list = sorted(blobs.y())
@@ -29,8 +30,8 @@ class TeerbalVision:
 
     #methode die de teerbal zoekt
     @staticmethod
-    def find_teerbal(image):
-        # image = Image(image)
+    def find_teerbal(img):
+        image = Image(img)
         bin_image  = image.colorDistance(Color.BLACK).binarize(50)
         blobs = bin_image.findBlobs(minsize=3000)
 
@@ -46,9 +47,8 @@ class TeerbalVision:
     @staticmethod
     #return values representeren (Teerbal is nog in zicht, draai recht, draai links) indien links en recht allebei False
     #zijn dan staat de spin gecentreerd en kan hij vooruit lopen
-    def center_on_teerbal(image):
-
-        # image = Image(img)
+    def center_on_teerbal(img):
+        image = Image(img)
         bin_image = image.colorDistance(Color.BLACK).binarize(50)
         blobs = bin_image.findBlobs()
         if blobs:
@@ -68,8 +68,8 @@ class TeerbalVision:
             return (False,False,False)
 
     @staticmethod
-    def teerbal_found(image):
-        # image = Image(img)
+    def teerbal_found(img):
+        image = Image(img)
         bin_image = image.colorDistance(Color.BLACK).binarize(50)
         blobs = bin_image.findBlobs()
         if blobs:
@@ -86,8 +86,9 @@ class TeerbalVision:
 
     @staticmethod
     #returns (found,verdwenen,centrated)
-    def isCentrated(image):
-        # image = Image(img)
+    def isCentrated(img):
+        image = Image(img)
+
         bin_image = image.colorDistance(Color.BLACK).binarize(50)
         blobs = bin_image.findBlobs()
         if blobs:
@@ -117,3 +118,7 @@ class TeerbalVision:
             #draai links
             return True
 
+    #debug method
+    @staticmethod
+    def toImage(img):
+        return Image(img)
