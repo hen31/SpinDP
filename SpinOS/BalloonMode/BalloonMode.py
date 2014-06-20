@@ -37,6 +37,13 @@ class BalloonMode:
         state = CardState(self)
         state.doe_stap([])
 
+        #Aan het einde van alles
+        BalloonMode.SpinOS.play_sound(0.5)
+        time.sleep(0.2)
+        BalloonMode.SpinOs.play_sound(0.5)
+        time.sleep(0.2)
+        BalloonMode.SpinOS.play_sound(1)
+
     def set_alive(self, value):
         #Alive variabele value geven
         BalloonMode.alive = value
@@ -250,7 +257,7 @@ class MoveState:
     def move_balloon_to_center(self, blob, center, color):
         self.balloonmode.logger.logevent(MoveState.LOGGER_NAME, "Ballon " + color + " naar het midden bewegen", Logger.MESSAGE)
         verschil = self.diff_to_center(blob, center)
-        while abs(verschil) > 100 and self.balloonmode.alive: #100 px marge voor het midden
+        while abs(verschil) > 200 and self.balloonmode.alive: #200 px marge voor het midden
             print "Blob nog niet in het midden"
             if verschil > 0:
                 #5 graden naar links draaien
@@ -280,8 +287,8 @@ class MoveState:
         return abs(center - blob.centroid) > marge
 
     def diff_to_center(self, blob, center):
-        blobCenter = blob.bottomLeftCorner[0] + (blob.width / 2)
-        return center - blobCenter
+        blobCenter = float(blob.bottomLeftCorner()[0]) + float(float(blob.width()) / float(2))
+        return int(center) - int(blobCenter)
 
 class SearchState:
 
@@ -300,24 +307,33 @@ class SearchState:
                                         Logger.MESSAGE)
             self.balloonmode.logger.logevent(SearchState.LOGGER_NAME, self.colors, Logger.MESSAGE)
 
-            self.balloonmode.logger.logevent(SearchState.LOGGER_NAME, "Volgorde ballonnen uit omgegving herkennen")
+            #self.balloonmode.logger.logevent(SearchState.LOGGER_NAME, "Volgorde ballonnen uit omgegving herkennen")
 
-            self.balloonOrder = self.get_balloon_order()
+            #self.balloonOrder = self.get_balloon_order()
+            #Lol kan gewoon hardcoded, staat in wedstrijddocument
+            self.balloonOrder = ["blue", "red", "green"]
 
             if not self.balloonOrder:
                 return
 
-            self.balloonmode.logger.logevent(SearchState.LOGGER_NAME, "Volgorde van ballonnen uit de omgeving: " + self.balloonOrder[0] +" " + self.balloonOrder[1] +" " +self.balloonOrder[2])
+            #self.balloonmode.logger.logevent(SearchState.LOGGER_NAME, "Volgorde van ballonnen uit de omgeving: " + self.balloonOrder[0] +" " + self.balloonOrder[1] +" " +self.balloonOrder[2])
+
 
 
             for i in xrange(0, 3):
-                if i > 0: #De eerste ballon kan de spin al zien, niet nodig om te draaien dan.
+                if i > 0: #De spin kan rood zien bij de eerste keer
                     if self.balloonOrder.index(self.colors[i-1]) > self.balloonOrder.index(self.colors[i]):
-                        #Naar links draaien
+                        #Naar rechts draaien
                         self.moveTo = False
                     else:
-                        #Naar rechts draaien
+                        #Naar links draaien
                         self.moveTo = True
+                else:
+                    if self.colors[i] != "red":
+                        if self.balloonOrder.index(self.colors[i]) > 1:
+                            self.moveTo = True
+                        else:
+                            self.moveTo = False
 
                 blob = self.find_balloon(self.colors[i])
                 if blob is not False:

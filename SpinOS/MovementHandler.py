@@ -47,8 +47,9 @@ class MovementHandler:
     raise_leg_angle = 25
 
     #time per degree
-    TIME_TURN = 3
+    TIME_TURN = 2.8
     TIME_MOVE_ONE_STEP = 3
+
 
     #pwm freq chip 1
     PWM_FREQ = 50
