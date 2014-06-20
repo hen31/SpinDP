@@ -118,21 +118,38 @@ class MoveState:
                     #True = links draaien, False = rechts draaien
                     kant_draaien = TeerbalVision.lost()
                     if kant_draaien:
-                        print "Draai terug naar links"
+                        TeerbalMode.logger.logevent((self.STATE,"Terug draaien naar links", TeerbalMode.logger.MESSAGE))
+
                         TeerbalMode.movementHandler.move(0,0,181,100)
                         time.sleep(TeerbalMode.movementHandler.TIME_TURN)
                         TeerbalMode.movementHandler.move(0,0,0,0)
                     else:
-                        print "Draai terug naar rechts"
+                        TeerbalMode.logger.logevent((self.STATE,"Terug draaien naar rechts", TeerbalMode.logger.MESSAGE))
                         TeerbalMode.movementHandler.move(0,0,180,100)
                         time.sleep(TeerbalMode.movementHandler.TIME_TURN)
                         TeerbalMode.movementHandler.move(0,0,0,0)
 
                 found,verdwenen,gecentreerd = TeerbalVision.isCentrated(TeerbalVision.getImage())
-                print found
+                # print found
             if TeerbalMode.alive and verdwenen:
                 #als de teerbal is verdwenen na het lopen kijken of hij onder in de foto met een kleinere area nog te vinden is
-                FoundState.play_sound()
+                gevonden = TeerbalVision.teerbal_found(TeerbalVision.getImage())
+                if gevonden:
+                    FoundState.play_sound()
+                else:
+                    while not gevonden:
+                        TeerbalMode.logger.logevent(self.STATE, "Kleine stap vooruit om dichter bij teerbal te komen", TeerbalMode.logger.MESSAGE)
+                        TeerbalMode.movementHandler.move(0, 100, 0, 0)
+                        time.sleep(TeerbalMode.movementHandler.TIME_MOVE_ONE_STEP * 3)
+                        TeerbalMode.movementHandler.move(0,0,0,0)
+                        if TeerbalVision.LAST_BLOB_SIZE > 4000:
+                            if TeerbalVision.teerbal_found(TeerbalVision.getImage()):
+                                FoundState.play_sound()
+                            else:
+                                TeerbalMode.logger.logevent(self.STATE,"Teerbal ligt nog niet deel buiten beeld", TeerbalMode.logger.MESSAGE)
+                        else:
+                            TeerbalMode.logger.logevent(self.STATE,"Teerbal is verdwenen laatste grootte ={}".format(TeerbalVision.LAST_BLOB_SIZE), TeerbalMode.logger.MESSAGE)
+
 
 
 
@@ -155,7 +172,7 @@ class FoundState:
     #methode die een geluids bestand afspeelt
     def play_sound(self):
         TeerbalMode.logger.logevent(self.STATE, "Maak nu geluid!", TeerbalMode.logger.MESSAGE)
-        # TeerbalMode.spinOS.play_sound(1)
+        TeerbalMode.spinOS.play_sound(1)
 
 
 

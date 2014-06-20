@@ -6,7 +6,7 @@ __author__ = 'Jeroen'
 class TeerbalVision:
 
     IMAGE_URL = "http://raspberrypi:8080/?action=snapshot"
-
+    MIN_AREA = 3000
     ESTIMATED_MIDDLE = 30
     #True = link, False = Rechts
     LAATST_GEDRAAID = None
@@ -33,7 +33,7 @@ class TeerbalVision:
     def find_teerbal(img):
         image = Image(img)
         bin_image  = image.colorDistance(Color.BLACK).binarize(50)
-        blobs = bin_image.findBlobs(minsize=3000)
+        blobs = bin_image.findBlobs(minsize=TeerbalVision.MIN_AREA)
 
         # bin_image.show()
         # time.sleep(2)
@@ -50,7 +50,7 @@ class TeerbalVision:
     def center_on_teerbal(img):
         image = Image(img)
         bin_image = image.colorDistance(Color.BLACK).binarize(50)
-        blobs = bin_image.findBlobs()
+        blobs = bin_image.findBlobs(minsize=TeerbalVision.MIN_AREA)
         if blobs:
             if blobs[-1].x > (image.width/2) - TeerbalVision.ESTIMATED_MIDDLE and blobs[-1].x < (image.width/2) + TeerbalVision.ESTIMATED_MIDDLE:
                 TeerbalVision.LAST_BLOB_SIZE = blobs[-1].area()
@@ -71,14 +71,15 @@ class TeerbalVision:
     def teerbal_found(img):
         image = Image(img)
         bin_image = image.colorDistance(Color.BLACK).binarize(50)
-        blobs = bin_image.findBlobs()
+        blobs = bin_image.findBlobs(minsize=TeerbalVision.MIN_AREA)
         if blobs:
-            if blobs[-1].onImageEdge(tolerance=1):
-                return (False,True)
+            TeerbalVision.LAST_BLOB_SIZE = blobs[-1].area()
+            if blobs[-1].maxY() == 479:
+                return True
             else:
-                return (False,False)
+                return False
         else:
-            return (True,False)
+            return True
 
 
 
@@ -90,7 +91,7 @@ class TeerbalVision:
         image = Image(img)
 
         bin_image = image.colorDistance(Color.BLACK).binarize(50)
-        blobs = bin_image.findBlobs()
+        blobs = bin_image.findBlobs(minsize=TeerbalVision.MIN_AREA)
         if blobs:
             cor = blobs[-1].bottomLeftCorner()
             y = cor[1]
