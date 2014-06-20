@@ -33,6 +33,7 @@ class SpinOS:
 
         GPIO.setmode(GPIO.BOARD) ## Use board pin numbering
         GPIO.setup(11, GPIO.OUT)
+        GPIO.setwarnings(False)
 
         SpinOS.play_sound(2)
         #logger aanmaken
