@@ -140,7 +140,7 @@ class SpinOS:
                         self.mode = "teerbal mode"
                         #mode naar teerbal zetten
                         SpinOS.logger.logevent("SPINOS", "Mode set to " + self.mode, Logger.MESSAGE)
-                        self.current_mode = TeerbalMode(self)
+                        self.current_mode = TeerbalMode(self.movementHandler,self.logger,self)
                         self.current_mode.alive = True
                     elif message[0] == COMMAND.TO_DANCE_MODE:
                         #huidige mode alive false zodat threads stoppen

@@ -43,7 +43,7 @@ class SearchState:
         nextState = MoveState()
         if TeerbalMode.alive:
 
-            gevonden = TeerbalVision.find_teerbal(TeerbalVision.find_teerbal(TeerbalVision.getImage()))
+            gevonden = TeerbalVision.find_teerbal(TeerbalVision.getImage())
             while not gevonden:
                 TeerbalMode.logger.logevent(self.STATE,"Geen teelbal gevonden, nu draaien",TeerbalMode.logger.MESSAGE)
                 #draai x graden naar rechts
@@ -52,7 +52,7 @@ class SearchState:
                 TeerbalMode.movementHandler.move(0,0,0,0)
 
 
-                gevonden = TeerbalVision.find_teerbal(TeerbalVision.find_teerbal(TeerbalVision.getImage()))
+                gevonden = TeerbalVision.find_teerbal(TeerbalVision.getImage())
             if gevonden:
                 TeerbalMode.logger.logevent(self.STATE,"Teerbal gevonden, nu centreren op de teerbal",TeerbalMode.logger.MESSAGE)
                 gecentreerd =  self.centreer()
@@ -118,13 +118,13 @@ class MoveState:
                     #True = links draaien, False = rechts draaien
                     kant_draaien = TeerbalVision.lost()
                     if kant_draaien:
-                        TeerbalMode.logger.logevent((self.STATE,"Terug draaien naar links", TeerbalMode.logger.MESSAGE))
+                        TeerbalMode.logger.logevent(self.STATE,"Terug draaien naar links", TeerbalMode.logger.MESSAGE)
 
                         TeerbalMode.movementHandler.move(0,0,181,100)
                         time.sleep(TeerbalMode.movementHandler.TIME_TURN)
                         TeerbalMode.movementHandler.move(0,0,0,0)
                     else:
-                        TeerbalMode.logger.logevent((self.STATE,"Terug draaien naar rechts", TeerbalMode.logger.MESSAGE))
+                        TeerbalMode.logger.logevent(self.STATE,"Terug draaien naar rechts", TeerbalMode.logger.MESSAGE)
                         TeerbalMode.movementHandler.move(0,0,180,100)
                         time.sleep(TeerbalMode.movementHandler.TIME_TURN)
                         TeerbalMode.movementHandler.move(0,0,0,0)
