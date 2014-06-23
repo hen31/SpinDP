@@ -41,7 +41,7 @@ class BalloonMode:
         #Aan het einde van alles
         BalloonMode.SpinOS.play_sound(0.5)
         time.sleep(0.2)
-        BalloonMode.SpinOs.play_sound(0.5)
+        BalloonMode.SpinOS.play_sound(0.5)
         time.sleep(0.2)
         BalloonMode.SpinOS.play_sound(1)
 
@@ -267,7 +267,7 @@ class MoveState:
     def move_balloon_to_center(self, blob, center, color):
         self.balloonmode.logger.logevent(MoveState.LOGGER_NAME, "Ballon " + color + " naar het midden bewegen", Logger.MESSAGE)
         verschil = self.diff_to_center(blob, center)
-        while abs(verschil) > 150 and self.balloonmode.alive: #150 px marge voor het midden
+        while abs(verschil) > 100 and self.balloonmode.alive: #100 px marge voor het midden
             print "Blob nog niet in het midden"
             if verschil > 0:
                 #naar links draaien
@@ -284,6 +284,9 @@ class MoveState:
 
             img = BalloonVision.get_image()
             search = BalloonVision.find_balloon(color, img)
+
+            if not search[0]:
+                return False
 
             blob = search[1]
 
@@ -335,11 +338,11 @@ class SearchState:
             for i in xrange(0, 3):
                 if i > 0: #De spin kan rood zien bij de eerste keer
                     if self.balloonOrder.index(self.colors[i-1]) > self.balloonOrder.index(self.colors[i]):
-                        #Naar rechts draaien
-                        self.moveTo = False
-                    else:
                         #Naar links draaien
                         self.moveTo = True
+                    else:
+                        #Naar rechts draaien
+                        self.moveTo = False
                 else:
                     if self.colors[i] != "red":
                         if self.balloonOrder.index(self.colors[i]) > 1:

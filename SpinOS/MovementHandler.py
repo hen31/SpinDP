@@ -681,14 +681,16 @@ class MovementHandler:
         rad2 = 0 #0
 
         if left:
+            print "naar links draaien"
             #links
 
-            x_stap_links = math.cos(rad) * MovementHandler.stap_uitslag
-            x_stap_rechts = math.cos(rad2) * MovementHandler.stap_uitslag
-        else:
-            #rechts
-            x_stap_links = math.cos(rad2) * MovementHandler.stap_uitslag
             x_stap_rechts = math.cos(rad) * MovementHandler.stap_uitslag
+            x_stap_links = math.cos(rad2) * MovementHandler.stap_uitslag
+        else:
+            print "naar rechts draaien"
+            #rechts
+            x_stap_rechts = math.cos(rad2) * MovementHandler.stap_uitslag
+            x_stap_links = math.cos(rad) * MovementHandler.stap_uitslag
 
         #hoogte uitrekken in mmm
         mm_height = MovementHandler.min_height_mm + (float(MovementHandler.max_height_mm - MovementHandler.min_height_mm) / float(100)) * float(height)
@@ -714,19 +716,19 @@ class MovementHandler:
         max_execution = 0.0
         for leg in self.legs:
             if leg.leg_number in [1, 2]:
-                exec_time = self.get_excution_time(leg, leg.normal_x, leg.normal_y + y_stap, mm_height)
+                exec_time = self.get_excution_time(leg, leg.normal_x, leg.normal_y, mm_height)
                 if exec_time >max_execution:
                     max_execution = exec_time
             else:
-                exec_time = self.get_excution_time(leg, leg.normal_x, leg.normal_y - y_stap, mm_height)
+                exec_time = self.get_excution_time(leg, leg.normal_x, leg.normal_y, mm_height)
                 if exec_time >max_execution:
                     max_execution = exec_time
 
         for legmove in self.legs:
             if legmove.leg_number in [1, 2]:
-                thread = threading.Thread(target=self.move_leg_stilstaand, args=(legmove, legmove.normal_x, legmove.normal_y + y_stap, mm_height,max_execution,))
+                thread = threading.Thread(target=self.move_leg_stilstaand, args=(legmove, legmove.normal_x, legmove.normal_y, mm_height,max_execution,))
             else:
-                thread = threading.Thread(target=self.move_leg_stilstaand, args=(legmove, legmove.normal_x, legmove.normal_y - y_stap, mm_height,max_execution,))
+                thread = threading.Thread(target=self.move_leg_stilstaand, args=(legmove, legmove.normal_x, legmove.normal_y, mm_height,max_execution,))
 
             threads.append(thread)
 
