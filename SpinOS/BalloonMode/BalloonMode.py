@@ -13,6 +13,7 @@ class BalloonMode:
     alive = True
     #Logger variabele
     logger = None
+
     #Movement handler, zo kan er gelopen worden
     movementHandler = None
 
@@ -208,10 +209,11 @@ class MoveState:
 
     def move_to_balloon(self, color, blob):
         self.balloonmode.logger.logevent(MoveState.LOGGER_NAME, "Naar ballon " + color + " lopen", Logger.MESSAGE)
-        #Draaien zodat de ballon in het midden van de camera staat
+
         #Midden van het beeld
         center = 640 / 2
 
+        #Draaien zodat de ballon in het midden van de camera staat
         move = self.move_balloon_to_center(blob, center, color)
 
         if not move:
@@ -225,9 +227,12 @@ class MoveState:
         not_found_count = 0
 
         #vooruit lopen
-        self.balloonmode.movementHandler.move(0, 100, 0, 0)
-        time.sleep(self.balloonmode.movementHandler.TIME_MOVE_ONE_STEP * 5)
-        self.balloonmode.movementHandler.move(0, 0, 0, 0)
+        for i in xrange(0, 5):
+            self.balloonmode.movementHandler.move_one_step()
+
+        #self.balloonmode.movementHandler.move(0, 100, 0, 0)
+        #time.sleep(self.balloonmode.movementHandler.TIME_MOVE_ONE_STEP * 5)
+        #self.balloonmode.movementHandler.move(0, 0, 0, 0)
 
         while area < 300000 and self.balloonmode.alive:
             if not_found_count >= 5:
@@ -239,12 +244,17 @@ class MoveState:
 
             if search[0]:
                 #Ballon als nodig naar het midden krijgen.
-                self.move_balloon_to_center(search[1], center, color)
+                move = self.move_balloon_to_center(search[1], center, color)
+                if not move:
+                    return False
                 
                 area = search[1].area()
-                self.balloonmode.movementHandler.move(0, 100, 0, 0)
-                time.sleep(self.balloonmode.movementHandler.TIME_MOVE_ONE_STEP * 5)
-                self.balloonmode.movementHandler.move(0, 0, 0, 0)
+                for i in xrange(0,5):
+                    self.balloonmode.movementHandler.move_one_step()
+
+                #self.balloonmode.movementHandler.move(0, 100, 0, 0)
+                #time.sleep(self.balloonmode.movementHandler.TIME_MOVE_ONE_STEP * 5)
+                #self.balloonmode.movementHandler.move(0, 0, 0, 0)
 
             else:
                 not_found_count += 1
@@ -257,18 +267,20 @@ class MoveState:
     def move_balloon_to_center(self, blob, center, color):
         self.balloonmode.logger.logevent(MoveState.LOGGER_NAME, "Ballon " + color + " naar het midden bewegen", Logger.MESSAGE)
         verschil = self.diff_to_center(blob, center)
-        while abs(verschil) > 200 and self.balloonmode.alive: #200 px marge voor het midden
+        while abs(verschil) > 150 and self.balloonmode.alive: #150 px marge voor het midden
             print "Blob nog niet in het midden"
             if verschil > 0:
-                #5 graden naar links draaien
-                self.balloonmode.movementHandler.move(0, 0, 181, 100)
-                time.sleep(self.balloonmode.movementHandler.TIME_TURN)
-                self.balloonmode.movementHandler.move(0, 0, 0, 0)
+                #naar links draaien
+                self.balloonmode.movementHandler.move_one_turn(True)
+                #self.balloonmode.movementHandler.move(0, 0, 181, 100)
+                #time.sleep(self.balloonmode.movementHandler.TIME_TURN)
+                #self.balloonmode.movementHandler.move(0, 0, 0, 0)
             else:
-                #5 graden naar rechts draaien
-                self.balloonmode.movementHandler.move(0, 0, 180, 100)
-                time.sleep(self.balloonmode.movementHandler.TIME_TURN)
-                self.balloonmode.movementHandler.move(0, 0, 0, 0)
+                #naar rechts draaien
+                self.balloonmode.movementHandler.move_one_turn(False)
+                #self.balloonmode.movementHandler.move(0, 0, 180, 100)
+                #time.sleep(self.balloonmode.movementHandler.TIME_TURN)
+                #self.balloonmode.movementHandler.move(0, 0, 0, 0)
 
             img = BalloonVision.get_image()
             search = BalloonVision.find_balloon(color, img)
@@ -353,18 +365,18 @@ class SearchState:
 
         while not search[0] and self.balloonmode.alive:
             if self.moveTo:
-                #TODO: beweeg 5 graden naar links
-                self.balloonmode.movementHandler.move(0, 0, 180, 100)
-                time.sleep(self.balloonmode.movementHandler.TIME_TURN * 5)
-                self.balloonmode.movementHandler.move(0, 0, 0, 0)
-                pass
+                #Beweeg naar links
+                self.balloonmode.movementHandler.move_one_turn(True)
+                #self.balloonmode.movementHandler.move(0, 0, 180, 100)
+                #time.sleep(self.balloonmode.movementHandler.TIME_TURN * 5)
+                #self.balloonmode.movementHandler.move(0, 0, 0, 0)
 
             elif not self.moveTo:
-                #TODO: beweeg 5 graden naar rechts
-                self.balloonmode.movementHandler.move(0, 0, 181, 100)
-                time.sleep(self.balloonmode.movementHandler.TIME_TURN * 5)
-                self.balloonmode.movementHandler.move(0, 0, 0, 0)
-                pass
+                #Beweeg naar rechts
+                self.balloonmode.movementHandler.move_one_turn(False)
+                # self.balloonmode.movementHandler.move(0, 0, 181, 100)
+                # time.sleep(self.balloonmode.movementHandler.TIME_TURN * 5)
+                # self.balloonmode.movementHandler.move(0, 0, 0, 0)
 
             img = BalloonVision.get_image()
             search = BalloonVision.find_balloon(color, img)

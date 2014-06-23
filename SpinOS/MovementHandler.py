@@ -584,3 +584,156 @@ class MovementHandler:
                     thread.join()
                 self.last_height = height
 
+
+    def move_one_step(self):
+        self.variable_mutex.acquire()
+        height = self.height_setting
+        self.variable_mutex.release()
+
+        degrees_move = 10 #vooruit mien jong
+
+        rad = math.radians(float(degrees_move))
+
+        #hoogte uitrekken in mmm
+        mm_height = MovementHandler.min_height_mm + (float(MovementHandler.max_height_mm - MovementHandler.min_height_mm) / float(100)) * float(height)
+
+        y_stap = math.sin(rad) * MovementHandler.stap_uitslag_y
+        x_stap = math.cos(rad) * MovementHandler.stap_uitslag
+
+
+        if self.voor == True:
+
+            #Poten op volgorde omhoog, verplaatsen en weer naar beneden brengen
+            self.raise_leg(self.legs[1])
+            self.move_leg_lucht(self.legs[1], self.legs[1].normal_x + x_stap, self.legs[1].normal_y - y_stap, mm_height)
+            self.lower_leg(self.legs[1])
+
+            self.raise_leg(self.legs[3])
+            self.move_leg_lucht(self.legs[3], self.legs[3].normal_x - x_stap, self.legs[3].normal_y + y_stap, mm_height)
+            self.lower_leg(self.legs[3])
+
+
+            self.raise_leg(self.legs[0])
+            self.move_leg_lucht(self.legs[0], self.legs[0].normal_x + x_stap, self.legs[0].normal_y - y_stap, mm_height)
+            self.lower_leg(self.legs[0])
+
+            self.raise_leg(self.legs[2])
+            self.move_leg_lucht(self.legs[2], self.legs[2].normal_x - x_stap, self.legs[2].normal_y + y_stap, mm_height)
+            self.lower_leg(self.legs[2])
+            self.voor = False
+
+        else:
+                           #Poten op volgorde omhoog, verplaatsen en weer naar beneden brengen
+            self.raise_leg(self.legs[3])
+            self.move_leg_lucht(self.legs[3], self.legs[3].normal_x - x_stap, self.legs[3].normal_y + y_stap, mm_height)
+            self.lower_leg(self.legs[3])
+
+            self.raise_leg(self.legs[1])
+            self.move_leg_lucht(self.legs[1], self.legs[1].normal_x + x_stap, self.legs[1].normal_y - y_stap, mm_height)
+            self.lower_leg(self.legs[1])
+
+            self.raise_leg(self.legs[2])
+            self.move_leg_lucht(self.legs[2], self.legs[2].normal_x - x_stap, self.legs[2].normal_y + y_stap, mm_height)
+            self.lower_leg(self.legs[2])
+
+            self.raise_leg(self.legs[0])
+            self.move_leg_lucht(self.legs[0], self.legs[0].normal_x + x_stap, self.legs[0].normal_y - y_stap, mm_height)
+            self.lower_leg(self.legs[0])
+
+            self.voor = True
+
+        #Alle poten weer terug in de normaal stand brengen
+        threads = []
+        max_execution = 0.0
+        for leg in self.legs:
+            if leg.leg_number in [1, 2]:
+                exec_time = self.get_excution_time(leg, leg.normal_x, leg.normal_y + y_stap, mm_height)
+                if exec_time >max_execution:
+                    max_execution = exec_time
+            else:
+                exec_time = self.get_excution_time(leg, leg.normal_x, leg.normal_y - y_stap, mm_height)
+                if exec_time >max_execution:
+                    max_execution = exec_time
+
+        for legmove in self.legs:
+            if legmove.leg_number in [1, 2]:
+                thread = threading.Thread(target=self.move_leg_stilstaand, args=(legmove, legmove.normal_x, legmove.normal_y + y_stap, mm_height,max_execution,))
+            else:
+                thread = threading.Thread(target=self.move_leg_stilstaand, args=(legmove, legmove.normal_x, legmove.normal_y - y_stap, mm_height,max_execution,))
+
+            threads.append(thread)
+
+        for thread in threads:
+            thread.start()
+
+        for thread in threads:
+            thread.join()
+        self.last_height = height
+
+
+    def move_one_turn(self, left):
+        self.variable_mutex.acquire()
+        height = self.height_setting
+        self.variable_mutex.release()
+
+        #DRAAIEENN1!!!!
+        rad = 3.14159265 #180
+        rad2 = 0 #0
+
+        if left:
+            #links
+
+            x_stap_links = math.cos(rad) * MovementHandler.stap_uitslag
+            x_stap_rechts = math.cos(rad2) * MovementHandler.stap_uitslag
+        else:
+            #rechts
+            x_stap_links = math.cos(rad2) * MovementHandler.stap_uitslag
+            x_stap_rechts = math.cos(rad) * MovementHandler.stap_uitslag
+
+        #hoogte uitrekken in mmm
+        mm_height = MovementHandler.min_height_mm + (float(MovementHandler.max_height_mm - MovementHandler.min_height_mm) / float(100)) * float(height)
+
+        self.raise_leg(self.legs[0])
+        self.move_leg_lucht(self.legs[0], self.legs[0].normal_x - x_stap_links, self.legs[0].normal_y, mm_height)
+        self.lower_leg(self.legs[0])
+
+        self.raise_leg(self.legs[3])
+        self.move_leg_lucht(self.legs[3], self.legs[3].normal_x + x_stap_rechts, self.legs[3].normal_y, mm_height)
+        self.lower_leg(self.legs[3])
+
+        self.raise_leg(self.legs[2])
+        self.move_leg_lucht(self.legs[2], self.legs[2].normal_x + x_stap_rechts, self.legs[2].normal_y, mm_height)
+        self.lower_leg(self.legs[2])
+
+        self.raise_leg(self.legs[1])
+        self.move_leg_lucht(self.legs[1], self.legs[1].normal_x - x_stap_links, self.legs[1].normal_y, mm_height)
+        self.lower_leg(self.legs[1])
+
+        #Alle poten weer terug in de normaal stand brengen
+        threads = []
+        max_execution = 0.0
+        for leg in self.legs:
+            if leg.leg_number in [1, 2]:
+                exec_time = self.get_excution_time(leg, leg.normal_x, leg.normal_y + y_stap, mm_height)
+                if exec_time >max_execution:
+                    max_execution = exec_time
+            else:
+                exec_time = self.get_excution_time(leg, leg.normal_x, leg.normal_y - y_stap, mm_height)
+                if exec_time >max_execution:
+                    max_execution = exec_time
+
+        for legmove in self.legs:
+            if legmove.leg_number in [1, 2]:
+                thread = threading.Thread(target=self.move_leg_stilstaand, args=(legmove, legmove.normal_x, legmove.normal_y + y_stap, mm_height,max_execution,))
+            else:
+                thread = threading.Thread(target=self.move_leg_stilstaand, args=(legmove, legmove.normal_x, legmove.normal_y - y_stap, mm_height,max_execution,))
+
+            threads.append(thread)
+
+        for thread in threads:
+            thread.start()
+
+        for thread in threads:
+            thread.join()
+
+        self.last_height = height
