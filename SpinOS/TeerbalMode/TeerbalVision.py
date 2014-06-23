@@ -6,7 +6,7 @@ __author__ = 'Jeroen'
 class TeerbalVision:
 
     IMAGE_URL = "http://raspberrypi:8080/?action=snapshot"
-
+    MIN_AREA = 3000
     ESTIMATED_MIDDLE = 30
     #True = link, False = Rechts
     LAATST_GEDRAAID = None
@@ -21,7 +21,8 @@ class TeerbalVision:
 
     #methode die de rode afbakening herkend
     @staticmethod
-    def find_top(image):
+    def find_top(img):
+        image = Image(img)
         bin_image = image.colorDistance(Color.RED).binarize()
         blobs = bin_image.findBlobs(minsize=3000)
         y_list = sorted(blobs.y())
@@ -29,10 +30,10 @@ class TeerbalVision:
 
     #methode die de teerbal zoekt
     @staticmethod
-    def find_teerbal(image):
-        # image = Image(image)
+    def find_teerbal(img):
+        image = Image(img)
         bin_image  = image.colorDistance(Color.BLACK).binarize(50)
-        blobs = bin_image.findBlobs(minsize=3000)
+        blobs = bin_image.findBlobs(minsize=TeerbalVision.MIN_AREA)
 
         # bin_image.show()
         # time.sleep(2)
@@ -46,11 +47,10 @@ class TeerbalVision:
     @staticmethod
     #return values representeren (Teerbal is nog in zicht, draai recht, draai links) indien links en recht allebei False
     #zijn dan staat de spin gecentreerd en kan hij vooruit lopen
-    def center_on_teerbal(image):
-
-        # image = Image(img)
+    def center_on_teerbal(img):
+        image = Image(img)
         bin_image = image.colorDistance(Color.BLACK).binarize(50)
-        blobs = bin_image.findBlobs()
+        blobs = bin_image.findBlobs(minsize=TeerbalVision.MIN_AREA)
         if blobs:
             if blobs[-1].x > (image.width/2) - TeerbalVision.ESTIMATED_MIDDLE and blobs[-1].x < (image.width/2) + TeerbalVision.ESTIMATED_MIDDLE:
                 TeerbalVision.LAST_BLOB_SIZE = blobs[-1].area()
@@ -68,17 +68,18 @@ class TeerbalVision:
             return (False,False,False)
 
     @staticmethod
-    def teerbal_found(image):
-        # image = Image(img)
+    def teerbal_found(img):
+        image = Image(img)
         bin_image = image.colorDistance(Color.BLACK).binarize(50)
-        blobs = bin_image.findBlobs()
+        blobs = bin_image.findBlobs(minsize=TeerbalVision.MIN_AREA)
         if blobs:
-            if blobs[-1].onImageEdge(tolerance=1):
-                return (False,True)
+            TeerbalVision.LAST_BLOB_SIZE = blobs[-1].area()
+            if blobs[-1].maxY() == 479:
+                return True
             else:
-                return (False,False)
+                return False
         else:
-            return (True,False)
+            return True
 
 
 
@@ -86,10 +87,11 @@ class TeerbalVision:
 
     @staticmethod
     #returns (found,verdwenen,centrated)
-    def isCentrated(image):
-        # image = Image(img)
+    def isCentrated(img):
+        image = Image(img)
+
         bin_image = image.colorDistance(Color.BLACK).binarize(50)
-        blobs = bin_image.findBlobs()
+        blobs = bin_image.findBlobs(minsize=TeerbalVision.MIN_AREA)
         if blobs:
             cor = blobs[-1].bottomLeftCorner()
             y = cor[1]
@@ -117,3 +119,7 @@ class TeerbalVision:
             #draai links
             return True
 
+    #debug method
+    @staticmethod
+    def toImage(img):
+        return Image(img)

@@ -33,6 +33,7 @@ class SpinOS:
 
         GPIO.setmode(GPIO.BOARD) ## Use board pin numbering
         GPIO.setup(11, GPIO.OUT)
+        GPIO.setwarnings(False)
 
         SpinOS.play_sound(2)
         #logger aanmaken
@@ -88,7 +89,6 @@ class SpinOS:
         GPIO.output(11,True)
         time.sleep(float(time_to_sleep))
         GPIO.output(11,False)
-        GPIO.cleanup()
 
     #run methode, deze loopt in eigen thread en halen de commando's op
     def run(self):
@@ -132,7 +132,7 @@ class SpinOS:
                         self.mode = "balloon mode"
                         #set mode naar balloon mode
                         SpinOS.logger.logevent("SPINOS", "Mode set to " + self.mode, Logger.MESSAGE)
-                        self.current_mode = BalloonMode(self.movementHandler, self.logger, self.serial, self)
+                        self.current_mode = BalloonMode(self.movementHandler, self.logger, self)
                         self.current_mode.alive = True
                     elif message[0] == COMMAND.TO_TEERBAL_MODE:
                         #huidige mode alive false zodat threads stoppen
@@ -166,7 +166,8 @@ class SpinOS:
                         message.remove(command)
                         self.current_mode.process_command(command, message)
 
-        except:
+        except Exception, e :
+            print e
             self.shutdown()#als er een exception optreedt wordt de spin gedood
 
     #loop voor het ophalen van sensor waarden
