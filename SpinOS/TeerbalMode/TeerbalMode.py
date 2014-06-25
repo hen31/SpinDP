@@ -108,10 +108,17 @@ class MoveState:
                 if kant_draaien:
                     #draai naar rechts
                     TeerbalMode.logger.logevent(self.STATE,"Centreren: draai rechts", TeerbalMode.logger.MESSAGE)
+<<<<<<< HEAD
                     TeerbalMode.movementHandler.move_one_turn(False)
                 else:
                     TeerbalMode.logger.logevent(self.STATE,"Centreren: draai links", TeerbalMode.logger.MESSAGE)
                     TeerbalMode.movementHandler.move_one_turn(True)
+=======
+                    TeerbalMode.movementHandler.move_one_turn(True)
+                else:
+                    TeerbalMode.logger.logevent(self.STATE,"Centreren: draai links", TeerbalMode.logger.MESSAGE)
+                    TeerbalMode.movementHandler.move_one_turn(False)
+>>>>>>> origin/master
                 gecentreerd = TeerbalVision.center(TeerbalVision.getImage())
 
             TeerbalMode.logger.logevent(self.STATE, "Vooruit lopen", TeerbalMode.logger.MESSAGE)

@@ -7,7 +7,11 @@ class TeerbalVision:
 
     IMAGE_URL = "http://raspberrypi:8080/?action=snapshot"
     MIN_AREA = 100
+<<<<<<< HEAD
     MAX_AREA = 5000
+=======
+    MAX_AREA = 14000
+>>>>>>> origin/master
     ESTIMATED_MIDDLE = 100
     #True = link, False = Rechts
     LAATST_GEDRAAID = None
@@ -66,7 +70,13 @@ class TeerbalVision:
                 if not e.isRectangle(0.3):
                     blobs.remove(e)
             blobs = sorted(blobs,key=lambda x:(x.y, x.area()))
+<<<<<<< HEAD
             if blobs[-1].x > (image.width/2) - 100 and blobs[-1].x < (image.width/2) + 100:
+                return True
+            else:
+                return False
+=======
+            if blobs and blobs[-1].x > (image.width/2) - 100 and blobs[-1].x < (image.width/2) + 100:
                 return True
             else:
                 return False
@@ -84,6 +94,52 @@ class TeerbalVision:
                     blobs.remove(e)
             blobs = sorted(blobs,key=lambda x:(x.y, x.area()))
 
+            if blobs and blobs[-1].x < image.width/2:
+                #draai naar rechts
+                return True
+            elif blobs and blobs[-1].x > image.width/2:
+                #draai naar links
+                return False
+
+
+    # @staticmethod
+    # #return values representeren (Teerbal is nog in zicht, draai links, draai rechts) indien links en recht allebei False
+    # #zijn dan staat de spin gecentreerd en kan hij vooruit lopen
+    # def center_on_teerbal(img):
+    #     image = img
+    #     bin_image = image.colorDistance(Color.BLACK).binarize(TeerbalVision.BLACK_THRESH)
+    #     blobs = bin_image.findBlobs(minsize=TeerbalVision.MIN_AREA, maxsize=TeerbalVision.MAX_AREA)
+    #     if blobs:
+    #         if blobs[-1].x > (image.width/2) - TeerbalVision.ESTIMATED_MIDDLE and blobs[-1].x < (image.width/2) + TeerbalVision.ESTIMATED_MIDDLE:
+    #             TeerbalVision.LAST_BLOB_SIZE = blobs[-1].area()
+    #             return (True,False,False)
+    #         elif blobs[-1].x < image.width/2:
+    #             #draai naar rechts
+    #             TeerbalVision.LAATST_GEDRAAID = True
+    #             return (True,False,True)
+    #         elif blobs[-1].x > image.width/2:
+    #             #draai naar links
+    #             TeerbalVision.LAATST_GEDRAAID = False
+    #             return (True,True,False)
+    #     else:
+    #         #Teerbal is verdwenen, HELP
+    #         return (False,False,False)
+>>>>>>> origin/master
+
+    @staticmethod
+    def turn_side(img):
+        image = img
+        bin_image = image.colorDistance(Color.BLACK).binarize(TeerbalVision.BLACK_THRESH)
+        blobs = bin_image.findBlobs(minsize=TeerbalVision.MIN_AREA, maxsize=TeerbalVision.MAX_AREA)
+
+
+        if blobs:
+            for e in blobs:
+                if not e.isRectangle(0.3):
+                    blobs.remove(e)
+            blobs = sorted(blobs,key=lambda x:(x.y, x.area()))
+
+<<<<<<< HEAD
             if blobs[-1].x < image.width/2:
                 #draai naar rechts
                 return True
@@ -126,6 +182,8 @@ class TeerbalVision:
                     blobs.remove(e)
             blobs = sorted(blobs,key=lambda x:(x.y, x.area()))
 
+=======
+>>>>>>> origin/master
             TeerbalVision.LAST_BLOB_SIZE = blobs[-1].area()
             #if blobs[-1].maxY() == 479:
              #   return True
