@@ -590,7 +590,7 @@ class MovementHandler:
         height = self.height_setting
         self.variable_mutex.release()
 
-        degrees_move = 10 #vooruit mien jong
+        degrees_move = 0 #vooruit mien jong
 
         rad = math.radians(float(degrees_move))
 

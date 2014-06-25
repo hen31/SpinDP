@@ -55,7 +55,7 @@ class BalloonMode:
 #In de cardstate wordt de kleurenkaart herkend
 class CardState:
 
-    LOGGER_NAME = "BalloonMode CardState"
+    LOGGER_NAME = "BalloonMode CardStateA"
 
     #Constructor
     def __init__(self, ballonmode):
@@ -285,9 +285,6 @@ class MoveState:
             img = BalloonVision.get_image()
             search = BalloonVision.find_balloon(color, img)
 
-            if not search[0]:
-                return False
-
             blob = search[1]
 
             if search[0]:
@@ -346,9 +343,9 @@ class SearchState:
                 else:
                     if self.colors[i] != "red":
                         if self.balloonOrder.index(self.colors[i]) > 1:
-                            self.moveTo = True
-                        else:
                             self.moveTo = False
+                        else:
+                            self.moveTo = True
 
                 blob = self.find_balloon(self.colors[i])
                 if blob is not False:
